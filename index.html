@@ -6,107 +6,53 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
 <style>
-html,body{
-  margin:0;width:100%;height:100%;overflow:hidden;
-  background:#000;color:#fff;
-  font-family:ui-rounded,"SF Pro Rounded","Segoe UI",system-ui,sans-serif
-}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:#fff;
+  font-family:ui-rounded,"SF Pro Rounded","Segoe UI",system-ui,sans-serif}
 *{box-sizing:border-box}
 body.idle{cursor:none}
 #stage{position:fixed;inset:0;width:100%;height:100%;display:block}
 #video{position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none}
 
-#toast{
-  position:fixed;z-index:20;left:50%;top:22px;max-width:84vw;
-  padding:10px 20px;border:1px solid rgba(125,211,252,.3);
-  border-radius:999px;background:rgba(5,13,27,.92);color:#fff;
-  font-size:14px;text-align:center;pointer-events:none;opacity:0;
-  transform:translate(-50%,-18px);transition:.35s
-}
+#toast{position:fixed;z-index:20;left:50%;top:22px;max-width:84vw;padding:10px 20px;
+  border:1px solid rgba(125,211,252,.3);border-radius:999px;background:rgba(5,13,27,.92);color:#fff;
+  font-size:14px;text-align:center;pointer-events:none;opacity:0;transform:translate(-50%,-18px);transition:.35s}
 #toast.show{opacity:1;transform:translate(-50%,0)}
-
-#status{
-  position:fixed;z-index:15;left:50%;bottom:14px;max-width:92vw;
-  transform:translateX(-50%);color:rgba(255,255,255,.68);
-  font-size:12px;text-align:center;pointer-events:none
-}
-
-#hint{
-  position:fixed;z-index:16;left:50%;bottom:14px;max-width:94vw;
-  padding:9px 16px;border-radius:14px;background:rgba(5,13,27,.92);
-  color:#d9efff;font-size:12px;line-height:1.55;text-align:center;
-  pointer-events:none;opacity:0;transform:translateX(-50%);transition:.35s
-}
+#status{position:fixed;z-index:15;left:50%;bottom:14px;max-width:92vw;transform:translateX(-50%);
+  color:rgba(255,255,255,.68);font-size:12px;text-align:center;pointer-events:none}
+#hint{position:fixed;z-index:16;left:50%;bottom:14px;max-width:94vw;padding:9px 16px;border-radius:14px;
+  background:rgba(5,13,27,.92);color:#d9efff;font-size:12px;line-height:1.55;text-align:center;
+  pointer-events:none;opacity:0;transform:translateX(-50%);transition:.35s}
 #hint.show{opacity:1}
 
-#panel{
-  position:fixed;z-index:30;left:12px;top:12px;display:none;width:318px;
-  max-height:calc(100vh - 24px);overflow-y:auto;padding:12px 14px 15px;
-  border:1px solid rgba(80,220,200,.35);border-radius:14px;
-  background:rgba(8,12,22,.95);box-shadow:0 16px 40px rgba(0,0,0,.72);
-  color:#fff;font-size:12px;line-height:1.35;cursor:default
-}
+#panel{position:fixed;z-index:30;left:12px;top:12px;display:none;width:318px;max-height:calc(100vh - 24px);
+  overflow-y:auto;padding:12px 14px 15px;border:1px solid rgba(80,220,200,.35);border-radius:14px;
+  background:rgba(8,12,22,.95);box-shadow:0 16px 40px rgba(0,0,0,.72);color:#fff;font-size:12px;
+  line-height:1.35;cursor:default}
 #panel.open{display:block}
 #panel *{box-sizing:border-box}
-
-.panel-head{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:8px;font-size:14px
-}
-
-section{
-  margin-top:7px;padding:9px 0 3px;
-  border-top:1px solid rgba(255,255,255,.1)
-}
-section h4{
-  margin:0 0 7px;color:#6ee7d0;font-size:11px;font-weight:700;
-  letter-spacing:.06em;text-transform:uppercase
-}
-
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:14px}
+section{margin-top:7px;padding:9px 0 3px;border-top:1px solid rgba(255,255,255,.1)}
+section h4{margin:0 0 7px;color:#6ee7d0;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 .row{display:flex;gap:5px;align-items:center;margin-bottom:6px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:6px}
 .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:6px}
-
-button,select{
-  min-width:0;padding:6px 7px;border:1px solid rgba(255,255,255,.16);
-  border-radius:8px;background:rgba(255,255,255,.07);color:#e8eef8;
-  font:inherit;cursor:pointer
-}
+button,select{min-width:0;padding:6px 7px;border:1px solid rgba(255,255,255,.16);border-radius:8px;
+  background:rgba(255,255,255,.07);color:#e8eef8;font:inherit;cursor:pointer}
 button:hover{background:rgba(255,255,255,.15)}
 button.on{border-color:#3ce0aa;background:rgba(60,220,170,.25);color:#fff}
 button:disabled{cursor:default;opacity:.35}
 select{width:100%}
-
-label{
-  display:flex;justify-content:space-between;
-  margin-bottom:2px;color:#cbd5e1
-}
-label b{
-  color:#6ee7d0;font-family:ui-monospace,Menlo,Consolas,monospace;
-  font-weight:600
-}
-
-input[type=range]{
-  width:100%;margin:0 0 8px;accent-color:#3ce0aa
-}
-
-.small{
-  margin-bottom:6px;color:#94a3b8;
-  font-size:10.5px;line-height:1.45
-}
+label{display:flex;justify-content:space-between;margin-bottom:2px;color:#cbd5e1}
+label b{color:#6ee7d0;font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:600}
+input[type=range]{width:100%;margin:0 0 8px;accent-color:#3ce0aa}
+.small{margin-bottom:6px;color:#94a3b8;font-size:10.5px;line-height:1.45}
 .status-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-.status-pill{
-  padding:6px 7px;border-radius:7px;
-  background:rgba(255,255,255,.06);color:#cbd5e1
-}
+.status-pill{padding:6px 7px;border-radius:7px;background:rgba(255,255,255,.06);color:#cbd5e1}
 .ok{color:#bbf7d0}
 .bad{color:#fecaca}
-
-kbd{
-  padding:1px 4px;border-radius:4px;background:rgba(255,255,255,.12);
-  font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px
-}
+kbd{padding:1px 4px;border-radius:4px;background:rgba(255,255,255,.12);
+  font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px}
 </style>
 </head>
 
@@ -114,16 +60,13 @@ kbd{
 
 <canvas id="stage"></canvas>
 <video id="video" autoplay muted playsinline></video>
-
 <div id="toast"></div>
 <div id="status"></div>
 
 <div id="hint">
-  <b>Scenes:</b> 1 Galaxy · 2 Sky & Butterflies · N next · T next look<br>
-  <b>Camera:</b> M mirror · V flip · C next camera · I list cameras ·
-  D motion view · A demo motion · − / + sensitivity<br>
-  <b>Alignment:</b> ← / → picture rotation · ↑ / ↓ camera rotation ·
-  Shift+arrows camera position · , / . camera zoom · 0 reset<br>
+  <b>Scenes:</b> 1 Galaxy · 2 Sky &amp; Birds · N next · T next look · B bird type · L constellation names · K constellation lines<br>
+  <b>Camera:</b> M mirror · V flip · C next camera · I list cameras · D motion view · A demo motion · − / + sensitivity<br>
+  <b>Alignment:</b> ← / → picture rotation · ↑ / ↓ camera rotation · Shift+arrows camera position · , / . camera zoom · 0 reset<br>
   <b>Display:</b> F fullscreen · H help · Tab or double-click controller
 </div>
 
@@ -144,12 +87,10 @@ kbd{
 
     <div class="row">
       <button id="previousScene">◀</button>
-
       <select id="sceneSelect">
-        <option value="galaxy">Galaxy & Constellations</option>
-        <option value="sky">Sky & Butterflies</option>
+        <option value="galaxy">Galaxy &amp; Constellations</option>
+        <option value="sky">Sky &amp; Birds</option>
       </select>
-
       <button id="nextScene">▶</button>
     </div>
 
@@ -162,6 +103,12 @@ kbd{
     <div class="grid2">
       <button id="calmButton">Calm mode</button>
       <button id="interactiveButton">Interactive mode</button>
+    </div>
+
+    <div class="grid3">
+      <button id="birdButton">Birds</button>
+      <button id="linesButton">Lines</button>
+      <button id="labelsButton">Names</button>
     </div>
 
     <label>Scene speed <b id="speedValue"></b></label>
@@ -196,7 +143,7 @@ kbd{
   </section>
 
   <section>
-    <h4>Camera & interaction</h4>
+    <h4>Camera &amp; interaction</h4>
 
     <div class="grid3">
       <button id="cameraButton">Camera</button>
@@ -252,7 +199,6 @@ kbd{
     <h4>Projectors</h4>
 
     <label>Projectors sharing image <b id="projectorValue"></b></label>
-
     <div class="grid4" id="projectorTotal">
       <button data-total="1">1</button>
       <button data-total="2">2</button>
@@ -261,7 +207,6 @@ kbd{
     </div>
 
     <label>This PC displays</label>
-
     <div class="grid4" id="projectorUnit">
       <button data-unit="1">1st</button>
       <button data-unit="2">2nd</button>
@@ -287,9 +232,7 @@ kbd{
       <button id="resetCameraButton">Reset camera</button>
     </div>
 
-    <button id="resetAllButton" style="width:100%">
-      Reset all saved settings
-    </button>
+    <button id="resetAllButton" style="width:100%">Reset all saved settings</button>
   </section>
 
 </aside>
@@ -301,5547 +244,1419 @@ kbd{
 /* =========================================================
    HELPERS
    ========================================================= */
-
 const TAU = Math.PI * 2;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const rnd = (a, b) => a + Math.random() * (b - a);
+const $ = id => document.getElementById(id);
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+const rgba = (c, a) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a})`;
+const rgb = c => `rgb(${clamp(c[0], 0, 255) | 0},${clamp(c[1], 0, 255) | 0},${clamp(c[2], 0, 255) | 0})`;
+const mixc = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
+const hex = h => { h = h.replace("#", ""); return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]; };
+const mk = (w, h) => { const c = document.createElement("canvas"); c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h)); return c; };
 
-const clamp = (value, minimum, maximum) =>
-  Math.max(minimum, Math.min(maximum, value));
-
-const lerp = (a, b, amount) =>
-  a + (b - a) * amount;
-
-const randomBetween = (a, b) =>
-  a + Math.random() * (b - a);
-
-const element = id =>
-  document.getElementById(id);
-
-function rgba(color, alpha) {
-  return `rgba(${color[0]},${color[1]},${color[2]},${alpha})`;
+function mulberry(seed) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
 }
 
+/* smooth value noise + fractal noise (used for Milky Way, aurora, hills) */
+const noise2 = (() => {
+  const P = new Uint8Array(512), r = mulberry(20241);
+  const a = Array.from({ length: 256 }, (_, i) => i);
+  for (let i = 255; i > 0; i--) { const j = (r() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; }
+  for (let i = 0; i < 512; i++) P[i] = a[i & 255];
+  return (x, y) => {
+    const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
+    const X = xi & 255, Y = yi & 255;
+    const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+    const g = (i, j) => P[P[X + i] + Y + j] / 255;
+    return lerp(lerp(g(0, 0), g(1, 0), u), lerp(g(0, 1), g(1, 1), u), v);
+  };
+})();
+const fbm = (x, y, o = 5) => {
+  let s = 0, a = .5, f = 1, n = 0;
+  for (let i = 0; i < o; i++) { s += a * noise2(x * f, y * f); n += a; f *= 2; a *= .5; }
+  return s / n;
+};
+
 function makeGlowSprite(color, size = 96) {
-  const canvas = document.createElement("canvas");
-  canvas.width = canvas.height = size;
-
-  const localContext =
-    canvas.getContext("2d");
-
-  const gradient =
-    localContext.createRadialGradient(
-      size / 2,
-      size / 2,
-      0,
-      size / 2,
-      size / 2,
-      size / 2
-    );
-
-  gradient.addColorStop(0, rgba(color, 1));
-  gradient.addColorStop(0.24, rgba(color, 0.4));
-  gradient.addColorStop(1, rgba(color, 0));
-
-  localContext.fillStyle = gradient;
-  localContext.fillRect(0, 0, size, size);
-
-  return canvas;
+  const c = mk(size, size), g = c.getContext("2d");
+  const gr = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+  gr.addColorStop(0, rgba(color, 1));
+  gr.addColorStop(.22, rgba(color, .38));
+  gr.addColorStop(.55, rgba(color, .08));
+  gr.addColorStop(1, rgba(color, 0));
+  g.fillStyle = gr; g.fillRect(0, 0, size, size);
+  return c;
 }
 
 /* =========================================================
    SETTINGS
    ========================================================= */
-
-const STORAGE_KEY =
-  "patientRoomGalaxyNaturalSky.v1";
+const STORAGE_KEY = "patientRoomGalaxyNaturalSky.v1";
 
 const defaults = {
-  scene: "galaxy",
-  interactive: false,
-
-  variant: {
-    galaxy: 0,
-    sky: 0
-  },
-
-  speed: 0.7,
-  response: 0.7,
-  detail: 1,
-  brightness: 0.92,
-
-  sceneZoom: 1,
-  sceneX: 0,
-  sceneY: 0,
-  pictureRotation: 0,
-
-  mirror: false,
-  flip: false,
-
-  sensitivity: 1,
-  maximumArea: 0.5,
-
-  cameraZoom: 1,
-  cameraHeight: 1,
-  cameraX: 0,
-  cameraY: 0,
-  cameraRotation: 0,
-
-  debug: false,
-  demo: false,
-  zone: null,
-
-  cameraId: "",
-
-  projectorTotal: 1,
-  projectorUnit: 1,
-  projectorGap: 0
+  scene: "galaxy", interactive: false,
+  variant: { galaxy: 0, sky: 0 },
+  speed: .7, response: .7, detail: 1, brightness: .92,
+  sceneZoom: 1, sceneX: 0, sceneY: 0, pictureRotation: 0,
+  mirror: false, flip: false, sensitivity: 1, maximumArea: .5,
+  cameraZoom: 1, cameraHeight: 1, cameraX: 0, cameraY: 0, cameraRotation: 0,
+  debug: false, demo: false, zone: null, cameraId: "",
+  projectorTotal: 1, projectorUnit: 1, projectorGap: 0,
+  birdType: "mixed", lines: true, labels: false
 };
 
 let settings;
-
 try {
-  const stored =
-    JSON.parse(
-      localStorage.getItem(STORAGE_KEY) || "{}"
-    );
+  const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+  settings = Object.assign({}, defaults, stored, { variant: Object.assign({}, defaults.variant, stored.variant || {}) });
+} catch (e) { settings = JSON.parse(JSON.stringify(defaults)); }
 
-  settings = Object.assign({}, defaults, stored, {
-    variant: Object.assign(
-      {},
-      defaults.variant,
-      stored.variant || {}
-    )
-  });
-} catch (error) {
-  settings =
-    JSON.parse(
-      JSON.stringify(defaults)
-    );
-}
+const query = new URLSearchParams(location.search);
+if (["galaxy", "sky"].includes(query.get("scene"))) settings.scene = query.get("scene");
+if (query.get("interactive") === "1") settings.interactive = true;
+if (query.get("demo") === "1") settings.demo = true;
+if (query.get("look") !== null) settings.variant[settings.scene] = (+query.get("look") || 0) % 3;
+if (["mixed", "gull", "eagle"].includes(query.get("bird"))) settings.birdType = query.get("bird");
+const noCamera = query.get("nocam") === "1";
 
-const query =
-  new URLSearchParams(location.search);
-
-if (
-  ["galaxy", "sky"].includes(
-    query.get("scene")
-  )
-) {
-  settings.scene =
-    query.get("scene");
-}
-
-const noCamera =
-  query.get("nocam") === "1";
-
-function saveSettings() {
-  try {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(settings)
-    );
-  } catch (error) {}
-}
+const saveSettings = () => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); } catch (e) {} };
 
 /* =========================================================
-   CANVAS
+   CANVAS / WORLD (supports several projectors sharing one image)
    ========================================================= */
-
-const stage =
-  element("stage");
-
-const context =
-  stage.getContext("2d");
-
-const video =
-  element("video");
-
-const worldCanvas =
-  document.createElement("canvas");
-
-const worldContext =
-  worldCanvas.getContext("2d");
-
-let screenWidth = 1;
-let screenHeight = 1;
-let worldWidth = 1;
-let worldHeight = 1;
-let worldOffsetX = 0;
-let unitScale = 1;
+const stage = $("stage"), context = stage.getContext("2d"), video = $("video");
+const worldCanvas = mk(1, 1), worldContext = worldCanvas.getContext("2d");
+let screenWidth = 1, screenHeight = 1, worldWidth = 1, worldHeight = 1, worldOffsetX = 0, unitScale = 1;
+let vignette = null;
+const SEED = (Math.random() * 1e9) | 0;
+const scenes = {};
 
 function updateProjectorWorld() {
-  const gapPixels =
-    settings.projectorGap *
-    screenWidth;
+  const gap = settings.projectorGap * screenWidth;
+  worldWidth = screenWidth * settings.projectorTotal + gap * (settings.projectorTotal - 1);
+  worldHeight = screenHeight;
+  worldOffsetX = (settings.projectorUnit - 1) * (screenWidth + gap);
+  worldCanvas.width = Math.max(1, Math.round(worldWidth));
+  worldCanvas.height = Math.max(1, Math.round(worldHeight));
+}
 
-  worldWidth =
-    screenWidth *
-    settings.projectorTotal +
-    gapPixels *
-    (
-      settings.projectorTotal - 1
-    );
-
-  worldHeight =
-    screenHeight;
-
-  worldOffsetX =
-    (
-      settings.projectorUnit - 1
-    ) *
-    (
-      screenWidth +
-      gapPixels
-    );
-
-  worldCanvas.width =
-    Math.max(
-      1,
-      Math.round(worldWidth)
-    );
-
-  worldCanvas.height =
-    Math.max(
-      1,
-      Math.round(worldHeight)
-    );
+function makeVignette() {
+  vignette = mk(screenWidth, screenHeight);
+  const g = vignette.getContext("2d");
+  const gr = g.createRadialGradient(screenWidth / 2, screenHeight / 2, Math.min(screenWidth, screenHeight) * .35,
+    screenWidth / 2, screenHeight / 2, Math.hypot(screenWidth, screenHeight) * .55);
+  gr.addColorStop(0, "rgba(0,0,0,0)");
+  gr.addColorStop(1, "rgba(0,0,0,.5)");
+  g.fillStyle = gr; g.fillRect(0, 0, screenWidth, screenHeight);
 }
 
 function resize() {
-  screenWidth =
-    stage.width =
-    innerWidth;
-
-  screenHeight =
-    stage.height =
-    innerHeight;
-
-  unitScale =
-    screenHeight / 720;
-
+  screenWidth = stage.width = innerWidth;
+  screenHeight = stage.height = innerHeight;
+  unitScale = screenHeight / 720;
   updateProjectorWorld();
-
-  if (
-    scenes[settings.scene]
-  ) {
-    scenes[
-      settings.scene
-    ].build();
-  }
+  makeVignette();
+  if (scenes[settings.scene]) scenes[settings.scene].build();
 }
-
-window.addEventListener(
-  "resize",
-  resize
-);
+window.addEventListener("resize", resize);
 
 /* =========================================================
-   PANEL AND TOAST
+   PANEL + TOAST
    ========================================================= */
+const panel = $("panel"), toastElement = $("toast"), statusElement = $("status"), hintElement = $("hint");
+let drawingZone = false, toastTimer = 0, idleTimer = 0;
 
-const panel =
-  element("panel");
-
-const toastElement =
-  element("toast");
-
-const statusElement =
-  element("status");
-
-const hintElement =
-  element("hint");
-
-let drawingZone = false;
-let toastTimer = 0;
-let idleTimer = 0;
-
-function showToast(
-  message,
-  duration = 2200
-) {
-  toastElement.textContent =
-    message;
-
-  toastElement.classList.add(
-    "show"
-  );
-
+function showToast(message, duration = 2200) {
+  toastElement.textContent = message;
+  toastElement.classList.add("show");
   clearTimeout(toastTimer);
-
-  toastTimer = setTimeout(
-    () =>
-      toastElement.classList.remove(
-        "show"
-      ),
-    duration
-  );
+  toastTimer = setTimeout(() => toastElement.classList.remove("show"), duration);
 }
-
-function updateCursor() {
-  document.body.classList.toggle(
-    "idle",
-    !panel.classList.contains("open") &&
-    !drawingZone
-  );
-}
-
+function updateCursor() { document.body.classList.toggle("idle", !panel.classList.contains("open") && !drawingZone); }
 function togglePanel(force) {
-  const open =
-    typeof force === "boolean"
-      ? force
-      : !panel.classList.contains(
-          "open"
-        );
-
-  panel.classList.toggle(
-    "open",
-    open
-  );
-
-  updateCursor();
-  syncPanel();
+  const open = typeof force === "boolean" ? force : !panel.classList.contains("open");
+  panel.classList.toggle("open", open);
+  updateCursor(); syncPanel();
 }
-
-element("closePanel").onclick =
-  () => togglePanel(false);
-
-window.addEventListener(
-  "dblclick",
-  event => {
-    if (
-      !panel.contains(
-        event.target
-      )
-    ) {
-      togglePanel();
-    }
-  }
-);
-
-window.addEventListener(
-  "mousemove",
-  () => {
-    document.body.classList.remove(
-      "idle"
-    );
-
-    clearTimeout(idleTimer);
-
-    idleTimer =
-      setTimeout(
-        updateCursor,
-        2500
-      );
-  }
-);
+$("closePanel").onclick = () => togglePanel(false);
+window.addEventListener("dblclick", e => { if (!panel.contains(e.target)) togglePanel(); });
+window.addEventListener("mousemove", () => {
+  document.body.classList.remove("idle");
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(updateCursor, 2500);
+});
 
 /* =========================================================
    MOTION ENGINE
    ========================================================= */
-
-const GRID_WIDTH = 64;
-const GRID_HEIGHT = 36;
-const GRID_COUNT =
-  GRID_WIDTH * GRID_HEIGHT;
-
-const motionCanvas =
-  document.createElement("canvas");
-
-motionCanvas.width =
-  GRID_WIDTH;
-
-motionCanvas.height =
-  GRID_HEIGHT;
-
-const motionContext =
-  motionCanvas.getContext(
-    "2d",
-    {
-      willReadFrequently: true
-    }
-  );
+const GW = 64, GH = 36, GN = GW * GH;
+const motionCanvas = mk(GW, GH);
+const motionContext = motionCanvas.getContext("2d", { willReadFrequently: true });
 
 const motion = {
-  raw:
-    new Float32Array(
-      GRID_COUNT
-    ),
-
-  grid:
-    new Float32Array(
-      GRID_COUNT
-    ),
-
-  previous:
-    new Float32Array(
-      GRID_COUNT
-    ),
-
-  activity: 0,
-  hotPoints: [],
-  hasCamera: false,
-  primed: false,
-
-  at(normalizedX, normalizedY) {
-    if (
-      settings.zone &&
-      (
-        normalizedX <
-          settings.zone.x0 ||
-        normalizedX >
-          settings.zone.x1 ||
-        normalizedY <
-          settings.zone.y0 ||
-        normalizedY >
-          settings.zone.y1
-      )
-    ) {
-      return 0;
-    }
-
-    const x =
-      (
-        normalizedX *
-        GRID_WIDTH
-      ) | 0;
-
-    const y =
-      (
-        normalizedY *
-        GRID_HEIGHT
-      ) | 0;
-
-    if (
-      x < 0 ||
-      y < 0 ||
-      x >= GRID_WIDTH ||
-      y >= GRID_HEIGHT
-    ) {
-      return 0;
-    }
-
-    return this.grid[
-      y * GRID_WIDTH + x
-    ];
+  raw: new Float32Array(GN), grid: new Float32Array(GN), previous: new Float32Array(GN),
+  activity: 0, hotPoints: [], hasCamera: false, primed: false,
+  at(nx, ny) {
+    const z = settings.zone;
+    if (z && (nx < z.x0 || nx > z.x1 || ny < z.y0 || ny > z.y1)) return 0;
+    const x = (nx * GW) | 0, y = (ny * GH) | 0;
+    if (x < 0 || y < 0 || x >= GW || y >= GH) return 0;
+    return this.grid[y * GW + x];
   }
 };
-
-let lastCaptureTime = 0;
+let lastCapture = 0;
 
 function finishMotion() {
-  let activeCells = 0;
-  let sum = 0;
+  let active = 0, sum = 0;
+  for (let i = 0; i < GN; i++) if (motion.raw[i] > .2) active++;
+  const ratio = active / GN;
+  const gain = ratio > settings.maximumArea ? settings.maximumArea / ratio : 1;
+  for (let i = 0; i < GN; i++) { motion.grid[i] = motion.raw[i] * gain; sum += motion.grid[i]; }
+  motion.activity = clamp(sum / GN * 4, 0, 1);
 
-  for (
-    let index = 0;
-    index < GRID_COUNT;
-    index++
-  ) {
-    if (
-      motion.raw[index] > 0.2
-    ) {
-      activeCells++;
-    }
-  }
-
-  const activeRatio =
-    activeCells /
-    GRID_COUNT;
-
-  const areaGain =
-    activeRatio >
-    settings.maximumArea
-      ? settings.maximumArea /
-        activeRatio
-      : 1;
-
-  for (
-    let index = 0;
-    index < GRID_COUNT;
-    index++
-  ) {
-    motion.grid[index] =
-      motion.raw[index] *
-      areaGain;
-
-    sum +=
-      motion.grid[index];
-  }
-
-  motion.activity =
-    clamp(
-      sum /
-      GRID_COUNT *
-      4,
-      0,
-      1
-    );
-
-  const candidates = [];
-
-  for (
-    let index = 0;
-    index < GRID_COUNT;
-    index++
-  ) {
-    if (
-      motion.grid[index] > 0.35
-    ) {
-      candidates.push(index);
-    }
-  }
-
+  const cand = [];
+  for (let i = 0; i < GN; i++) if (motion.grid[i] > .35) cand.push(i);
   motion.hotPoints = [];
-
-  for (
-    let count = 0;
-    count < 8 &&
-    candidates.length;
-    count++
-  ) {
-    const selected =
-      candidates.splice(
-        (
-          Math.random() *
-          candidates.length
-        ) | 0,
-        1
-      )[0];
-
-    motion.hotPoints.push({
-      x:
-        (
-          (
-            selected %
-            GRID_WIDTH
-          ) +
-          0.5
-        ) /
-        GRID_WIDTH,
-
-      y:
-        (
-          (
-            (
-              selected /
-              GRID_WIDTH
-            ) | 0
-          ) +
-          0.5
-        ) /
-        GRID_HEIGHT,
-
-      value:
-        motion.grid[selected]
-    });
+  for (let n = 0; n < 8 && cand.length; n++) {
+    const s = cand.splice((Math.random() * cand.length) | 0, 1)[0];
+    motion.hotPoints.push({ x: ((s % GW) + .5) / GW, y: (((s / GW) | 0) + .5) / GH, value: motion.grid[s] });
   }
-
-  element(
-    "motionStatus"
-  ).textContent =
-    "Motion: " +
-    Math.round(
-      motion.activity * 100
-    ) +
-    "%";
+  $("motionStatus").textContent = "Motion: " + Math.round(motion.activity * 100) + "%";
 }
 
 function stepMotion(now) {
-  if (
-    now -
-    lastCaptureTime <
-    50
-  ) {
-    return;
-  }
-
-  lastCaptureTime = now;
+  if (now - lastCapture < 50) return;
+  lastCapture = now;
 
   if (settings.demo) {
-    for (
-      let index = 0;
-      index < GRID_COUNT;
-      index++
-    ) {
-      motion.raw[index] *=
-        0.84;
+    for (let i = 0; i < GN; i++) motion.raw[i] *= .84;
+    const cx = (.5 + Math.sin(now * .00055) * .34) * GW, cy = (.5 + Math.sin(now * .0008) * .22) * GH;
+    for (let y = 0; y < GH; y++) for (let x = 0; x < GW; x++) {
+      const d = Math.hypot(x - cx, y - cy);
+      if (d < 5) { const i = y * GW + x; motion.raw[i] = Math.max(motion.raw[i], 1 - d / 5); }
     }
-
-    const centerX =
-      (
-        0.5 +
-        Math.sin(
-          now * 0.00055
-        ) *
-        0.34
-      ) *
-      GRID_WIDTH;
-
-    const centerY =
-      (
-        0.5 +
-        Math.sin(
-          now * 0.0008
-        ) *
-        0.22
-      ) *
-      GRID_HEIGHT;
-
-    for (
-      let y = 0;
-      y < GRID_HEIGHT;
-      y++
-    ) {
-      for (
-        let x = 0;
-        x < GRID_WIDTH;
-        x++
-      ) {
-        const distance =
-          Math.hypot(
-            x - centerX,
-            y - centerY
-          );
-
-        if (distance < 5) {
-          const index =
-            y *
-            GRID_WIDTH +
-            x;
-
-          motion.raw[index] =
-            Math.max(
-              motion.raw[index],
-              1 -
-              distance / 5
-            );
-        }
-      }
-    }
-
     finishMotion();
     return;
   }
 
-  if (
-    motion.hasCamera &&
-    video.readyState >= 2
-  ) {
-    motionContext.setTransform(
-      1, 0, 0, 1, 0, 0
-    );
+  if (motion.hasCamera && video.readyState >= 2) {
+    const m = motionContext;
+    m.setTransform(1, 0, 0, 1, 0, 0);
+    m.fillStyle = "#000"; m.fillRect(0, 0, GW, GH);
+    m.translate(GW / 2 + settings.cameraX * GW, GH / 2 + settings.cameraY * GH);
+    m.rotate(settings.cameraRotation * Math.PI / 2);
+    m.scale((settings.mirror ? -1 : 1) * settings.cameraZoom, (settings.flip ? -1 : 1) * settings.cameraZoom * settings.cameraHeight);
+    const odd = settings.cameraRotation % 2;
+    const dw = odd ? GH : GW, dh = odd ? GW : GH;
+    m.drawImage(video, -dw / 2, -dh / 2, dw, dh);
+    const px = m.getImageData(0, 0, GW, GH).data;
+    const threshold = Math.max(5, 34 - 28 * settings.sensitivity);
 
-    motionContext.fillStyle =
-      "#000";
-
-    motionContext.fillRect(
-      0,
-      0,
-      GRID_WIDTH,
-      GRID_HEIGHT
-    );
-
-    motionContext.translate(
-      GRID_WIDTH / 2 +
-      settings.cameraX *
-      GRID_WIDTH,
-
-      GRID_HEIGHT / 2 +
-      settings.cameraY *
-      GRID_HEIGHT
-    );
-
-    motionContext.rotate(
-      settings.cameraRotation *
-      Math.PI / 2
-    );
-
-    motionContext.scale(
-      (
-        settings.mirror
-          ? -1
-          : 1
-      ) *
-      settings.cameraZoom,
-
-      (
-        settings.flip
-          ? -1
-          : 1
-      ) *
-      settings.cameraZoom *
-      settings.cameraHeight
-    );
-
-    const odd =
-      settings.cameraRotation %
-      2;
-
-    const drawWidth =
-      odd
-        ? GRID_HEIGHT
-        : GRID_WIDTH;
-
-    const drawHeight =
-      odd
-        ? GRID_WIDTH
-        : GRID_HEIGHT;
-
-    motionContext.drawImage(
-      video,
-      -drawWidth / 2,
-      -drawHeight / 2,
-      drawWidth,
-      drawHeight
-    );
-
-    const pixels =
-      motionContext.getImageData(
-        0,
-        0,
-        GRID_WIDTH,
-        GRID_HEIGHT
-      ).data;
-
-    const threshold =
-      Math.max(
-        5,
-        34 -
-        28 *
-        settings.sensitivity
-      );
-
-    for (
-      let index = 0;
-      index < GRID_COUNT;
-      index++
-    ) {
-      const pixel =
-        index * 4;
-
-      const luminance =
-        pixels[pixel] *
-        0.3 +
-        pixels[pixel + 1] *
-        0.59 +
-        pixels[pixel + 2] *
-        0.11;
-
-      if (!motion.primed) {
-        motion.previous[index] =
-          luminance;
-      }
-
-      const difference =
-        Math.abs(
-          luminance -
-          motion.previous[index]
-        );
-
-      motion.previous[index] +=
-        (
-          luminance -
-          motion.previous[index]
-        ) *
-        0.5;
-
-      const amount =
-        clamp(
-          (
-            difference -
-            threshold
-          ) /
-          30,
-          0,
-          1
-        );
-
-      motion.raw[index] =
-        Math.min(
-          1,
-          motion.raw[index] *
-          0.8 +
-          amount *
-          0.55
-        );
+    for (let i = 0; i < GN; i++) {
+      const p = i * 4;
+      const lum = px[p] * .3 + px[p + 1] * .59 + px[p + 2] * .11;
+      if (!motion.primed) motion.previous[i] = lum;
+      const diff = Math.abs(lum - motion.previous[i]);
+      motion.previous[i] += (lum - motion.previous[i]) * .5;
+      const amount = clamp((diff - threshold) / 30, 0, 1);
+      motion.raw[i] = Math.min(1, motion.raw[i] * .8 + amount * .55);
     }
-
     motion.primed = true;
   } else {
-    for (
-      let index = 0;
-      index < GRID_COUNT;
-      index++
-    ) {
-      motion.raw[index] *=
-        0.88;
-    }
+    for (let i = 0; i < GN; i++) motion.raw[i] *= .88;
   }
-
   finishMotion();
 }
 
-/* Mouse movement fallback */
-window.addEventListener(
-  "mousemove",
-  event => {
-    if (
-      motion.hasCamera ||
-      drawingZone
-    ) {
-      return;
+/* mouse as motion fallback */
+window.addEventListener("mousemove", e => {
+  if (motion.hasCamera || drawingZone) return;
+  const cx = e.clientX / innerWidth * GW, cy = e.clientY / innerHeight * GH;
+  for (let y = Math.max(0, (cy - 4) | 0); y < Math.min(GH, cy + 5); y++)
+    for (let x = Math.max(0, (cx - 4) | 0); x < Math.min(GW, cx + 5); x++) {
+      const inf = 1 - Math.hypot(x - cx, y - cy) / 4.5;
+      if (inf > 0) { const i = y * GW + x; motion.raw[i] = Math.max(motion.raw[i], inf * .9); }
     }
-
-    const centerX =
-      event.clientX /
-      innerWidth *
-      GRID_WIDTH;
-
-    const centerY =
-      event.clientY /
-      innerHeight *
-      GRID_HEIGHT;
-
-    for (
-      let y =
-        Math.max(
-          0,
-          (
-            centerY - 4
-          ) | 0
-        );
-
-      y <
-        Math.min(
-          GRID_HEIGHT,
-          centerY + 5
-        );
-
-      y++
-    ) {
-      for (
-        let x =
-          Math.max(
-            0,
-            (
-              centerX - 4
-            ) | 0
-          );
-
-        x <
-          Math.min(
-            GRID_WIDTH,
-            centerX + 5
-          );
-
-        x++
-      ) {
-        const influence =
-          1 -
-          Math.hypot(
-            x - centerX,
-            y - centerY
-          ) /
-          4.5;
-
-        if (influence > 0) {
-          const index =
-            y *
-            GRID_WIDTH +
-            x;
-
-          motion.raw[index] =
-            Math.max(
-              motion.raw[index],
-              influence *
-              0.9
-            );
-        }
-      }
-    }
-  }
-);
+});
 
 /* =========================================================
    CAMERA
    ========================================================= */
-
-let stream = null;
-let cameraDevices = [];
-let cameraAttempts = 0;
-
-function isDepthCamera(label) {
-  return (
-    /depth|infrared|\bir\b|ir camera/i
-  ).test(label || "");
-}
+let stream = null, cameraDevices = [], cameraAttempts = 0;
+const isDepthCamera = label => /depth|infrared|\bir\b|ir camera/i.test(label || "");
 
 async function refreshCameraList() {
   try {
-    if (
-      !navigator.mediaDevices ||
-      !navigator.mediaDevices
-        .enumerateDevices
-    ) {
-      cameraDevices = [];
-      return;
-    }
-
-    const devices =
-      await navigator.mediaDevices
-        .enumerateDevices();
-
-    cameraDevices =
-      devices.filter(
-        device =>
-          device.kind ===
-          "videoinput"
-      );
-  } catch (error) {
-    cameraDevices = [];
-  }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) { cameraDevices = []; return; }
+    cameraDevices = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === "videoinput");
+  } catch (e) { cameraDevices = []; }
 }
-
 function stopCamera() {
-  if (stream) {
-    stream
-      .getTracks()
-      .forEach(
-        track =>
-          track.stop()
-      );
-  }
-
-  stream = null;
-  motion.hasCamera = false;
-  motion.primed = false;
-
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  stream = null; motion.hasCamera = false; motion.primed = false;
   syncPanel();
 }
-
+function cameraUnavailable() {
+  $("cameraStatus").textContent = "Camera: unavailable";
+  $("cameraStatus").className = "status-pill bad";
+  statusElement.textContent = "Camera unavailable. Move the mouse or use Demo Motion.";
+}
 async function startCamera(deviceId) {
   stopCamera();
-
-  if (
-    noCamera ||
-    !navigator.mediaDevices ||
-    !navigator.mediaDevices
-      .getUserMedia
-  ) {
-    element(
-      "cameraStatus"
-    ).textContent =
-      "Camera: unavailable";
-
-    element(
-      "cameraStatus"
-    ).className =
-      "status-pill bad";
-
-    statusElement.textContent =
-      "Camera unavailable. Move the mouse or use Demo Motion.";
-
-    return;
-  }
-
+  if (noCamera || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { cameraUnavailable(); return; }
   try {
-    const videoConstraints = {
-      width: {
-        ideal: 640
-      },
-      height: {
-        ideal: 480
-      }
-    };
-
-    if (deviceId) {
-      videoConstraints.deviceId = {
-        exact: deviceId
-      };
-    }
-
-    stream =
-      await navigator.mediaDevices
-        .getUserMedia({
-          video:
-            videoConstraints,
-          audio: false
-        });
-
-    video.srcObject =
-      stream;
-
+    const vc = { width: { ideal: 640 }, height: { ideal: 480 } };
+    if (deviceId) vc.deviceId = { exact: deviceId };
+    stream = await navigator.mediaDevices.getUserMedia({ video: vc, audio: false });
+    video.srcObject = stream;
     await video.play();
-
-    motion.hasCamera = true;
-    motion.primed = false;
-
+    motion.hasCamera = true; motion.primed = false;
     await refreshCameraList();
-
-    const track =
-      stream
-        .getVideoTracks()[0];
-
-    const activeDeviceId =
-      track
-        .getSettings()
-        .deviceId;
-
-    settings.cameraId =
-      activeDeviceId || "";
-
+    const track = stream.getVideoTracks()[0];
+    settings.cameraId = track.getSettings().deviceId || "";
     saveSettings();
+    $("cameraStatus").textContent = "Camera: on";
+    $("cameraStatus").className = "status-pill ok";
+    statusElement.textContent = "";
 
-    element(
-      "cameraStatus"
-    ).textContent =
-      "Camera: on";
-
-    element(
-      "cameraStatus"
-    ).className =
-      "status-pill ok";
-
-    statusElement.textContent =
-      "";
-
-    /*
-      Prefer RGB instead of a depth or infrared RealSense stream.
-    */
-    if (
-      !deviceId &&
-      isDepthCamera(
-        track.label
-      ) &&
-      cameraAttempts++ < 1
-    ) {
-      const rgbCamera =
-        cameraDevices.find(
-          device =>
-            !isDepthCamera(
-              device.label
-            )
-        );
-
-      if (rgbCamera) {
-        settings.cameraId =
-          rgbCamera.deviceId;
-
-        saveSettings();
-
-        return startCamera(
-          rgbCamera.deviceId
-        );
-      }
+    /* prefer the RGB stream over RealSense depth / infrared */
+    if (!deviceId && isDepthCamera(track.label) && cameraAttempts++ < 1) {
+      const rgbCam = cameraDevices.find(d => !isDepthCamera(d.label));
+      if (rgbCam) { settings.cameraId = rgbCam.deviceId; saveSettings(); return startCamera(rgbCam.deviceId); }
     }
-
-    showToast(
-      "Camera: " +
-      (
-        track.label ||
-        "camera"
-      ),
-      4000
-    );
+    showToast("Camera: " + (track.label || "camera"), 4000);
   } catch (error) {
-    if (deviceId) {
-      settings.cameraId = "";
-      saveSettings();
-
-      return startCamera("");
-    }
-
+    if (deviceId) { settings.cameraId = ""; saveSettings(); return startCamera(""); }
     motion.hasCamera = false;
-
-    element(
-      "cameraStatus"
-    ).textContent =
-      "Camera: unavailable";
-
-    element(
-      "cameraStatus"
-    ).className =
-      "status-pill bad";
-
-    statusElement.textContent =
-      "Camera unavailable. Move the mouse or use Demo Motion.";
-
-    showToast(
-      "Camera could not open: " +
-      (
-        error.message ||
-        error.name ||
-        "camera error"
-      ),
-      5000
-    );
-
+    cameraUnavailable();
+    showToast("Camera could not open: " + (error.message || error.name || "camera error"), 5000);
     syncPanel();
   }
 }
-
 async function nextCamera() {
   await refreshCameraList();
-
-  if (
-    cameraDevices.length < 2
-  ) {
-    showToast(
-      cameraDevices.length
-        ? "Only one camera was found."
-        : "No cameras were found."
-    );
-
-    return;
-  }
-
-  const currentId =
-    stream
-      ? stream
-          .getVideoTracks()[0]
-          .getSettings()
-          .deviceId
-      : "";
-
-  const currentIndex =
-    cameraDevices.findIndex(
-      device =>
-        device.deviceId ===
-        currentId
-    );
-
-  const next =
-    cameraDevices[
-      (
-        currentIndex +
-        1 +
-        cameraDevices.length
-      ) %
-      cameraDevices.length
-    ];
-
-  settings.cameraId =
-    next.deviceId;
-
-  saveSettings();
-
-  startCamera(
-    next.deviceId
-  );
+  if (cameraDevices.length < 2) { showToast(cameraDevices.length ? "Only one camera was found." : "No cameras were found."); return; }
+  const cur = stream ? stream.getVideoTracks()[0].getSettings().deviceId : "";
+  const idx = cameraDevices.findIndex(d => d.deviceId === cur);
+  const next = cameraDevices[(idx + 1 + cameraDevices.length) % cameraDevices.length];
+  settings.cameraId = next.deviceId; saveSettings();
+  startCamera(next.deviceId);
 }
-
 async function listCameras() {
   await refreshCameraList();
-
-  const names =
-    cameraDevices.map(
-      (camera, index) =>
-        (
-          index + 1
-        ) +
-        ". " +
-        (
-          camera.label ||
-          "Camera"
-        )
-    );
-
-  showToast(
-    names.length
-      ? names.join(" | ")
-      : "No cameras were found.",
-    8000
-  );
+  const names = cameraDevices.map((c, i) => (i + 1) + ". " + (c.label || "Camera"));
+  showToast(names.length ? names.join(" | ") : "No cameras were found.", 8000);
 }
 
 /* =========================================================
-   SCENES
+   GALAXY: procedural Milky Way + real constellations
    ========================================================= */
 
-const scenes = {};
+/* Real star positions (RA hours, Dec degrees, apparent magnitude).
+   Each constellation keeps its true shape; they are laid out across the sky. */
+const STAR_TINT = { o: [255, 190, 140], b: [178, 206, 255], r: [255, 160, 120], w: [236, 242, 255] };
+const CONSTELLATIONS = [
+  { name: "Orion", sub: "The Hunter", c: [5.55, 0], at: [.17, .50], rot: .08,
+    stars: [["Betelgeuse", 5.919, 7.407, .5, "o"], ["Rigel", 5.242, -8.202, .13, "b"], ["Bellatrix", 5.419, 6.35, 1.64, "b"],
+      ["Saiph", 5.796, -9.67, 2.06, "b"], ["Alnitak", 5.679, -1.943, 1.77, "b"], ["Alnilam", 5.603, -1.202, 1.69, "b"],
+      ["Mintaka", 5.533, -.299, 2.23, "b"], ["Meissa", 5.585, 9.934, 3.39, "w"]],
+    lines: [[7, 0], [7, 2], [0, 4], [2, 6], [4, 5], [5, 6], [4, 3], [6, 1]] },
+  { name: "Ursa Major", sub: "The Big Dipper", c: [12.3, 56], at: [.80, .20], rot: .22,
+    stars: [["Dubhe", 11.062, 61.751, 1.79, "o"], ["Merak", 11.031, 56.382, 2.37, "w"], ["Phecda", 11.897, 53.695, 2.44, "w"],
+      ["Megrez", 12.257, 57.033, 3.31, "w"], ["Alioth", 12.9, 55.96, 1.77, "w"], ["Mizar", 13.399, 54.925, 2.27, "w"], ["Alkaid", 13.792, 49.313, 1.86, "b"]],
+    lines: [[0, 1], [1, 2], [2, 3], [3, 0], [3, 4], [4, 5], [5, 6]] },
+  { name: "Cassiopeia", sub: "The Queen", c: [1.0, 60], at: [.09, .17], rot: -.25,
+    stars: [["Caph", .153, 59.15, 2.27, "w"], ["Schedar", .675, 56.537, 2.23, "o"], ["Gamma Cas", .945, 60.717, 2.47, "b"],
+      ["Ruchbah", 1.43, 60.235, 2.68, "w"], ["Segin", 1.907, 63.67, 3.37, "b"]],
+    lines: [[0, 1], [1, 2], [2, 3], [3, 4]] },
+  { name: "Cygnus", sub: "The Swan", c: [20.3, 38], at: [.47, .27], rot: 1.05,
+    stars: [["Deneb", 20.69, 45.28, 1.25, "w"], ["Sadr", 20.37, 40.257, 2.23, "o"], ["Albireo", 19.512, 27.96, 3.18, "o"],
+      ["Gienah", 20.77, 33.97, 2.48, "o"], ["Delta Cyg", 19.75, 45.131, 2.87, "b"]],
+    lines: [[0, 1], [1, 2], [4, 1], [1, 3]] },
+  { name: "Lyra", sub: "The Harp", c: [18.85, 36], at: [.64, .10], rot: .3,
+    stars: [["Vega", 18.616, 38.784, .03, "b"], ["Zeta Lyr", 18.746, 37.605, 4.3, "w"], ["Delta Lyr", 18.908, 36.899, 4.3, "w"],
+      ["Sulafat", 18.982, 32.69, 3.25, "b"], ["Sheliak", 18.835, 33.363, 3.5, "b"]],
+    lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 1]] },
+  { name: "Scorpius", sub: "The Scorpion", c: [16.9, -30], at: [.87, .52], rot: -.1,
+    stars: [["Graffias", 16.09, -19.805, 2.6, "b"], ["Dschubba", 16.006, -22.622, 2.3, "b"], ["Pi Sco", 15.981, -26.114, 2.89, "b"],
+      ["Sigma Sco", 16.353, -25.593, 2.9, "b"], ["Antares", 16.49, -26.432, 1.06, "r"], ["Tau Sco", 16.598, -28.216, 2.8, "b"],
+      ["Epsilon Sco", 16.836, -34.293, 2.3, "o"], ["Mu Sco", 16.864, -38.047, 3.0, "b"], ["Zeta Sco", 16.909, -42.362, 3.6, "o"],
+      ["Eta Sco", 17.202, -43.239, 3.3, "w"], ["Sargas", 17.622, -42.998, 1.87, "w"], ["Iota Sco", 17.793, -40.127, 3.0, "w"],
+      ["Kappa Sco", 17.708, -39.03, 2.4, "b"], ["Shaula", 17.56, -37.104, 1.62, "b"], ["Lesath", 17.513, -37.296, 2.7, "b"]],
+    lines: [[0, 1], [1, 2], [1, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9], [9, 10], [10, 11], [11, 12], [12, 13], [13, 14]] }
+];
 
-/* =========================================================
-   GALAXY, MILKY WAY AND CONSTELLATIONS
-   ========================================================= */
+
+/* natural treeline: clumpy patches of broadleaf canopies, soft tiered pines, shrubs and clearings */
+function drawTreeline(c, fn, W, U, col, scale, seed) {
+  c.fillStyle = col;
+  const clumpAt = x => smooth(.32, .62, fbm(x / (240 * U) + seed, seed * .7, 3));
+  /* continuous bumpy understory / canopy mass */
+  for (let x = -12 * U; x < W + 12 * U; x += rnd(2.5, 6) * U) {
+    const k = clumpAt(x), r = (k < .12 ? rnd(2, 5) : rnd(4, 11) * (.5 + k)) * U * scale, y = fn(x);
+    c.beginPath(); c.ellipse(x, y - r * .35, r * rnd(.9, 1.4), r, 0, 0, TAU); c.fill();
+  }
+  /* individual trees standing a little taller than the mass */
+  for (let x = 0; x < W; x += rnd(9, 24) * U) {
+    const k = clumpAt(x); if (k < .3) continue;
+    const y = fn(x) + 2 * U, hh = rnd(16, 46) * U * (.45 + k) * scale, lean = rnd(-.05, .05) * hh;
+    if (Math.random() < .55) {                                   /* pine: tiers with drooping, uneven edges */
+      const tiers = 4 + ((Math.random() * 3) | 0), w0 = hh * rnd(.2, .3);
+      c.beginPath(); c.moveTo(x + lean, y - hh);
+      for (let t = 1; t <= tiers; t++) {
+        const f = t / tiers, yy = y - hh * (1 - f * .94), ww = w0 * (.25 + .75 * f) * rnd(.85, 1.1);
+        c.quadraticCurveTo(x + ww * .55 + lean * (1 - f), yy - hh / tiers * .35, x + ww + lean * (1 - f), yy + hh / tiers * .08);
+        c.lineTo(x + ww * .45 + lean * (1 - f), yy);
+      }
+      c.lineTo(x, y);
+      for (let t = tiers; t >= 1; t--) {
+        const f = t / tiers, yy = y - hh * (1 - f * .94), ww = w0 * (.25 + .75 * f) * rnd(.85, 1.1);
+        c.lineTo(x - ww * .45 + lean * (1 - f), yy);
+        c.quadraticCurveTo(x - ww * .55 + lean * (1 - f), yy - hh / tiers * .35, x - ww + lean * (1 - f), yy + hh / tiers * .08);
+      }
+      c.closePath(); c.fill();
+    } else {                                                     /* broadleaf: trunk + clustered round crown */
+      const cr = hh * rnd(.14, .21), ty = y - hh * .6;
+      c.fillRect(x - Math.max(.8, cr * .09), ty, Math.max(1.6, cr * .18), hh * .55);
+      for (let j = 0; j < 4; j++) {
+        c.beginPath(); c.ellipse(x + rnd(-.6, .6) * cr, ty - rnd(0, .7) * cr, cr * rnd(.6, .95), cr * rnd(.55, .85), 0, 0, TAU); c.fill();
+      }
+    }
+  }
+}
 
 scenes.galaxy = {
-  label:
-    "Galaxy & Constellations",
+  label: "Galaxy & Constellations",
+  variants: ["Natural Milky Way", "Aurora Night", "Twilight Dusk"],
 
-  variants: [
-    "Natural Milky Way",
-    "Aurora Milky Way",
-    "Rose Nebula"
+  looks: [
+    { top: "#01030a", mid: "#050c18", low: "#0c1520", hor: [255, 170, 105, .22], glow: [40, 120, 90, .05],
+      core: [255, 224, 188], outer: [150, 176, 228], gain: 1, aurora: 0, ridge: [[16, 22, 32], [2, 3, 6]] },
+    { top: "#010608", mid: "#031821", low: "#06202a", hor: [90, 220, 180, .12], glow: [40, 180, 140, .07],
+      core: [214, 232, 238], outer: [120, 190, 228], gain: .85, aurora: 1, ridge: [[10, 28, 36], [1, 4, 6]] },
+    { top: "#060418", mid: "#1f0e3c", low: "#512346", hor: [255, 135, 95, .34], glow: [255, 120, 140, .08],
+      core: [255, 208, 200], outer: [190, 154, 228], gain: .9, aurora: 0, ridge: [[58, 28, 70], [10, 4, 16]] }
   ],
-
-  palettes: [
-    {
-      top: "#01040a",
-      middle: "#07101b",
-      bottom: "#10161c",
-      nebula: [
-        [107,111,137],
-        [96,132,170],
-        [181,151,119]
-      ]
-    },
-    {
-      top: "#010709",
-      middle: "#05222d",
-      bottom: "#06151c",
-      nebula: [
-        [32,205,169],
-        [44,128,219],
-        [116,80,221]
-      ]
-    },
-    {
-      top: "#08030d",
-      middle: "#2b0c33",
-      bottom: "#190b25",
-      nebula: [
-        [255,104,167],
-        [144,83,255],
-        [255,155,97]
-      ]
-    }
-  ],
-
-  stars: [],
-  constellations: [],
-  movementDust: [],
-  shooters: [],
-
-  nextShooter: 7,
-  lastMovementShooter: 0,
 
   build() {
-    const palette =
-      this.palettes[
-        settings.variant.galaxy
-      ];
+    const L = this.look = this.looks[settings.variant.galaxy];
+    const W = Math.round(worldWidth), H = Math.round(worldHeight), U = unitScale;
+    const R = mulberry(SEED + settings.variant.galaxy * 77);
+    this.R = R;
 
-    this.background =
-      document.createElement(
-        "canvas"
-      );
+    const bg = this.background = mk(W, H), g = bg.getContext("2d");
+    let gr = g.createLinearGradient(0, 0, 0, H);
+    gr.addColorStop(0, L.top); gr.addColorStop(.62, L.mid); gr.addColorStop(1, L.low);
+    g.fillStyle = gr; g.fillRect(0, 0, W, H);
 
-    this.background.width =
-      Math.max(
-        1,
-        Math.round(worldWidth)
-      );
+    /* ---- Milky Way: rendered at low resolution from layered noise ---- */
+    const cell = Math.max(3, Math.ceil(Math.sqrt(W * H / 180000)));
+    const lw = Math.ceil(W / cell), lh = Math.ceil(H / cell);
+    const mc = mk(lw, lh), mg = mc.getContext("2d");
+    const img = mg.createImageData(lw, lh), d = img.data;
+    const dens = this.dens = new Float32Array(lw * lh);
+    const sx = W * .74, sy = H * 1.02, ex = W * .38, ey = -H * .12;
+    const ux = ex - sx, uy = ey - sy, len = Math.hypot(ux, uy), tx = ux / len, ty = uy / len, nx = -ty, ny = tx;
+    const ox = (SEED % 997) * .37, oy = (SEED % 677) * .21;
 
-    this.background.height =
-      Math.max(
-        1,
-        Math.round(worldHeight)
-      );
+    for (let y = 0; y < lh; y++) for (let x = 0; x < lw; x++) {
+      const i = (y * lw + x) * 4, wx = x * cell + cell / 2, wy = y * cell + cell / 2;
+      const rx = wx - sx, ry = wy - sy;
+      const t = (rx * tx + ry * ty) / len;
+      let dd = rx * nx + ry * ny;
+      dd += (fbm(wx / (H * .6) + 3.1 + ox, wy / (H * .6) + 1.7 + oy, 3) - .5) * H * .11 + Math.sin(t * 7) * H * .012;
+      const w = H * (.15 + .075 * Math.exp(-Math.pow((t - .25) / .28, 2)));
+      const q = dd / w, band = Math.exp(-q * q * 1.45);
+      d[i + 3] = 255;
+      if (band < .012) { d[i] = d[i + 1] = d[i + 2] = 0; continue; }
 
-    const background =
-      this.background.getContext(
-        "2d"
-      );
+      const cl = fbm(wx / (H * .16) + 9 + ox, wy / (H * .16) + 4 + oy, 5);
+      const fine = fbm(wx / (H * .035) + 20, wy / (H * .035) + 7, 3);
+      let v = band * (.2 + 1.15 * Math.pow(cl, 1.6)) * (.78 + .44 * fine);
+      const ln = fbm((t * len) / (H * .3) + 40 + ox, dd / (H * .05) + 11, 4);
+      const lane = smooth(.56, .82, ln);
+      const rift = Math.exp(-Math.pow((dd - .012 * H) / (H * .032), 2)) * smooth(.4, .75, fbm(t * 14 + 5, dd / (H * .1), 3)) * .5;
+      v *= 1 - clamp(lane * .5 + rift, 0, .8) * Math.min(1, band * 1.6);
+      const core = Math.exp(-Math.pow((t - .2) / .18, 2));
+      v *= (.55 + .6 * core) * L.gain * .55;
+      dens[y * lw + x] = v;
 
-    let gradient =
-      background
-        .createLinearGradient(
-          0,
-          0,
-          0,
-          worldHeight
-        );
+      const m = Math.exp(-Math.pow((t - .2) / .24, 2));
+      d[i] = clamp((lerp(L.outer[0], L.core[0], m) * v) | 0, 0, 255);
+      d[i + 1] = clamp((lerp(L.outer[1], L.core[1], m) * v * (1 - .1 * lane)) | 0, 0, 255);
+      d[i + 2] = clamp((lerp(L.outer[2], L.core[2], m) * v * (1 - .22 * lane * m)) | 0, 0, 255);
+    }
+    mg.putImageData(img, 0, 0);
+    g.save();
+    g.globalCompositeOperation = "lighter";
+    g.imageSmoothingEnabled = true; g.imageSmoothingQuality = "high";
+    g.drawImage(mc, 0, 0, W, H);
+    g.restore();
 
-    gradient.addColorStop(
-      0,
-      palette.top
-    );
+    /* ---- horizon glow + airglow ---- */
+    const hg = g.createRadialGradient(W * .7, H * .98, 0, W * .7, H * .98, H * .55);
+    hg.addColorStop(0, rgba(L.hor, L.hor[3])); hg.addColorStop(.4, rgba(L.hor, L.hor[3] * .3)); hg.addColorStop(1, rgba(L.hor, 0));
+    g.fillStyle = hg; g.fillRect(0, H * .35, W, H * .65);
+    const ag = g.createLinearGradient(0, H * .62, 0, H);
+    ag.addColorStop(0, rgba(L.glow, 0)); ag.addColorStop(1, rgba(L.glow, L.glow[3]));
+    g.fillStyle = ag; g.fillRect(0, H * .62, W, H * .38);
 
-    gradient.addColorStop(
-      0.62,
-      palette.middle
-    );
+    /* ---- star temperature palette ---- */
+    const temps = [[190, 208, 255], [236, 242, 255], [255, 248, 236], [255, 224, 190], [255, 190, 150]];
+    const cum = [.12, .40, .68, .90, 1];
+    const pickT = () => { const r = R(); for (let i = 0; i < 5; i++) if (r < cum[i]) return i; return 1; };
+    const densAt = (x, y) => dens[Math.min(lh - 1, (y / cell) | 0) * lw + Math.min(lw - 1, (x / cell) | 0)];
 
-    gradient.addColorStop(
-      1,
-      palette.bottom
-    );
-
-    background.fillStyle =
-      gradient;
-
-    background.fillRect(
-      0,
-      0,
-      worldWidth,
-      worldHeight
-    );
-
-    /*
-      Diagonal Milky Way path.
-    */
-    const startX =
-      worldWidth *
-      0.73;
-
-    const startY =
-      worldHeight *
-      0.97;
-
-    const endX =
-      worldWidth *
-      0.4;
-
-    const endY =
-      -worldHeight *
-      0.08;
-
-    const pathX =
-      endX - startX;
-
-    const pathY =
-      endY - startY;
-
-    const pathLength =
-      Math.hypot(
-        pathX,
-        pathY
-      );
-
-    const normalX =
-      -pathY /
-      pathLength;
-
-    const normalY =
-      pathX /
-      pathLength;
-
-    background.save();
-
-    background
-      .globalCompositeOperation =
-      "screen";
-
-    /*
-      Wide soft Milky Way haze.
-    */
-    for (
-      let index = 0;
-      index < 250;
-      index++
-    ) {
-      const position =
-        Math.random();
-
-      const spread =
-        (
-          Math.random() +
-          Math.random() +
-          Math.random() -
-          1.5
-        ) *
-        worldHeight *
-        0.2;
-
-      const wave =
-        Math.sin(
-          position * 17
-        ) *
-        worldHeight *
-        0.017;
-
-      const x =
-        startX +
-        pathX *
-        position +
-        normalX *
-        (
-          spread +
-          wave
-        );
-
-      const y =
-        startY +
-        pathY *
-        position +
-        normalY *
-        (
-          spread +
-          wave
-        );
-
-      const radius =
-        randomBetween(
-          45,
-          155
-        ) *
-        unitScale;
-
-      const warmth =
-        Math.exp(
-          -Math.pow(
-            (
-              position -
-              0.2
-            ) /
-            0.25,
-            2
-          )
-        );
-
-      const color =
-        warmth >
-        0.3
-          ? [220,196,166]
-          : [154,178,206];
-
-      const haze =
-        background
-          .createRadialGradient(
-            x,
-            y,
-            0,
-            x,
-            y,
-            radius
-          );
-
-      haze.addColorStop(
-        0,
-        rgba(
-          color,
-          randomBetween(
-            0.01,
-            0.036
-          )
-        )
-      );
-
-      haze.addColorStop(
-        1,
-        rgba(
-          color,
-          0
-        )
-      );
-
-      background.fillStyle =
-        haze;
-
-      background.fillRect(
-        x - radius,
-        y - radius,
-        radius * 2,
-        radius * 2
-      );
+    /* ---- dense faint star field, clustered in the galaxy band ---- */
+    const nFine = Math.round(clamp(W * H / 55, 6000, 70000) * settings.detail);
+    for (let n = 0; n < nFine; n++) {
+      const x = R() * W, y = R() * H * .94;
+      if (R() > .2 + .8 * Math.min(1, densAt(x, y) * 2.4)) continue;
+      const b = Math.pow(R(), 5), horizon = 1 - smooth(.7, .93, y / H) * .75;
+      const col = temps[pickT()], r = (.28 + b * 1.15) * Math.max(.8, U * .9);
+      g.fillStyle = rgba(col, (.2 + b * .72) * horizon);
+      if (r < .9) g.fillRect(x, y, r * 1.4, r * 1.4);
+      else { g.beginPath(); g.arc(x, y, r * .75, 0, TAU); g.fill(); }
     }
 
-    /*
-      Dense Milky Way star dust.
-    */
-    const dustCount =
-      Math.round(
-        7200 *
-        settings.detail
-      );
-
-    for (
-      let index = 0;
-      index < dustCount;
-      index++
-    ) {
-      const position =
-        Math.random();
-
-      const spread =
-        (
-          Math.random() +
-          Math.random() +
-          Math.random() +
-          Math.random() -
-          2
-        ) *
-        worldHeight *
-        0.115;
-
-      const irregularity =
-        Math.sin(
-          position * 21
-        ) *
-        worldHeight *
-        0.018 +
-        Math.sin(
-          position * 47
-        ) *
-        worldHeight *
-        0.008;
-
-      const x =
-        startX +
-        pathX *
-        position +
-        normalX *
-        (
-          spread +
-          irregularity
-        );
-
-      const y =
-        startY +
-        pathY *
-        position +
-        normalY *
-        (
-          spread +
-          irregularity
-        );
-
-      const coreStrength =
-        Math.exp(
-          -Math.pow(
-            (
-              position -
-              0.2
-            ) /
-            0.2,
-            2
-          )
-        );
-
-      const upperStrength =
-        Math.exp(
-          -Math.pow(
-            (
-              position -
-              0.68
-            ) /
-            0.35,
-            2
-          )
-        );
-
-      const color =
-        coreStrength >
-        0.38
-          ? [230,209,178]
-          : upperStrength >
-            0.35
-            ? [170,194,220]
-            : [204,210,216];
-
-      const alpha =
-        randomBetween(
-          0.035,
-          0.3
-        ) *
-        (
-          0.52 +
-          coreStrength *
-          0.75
-        );
-
-      const size =
-        Math.random() <
-        0.95
-          ? randomBetween(
-              0.35,
-              1.1
-            )
-          : randomBetween(
-              1.1,
-              2
-            );
-
-      background.fillStyle =
-        rgba(
-          color,
-          alpha
-        );
-
-      background.fillRect(
-        x,
-        y,
-        size,
-        size
-      );
+    /* ---- twinkling brighter stars (animated) ---- */
+    this.glow = temps.map(c => makeGlowSprite(c, 64));
+    const nDyn = Math.round(clamp(W * H / 2600, 300, 1400) * settings.detail);
+    this.stars = [];
+    for (let n = 0; n < nDyn * 4 && this.stars.length < nDyn; n++) {
+      const x = R() * W, y = R() * H * .92;
+      if (R() > .35 + .65 * Math.min(1, densAt(x, y) * 2)) continue;
+      const b = .3 + .7 * Math.pow(R(), 2.2);
+      this.stars.push({ x, y, r: (.5 + b * 1.7) * Math.max(.8, U * .85), b, ph: R() * TAU, tw: .5 + R() * 1.6, t: pickT(), hz: y / H });
     }
 
-    /*
-      Brighter knots.
-    */
-    for (
-      let index = 0;
-      index < 42;
-      index++
-    ) {
-      const position =
-        randomBetween(
-          0.05,
-          0.93
-        );
+    /* ---- real constellations, gnomonic projection per figure ---- */
+    const D = Math.PI / 180, k = H * .0105 / D;
+    this.cons = CONSTELLATIONS.map(c => {
+      const ra0 = c.c[0] * 15 * D, de0 = c.c[1] * D;
+      const cx = c.at[0] * W, cy = c.at[1] * H, cr = Math.cos(c.rot), sr = Math.sin(c.rot);
+      const pts = c.stars.map(s => {
+        const ra = s[1] * 15 * D, de = s[2] * D, dra = ra - ra0;
+        const cc = Math.sin(de0) * Math.sin(de) + Math.cos(de0) * Math.cos(de) * Math.cos(dra);
+        const px = Math.cos(de) * Math.sin(dra) / cc, py = (Math.cos(de0) * Math.sin(de) - Math.sin(de0) * Math.cos(de) * Math.cos(dra)) / cc;
+        const X = -px * k, Y = -py * k;
+        return { x: cx + X * cr - Y * sr, y: cy + X * sr + Y * cr, name: s[0], mag: s[3], col: STAR_TINT[s[4] || "w"] };
+      });
+      let minx = 1e9, maxx = -1e9, maxy = -1e9;
+      pts.forEach(p => { minx = Math.min(minx, p.x); maxx = Math.max(maxx, p.x); maxy = Math.max(maxy, p.y); });
+      return { name: c.name, sub: c.sub, pts, links: c.lines, lx: (minx + maxx) / 2, ly: maxy + 26 * U, ph: R() * TAU };
+    });
 
-      const spread =
-        randomBetween(
-          -0.065,
-          0.065
-        ) *
-        worldHeight;
+    /* ---- foreground: layered ridges with pine treeline ---- */
+    const fg = this.fg = mk(W, H), f = fg.getContext("2d");
+    const ridge = (base, amp, freq, off) => x => H * base - (fbm(x / (H * .9) * freq + off, off * 1.3, 4) - .5) * 2 * amp * H;
+    const layers = [[.905, .07, 1.3, 3.1, L.ridge[0]], [.945, .05, 2.2, 8.4, L.ridge[1]]];
+    layers.forEach((ly, li) => {
+      const fn = ridge(ly[0], ly[1], ly[2], ly[3]);
+      const c0 = li === 0 ? ly[4] : ly[4];
+      f.fillStyle = rgb(c0);
+      f.beginPath(); f.moveTo(0, H);
+      for (let x = 0; x <= W; x += 3) f.lineTo(x, fn(x));
+      f.lineTo(W, H); f.closePath(); f.fill();
+      if (li === 1) drawTreeline(f, fn, W, U, rgb(c0), 1, 4.7);
+      else drawTreeline(f, fn, W, U, rgb(c0), .45, 9.1);
+    });
 
-      const x =
-        startX +
-        pathX *
-        position +
-        normalX *
-        spread;
+    this.shooters = []; this.dust = []; this.sat = null;
+    this.nextShooter = rnd(5, 12); this.lastMoveShooter = 0; this.nextSat = rnd(18, 40);
 
-      const y =
-        startY +
-        pathY *
-        position +
-        normalY *
-        spread;
-
-      const radius =
-        randomBetween(
-          18,
-          70
-        ) *
-        unitScale;
-
-      const color =
-        position <
-        0.36
-          ? [236,211,177]
-          : [174,199,225];
-
-      const knot =
-        background
-          .createRadialGradient(
-            x,
-            y,
-            0,
-            x,
-            y,
-            radius
-          );
-
-      knot.addColorStop(
-        0,
-        rgba(
-          color,
-          randomBetween(
-            0.035,
-            0.105
-          )
-        )
-      );
-
-      knot.addColorStop(
-        1,
-        rgba(
-          color,
-          0
-        )
-      );
-
-      background.fillStyle =
-        knot;
-
-      background.fillRect(
-        x - radius,
-        y - radius,
-        radius * 2,
-        radius * 2
-      );
-    }
-
-    background.restore();
-
-    /*
-      Dark dust lanes.
-    */
-    background.save();
-    background.lineCap =
-      "round";
-
-    for (
-      let lane = 0;
-      lane < 8;
-      lane++
-    ) {
-      const offset =
-        randomBetween(
-          -0.05,
-          0.05
-        ) *
-        worldHeight;
-
-      background.strokeStyle =
-        "rgba(0,3,9," +
-        randomBetween(
-          0.035,
-          0.09
-        ) +
-        ")";
-
-      background.lineWidth =
-        randomBetween(
-          9,
-          28
-        ) *
-        unitScale;
-
-      background.beginPath();
-
-      for (
-        let step = 0;
-        step <= 34;
-        step++
-      ) {
-        const position =
-          step / 34;
-
-        const wave =
-          Math.sin(
-            position *
-            19 +
-            lane *
-            1.7
-          ) *
-          worldHeight *
-          0.017 +
-          Math.sin(
-            position *
-            43 +
-            lane
-          ) *
-          worldHeight *
-          0.006;
-
-        const x =
-          startX +
-          pathX *
-          position +
-          normalX *
-          (
-            offset +
-            wave
-          );
-
-        const y =
-          startY +
-          pathY *
-          position +
-          normalY *
-          (
-            offset +
-            wave
-          );
-
-        if (step === 0) {
-          background.moveTo(
-            x,
-            y
-          );
-        } else {
-          background.lineTo(
-            x,
-            y
-          );
-        }
-      }
-
-      background.stroke();
-    }
-
-    background.restore();
-
-    /*
-      Soft warm horizon illumination.
-    */
-    const horizon =
-      background
-        .createRadialGradient(
-          worldWidth *
-          0.72,
-
-          worldHeight *
-          0.92,
-
-          0,
-
-          worldWidth *
-          0.72,
-
-          worldHeight *
-          0.92,
-
-          worldHeight *
-          0.32
-        );
-
-    horizon.addColorStop(
-      0,
-      settings.variant.galaxy ===
-      0
-        ? "rgba(255,185,105,.18)"
-        : rgba(
-            palette.nebula[2],
-            0.14
-          )
-    );
-
-    horizon.addColorStop(
-      0.35,
-      "rgba(255,145,80,.055)"
-    );
-
-    horizon.addColorStop(
-      1,
-      "rgba(255,120,70,0)"
-    );
-
-    background.fillStyle =
-      horizon;
-
-    background.fillRect(
-      0,
-      worldHeight *
-      0.52,
-      worldWidth,
-      worldHeight *
-      0.48
-    );
-
-    /*
-      Mountain silhouette.
-    */
-    const mountains = [
-      [0,.928],[.06,.917],[.13,.931],[.20,.912],
-      [.27,.928],[.34,.895],[.40,.917],[.46,.876],
-      [.51,.91],[.58,.897],[.65,.925],[.72,.903],
-      [.79,.919],[.86,.89],[.93,.916],[1,.899]
-    ];
-
-    background.fillStyle =
-      "#010203";
-
-    background.beginPath();
-
-    background.moveTo(
-      0,
-      worldHeight
-    );
-
-    for (
-      const point of
-      mountains
-    ) {
-      background.lineTo(
-        point[0] *
-        worldWidth,
-
-        point[1] *
-        worldHeight
-      );
-    }
-
-    background.lineTo(
-      worldWidth,
-      worldHeight
-    );
-
-    background.closePath();
-    background.fill();
-
-    this.glowSprites = [
-      makeGlowSprite(
-        [255,255,255]
-      ),
-      makeGlowSprite(
-        [171,207,255]
-      ),
-      makeGlowSprite(
-        [255,220,180]
-      )
-    ];
-
-    this.starColors = [
-      "#ffffff",
-      "#cfe2ff",
-      "#ffe7cb"
-    ];
-
-    const starCount =
-      clamp(
-        worldWidth *
-        worldHeight /
-        2100 *
-        settings.detail,
-        400,
-        1600
-      ) | 0;
-
-    this.stars =
-      Array.from(
-        {
-          length:
-            starCount
-        },
-        () => ({
-          x:
-            randomBetween(
-              0,
-              worldWidth
-            ),
-
-          y:
-            randomBetween(
-              0,
-              worldHeight *
-              0.91
-            ),
-
-          radius:
-            0.35 +
-            Math.pow(
-              Math.random(),
-              3
-            ) *
-            1.8,
-
-          phase:
-            randomBetween(
-              0,
-              TAU
-            ),
-
-          twinkle:
-            randomBetween(
-              0.3,
-              1.45
-            ),
-
-          base:
-            randomBetween(
-              0.3,
-              0.9
-            ),
-
-          tint:
-            (
-              Math.random() *
-              3
-            ) | 0,
-
-          velocity:
-            -randomBetween(
-              0.06,
-              0.35
-            )
-        })
-      );
-
-    /*
-      Four subtle constellations.
-    */
-    this.constellations = [
-      {
-        points: [
-          [.08,.18],[.14,.14],[.20,.20],
-          [.27,.15],[.33,.21],[.39,.17]
-        ],
-        links: [
-          [0,1],[1,2],[2,3],[3,4],[4,5]
-        ]
-      },
-      {
-        points: [
-          [.69,.17],[.76,.13],[.83,.19],
-          [.79,.28],[.69,.17],[.75,.35]
-        ],
-        links: [
-          [0,1],[1,2],[2,3],[3,4],[3,5]
-        ]
-      },
-      {
-        points: [
-          [.09,.51],[.15,.46],[.21,.50],
-          [.27,.44],[.33,.49]
-        ],
-        links: [
-          [0,1],[1,2],[2,3],[3,4]
-        ]
-      },
-      {
-        points: [
-          [.52,.37],[.58,.33],[.64,.38],
-          [.62,.47],[.56,.49],[.52,.37]
-        ],
-        links: [
-          [0,1],[1,2],[2,3],[3,4],[4,5]
-        ]
-      }
-    ];
-
-    this.movementDust = [];
-    this.shooters = [];
+    /* aurora curtain sprite */
+    const sp = this.auroraSprite = mk(4, 256), sg = sp.getContext("2d");
+    const ag2 = sg.createLinearGradient(0, 0, 0, 256);
+    ag2.addColorStop(0, "rgba(150,90,230,0)"); ag2.addColorStop(.3, "rgba(140,100,235,.16)");
+    ag2.addColorStop(.62, "rgba(70,230,185,.38)"); ag2.addColorStop(.92, "rgba(130,255,170,.92)"); ag2.addColorStop(1, "rgba(130,255,170,0)");
+    sg.fillStyle = ag2; sg.fillRect(0, 0, 4, 256);
   },
 
   shoot(x, y) {
-    const direction =
-      Math.random() <
-      0.5
-        ? 1
-        : -1;
-
-    const angle =
-      randomBetween(
-        0.35,
-        0.6
-      );
-
-    const speed =
-      randomBetween(
-        380,
-        520
-      ) *
-      unitScale;
-
-    this.shooters.push({
-      x,
-      y,
-
-      velocityX:
-        Math.cos(angle) *
-        speed *
-        direction,
-
-      velocityY:
-        Math.sin(angle) *
-        speed,
-
-      life: 0,
-
-      maximumLife:
-        randomBetween(
-          1.3,
-          1.9
-        )
-    });
+    const dir = Math.random() < .5 ? 1 : -1, ang = rnd(.3, .6), sp = rnd(520, 760) * unitScale;
+    this.shooters.push({ x, y, vx: Math.cos(ang) * sp * dir, vy: Math.sin(ang) * sp, life: 0, max: rnd(.8, 1.3) });
   },
 
-  update(delta, time) {
-    for (
-      const star of
-      this.stars
-    ) {
-      star.x +=
-        star.velocity *
-        delta *
-        unitScale *
-        settings.speed;
-
-      if (star.x < -4) {
-        star.x =
-          worldWidth + 4;
-      }
+  update(dt, time) {
+    const W = worldWidth, H = worldHeight;
+    this.nextShooter -= dt * settings.speed;
+    if (this.nextShooter <= 0 && this.shooters.length < 2) {
+      this.shoot(rnd(.1, .9) * W, rnd(.03, .35) * H);
+      this.nextShooter = rnd(16, 30);
     }
-
-    this.nextShooter -=
-      delta *
-      settings.speed;
-
-    if (
-      this.nextShooter <= 0 &&
-      this.shooters.length < 2
-    ) {
-      this.shoot(
-        randomBetween(
-          0.1,
-          0.9
-        ) *
-        worldWidth,
-
-        randomBetween(
-          0.03,
-          0.35
-        ) *
-        worldHeight
-      );
-
-      this.nextShooter =
-        randomBetween(
-          14,
-          25
-        );
+    if (settings.interactive && motion.activity > .04 && time - this.lastMoveShooter > 6 && motion.hotPoints.length) {
+      const p = motion.hotPoints[0];
+      this.shoot(p.x * W, p.y * H * .65);
+      this.lastMoveShooter = time;
     }
-
-    if (
-      settings.interactive &&
-      motion.activity > 0.04 &&
-      time -
-      this.lastMovementShooter >
-      5 &&
-      motion.hotPoints.length
-    ) {
-      const point =
-        motion.hotPoints[0];
-
-      this.shoot(
-        point.x *
-        worldWidth,
-
-        point.y *
-        worldHeight *
-        0.65
-      );
-
-      this.lastMovementShooter =
-        time;
-    }
-
     if (settings.interactive) {
-      for (
-        const point of
-        motion.hotPoints.slice(
-          0,
-          2
-        )
-      ) {
-        if (
-          this.movementDust.length <
-          170 &&
-          Math.random() <
-          0.45 *
-          settings.response
-        ) {
-          this.movementDust.push({
-            x:
-              point.x *
-              worldWidth +
-              randomBetween(
-                -14,
-                14
-              ),
-
-            y:
-              point.y *
-              worldHeight +
-              randomBetween(
-                -14,
-                14
-              ),
-
-            velocityX:
-              randomBetween(
-                -8,
-                8
-              ),
-
-            velocityY:
-              randomBetween(
-                -18,
-                -6
-              ),
-
-            life: 0,
-
-            maximumLife:
-              randomBetween(
-                2.5,
-                4
-              ),
-
-            radius:
-              randomBetween(
-                5,
-                10
-              ) *
-              unitScale
-          });
-        }
+      for (const p of motion.hotPoints.slice(0, 2)) {
+        if (this.dust.length < 170 && Math.random() < .45 * settings.response)
+          this.dust.push({ x: p.x * W + rnd(-14, 14), y: p.y * H + rnd(-14, 14), vx: rnd(-8, 8), vy: rnd(-18, -6), life: 0, max: rnd(2.5, 4), r: rnd(5, 10) * unitScale });
       }
     }
+    for (const p of this.dust) { p.x += p.vx * dt; p.y += p.vy * dt; p.life += dt; }
+    this.dust = this.dust.filter(p => p.life < p.max);
+    for (const s of this.shooters) { s.x += s.vx * dt; s.y += s.vy * dt; s.life += dt; }
+    this.shooters = this.shooters.filter(s => s.life < s.max);
 
-    for (
-      const particle of
-      this.movementDust
-    ) {
-      particle.x +=
-        particle.velocityX *
-        delta;
-
-      particle.y +=
-        particle.velocityY *
-        delta;
-
-      particle.life +=
-        delta;
+    /* a slow satellite crossing the sky */
+    this.nextSat -= dt;
+    if (this.nextSat <= 0 && !this.sat) {
+      const dir = Math.random() < .5 ? 1 : -1;
+      this.sat = { x: dir > 0 ? -10 : W + 10, y: rnd(.12, .45) * H, vx: dir * rnd(26, 38) * unitScale, vy: rnd(-5, 5) * unitScale, life: 0, max: 0 };
+      this.sat.max = (W + 20) / Math.abs(this.sat.vx);
+      this.nextSat = rnd(45, 90);
     }
-
-    this.movementDust =
-      this.movementDust.filter(
-        particle =>
-          particle.life <
-          particle.maximumLife
-      );
-
-    for (
-      const shooter of
-      this.shooters
-    ) {
-      shooter.x +=
-        shooter.velocityX *
-        delta;
-
-      shooter.y +=
-        shooter.velocityY *
-        delta;
-
-      shooter.life +=
-        delta;
+    if (this.sat) {
+      this.sat.x += this.sat.vx * dt; this.sat.y += this.sat.vy * dt; this.sat.life += dt;
+      if (this.sat.life > this.sat.max) this.sat = null;
     }
-
-    this.shooters =
-      this.shooters.filter(
-        shooter =>
-          shooter.life <
-          shooter.maximumLife
-      );
   },
 
-  draw(target, time) {
-    target.drawImage(
-      this.background,
-      0,
-      0
-    );
+  draw(g, time) {
+    const W = worldWidth, H = worldHeight, U = unitScale, L = this.look;
+    g.drawImage(this.background, 0, 0);
 
-    /*
-      Constellation lines and stars.
-    */
-    target.save();
+    /* aurora curtains */
+    if (L.aurora) {
+      g.save(); g.globalCompositeOperation = "lighter";
+      const step = Math.max(3, Math.round(3 * U)), pulse = .75 + .25 * Math.sin(time * .08);
+      for (let k = 0; k < 2; k++) for (let x = 0; x < W; x += step) {
+        const n = x / W * (W / H);
+        const base = H * (.6 + .05 * k) + Math.sin(n * 2.6 + time * .07 + k * 2) * H * .05 + Math.sin(n * 6.1 - time * .05 + k) * H * .018 + (fbm(n * 1.3 + k * 7 + time * .015, time * .03 + k, 3) - .5) * H * .12;
+        const hgt = H * (.2 + .22 * fbm(n * 3.4 + time * .05 + k * 3, k * 5 + time * .04, 3)) * (.9 + .1 * fbm(n * 14 + time * .25 + k, k, 2));
+        const a = (.06 + .62 * Math.pow(fbm(n * 5 - time * .025 + k * 9, time * .045, 3), 1.7)) * pulse * (k ? .55 : 1);
+        g.globalAlpha = clamp(a, 0, 1);
+        g.drawImage(this.auroraSprite, 0, 0, 4, 256, x - 1, base - hgt, step + 2, hgt);
+      }
+      g.restore();
+    }
 
-    target.lineWidth =
-      Math.max(
-        0.55,
-        unitScale *
-        0.72
-      );
+    /* twinkling stars (scintillation grows near the horizon) */
+    for (const s of this.stars) {
+      const amp = .12 + .38 * s.hz;
+      const tw = 1 - amp + amp * (.5 + .5 * Math.sin(time * s.tw * 2.2 + s.ph)) + .06 * Math.sin(time * s.tw * 5.1 + s.ph * 2);
+      const act = settings.interactive ? motion.at(s.x / W, s.y / H) * settings.response : 0;
+      const a = clamp(s.b * tw * (1 - smooth(.78, .93, s.hz) * .6) + act * .7, 0, 1);
+      if (s.r > 1.25) {
+        const sz = s.r * 8 * (1 + act * .5);
+        g.globalAlpha = a * .55;
+        g.drawImage(this.glow[s.t], s.x - sz / 2, s.y - sz / 2, sz, sz);
+        g.globalAlpha = a; g.fillStyle = "#fff";
+        g.beginPath(); g.arc(s.x, s.y, Math.max(.7, s.r * .42), 0, TAU); g.fill();
+      } else { g.globalAlpha = a; g.fillStyle = "#fff"; g.fillRect(s.x, s.y, s.r * 1.2, s.r * 1.2); }
+    }
+    g.globalAlpha = 1;
 
-    target.lineCap =
-      "round";
+    /* constellations */
+    g.save();
+    g.lineCap = "round"; g.textAlign = "center";
+    for (const c of this.cons) {
+      let act = 0;
+      if (settings.interactive) {
+        for (const p of c.pts) act = Math.max(act, motion.at(p.x / W, p.y / H));
+        act *= settings.response;
+      }
+      const breathe = .72 + .28 * Math.sin(time * .22 + c.ph);
 
-    target.lineJoin =
-      "round";
-
-    for (
-      const constellation of
-      this.constellations
-    ) {
-      let activation = 0;
-
-      if (
-        settings.interactive
-      ) {
-        for (
-          const point of
-          constellation.points
-        ) {
-          activation =
-            Math.max(
-              activation,
-              motion.at(
-                point[0],
-                point[1]
-              )
-            );
+      if (settings.lines) {
+        g.lineWidth = Math.max(.7, U * .85);
+        g.strokeStyle = `rgba(150,198,238,${(.16 * breathe + act * .22).toFixed(3)})`;
+        g.shadowColor = "rgba(130,190,255,.5)"; g.shadowBlur = 3 + act * 8;
+        for (const ln of c.links) {
+          const a = c.pts[ln[0]], b = c.pts[ln[1]];
+          const dx = b.x - a.x, dy = b.y - a.y, l = Math.hypot(dx, dy) || 1;
+          const ga = (3.2 + Math.max(0, 2.2 - a.mag * .5)) * U + 3, gb = (3.2 + Math.max(0, 2.2 - b.mag * .5)) * U + 3;
+          g.beginPath();
+          g.moveTo(a.x + dx / l * ga, a.y + dy / l * ga);
+          g.lineTo(b.x - dx / l * gb, b.y - dy / l * gb);
+          g.stroke();
         }
-
-        activation *=
-          settings.response;
+        g.shadowBlur = 0;
       }
 
-      target.shadowColor =
-        "rgba(145,205,255,.65)";
-
-      target.shadowBlur =
-        2.5 +
-        activation *
-        7;
-
-      target.strokeStyle =
-        "rgba(157,206,236," +
-        (
-          0.095 +
-          activation *
-          0.16
-        ) +
-        ")";
-
-      for (
-        const link of
-        constellation.links
-      ) {
-        const start =
-          constellation.points[
-            link[0]
-          ];
-
-        const end =
-          constellation.points[
-            link[1]
-          ];
-
-        target.beginPath();
-
-        target.moveTo(
-          start[0] *
-          worldWidth,
-          start[1] *
-          worldHeight
-        );
-
-        target.lineTo(
-          end[0] *
-          worldWidth,
-          end[1] *
-          worldHeight
-        );
-
-        target.stroke();
-      }
-
-      target.shadowBlur = 0;
-
-      constellation.points.forEach(
-        (
-          point,
-          pointIndex
-        ) => {
-          const x =
-            point[0] *
-            worldWidth;
-
-          const y =
-            point[1] *
-            worldHeight;
-
-          const localActivation =
-            settings.interactive
-              ? motion.at(
-                  point[0],
-                  point[1]
-                ) *
-                settings.response
-              : 0;
-
-          const pulse =
-            0.94 +
-            0.06 *
-            Math.sin(
-              time *
-              0.72 +
-              pointIndex *
-              1.8
-            );
-
-          const radius =
-            (
-              pointIndex %
-              3 === 0
-                ? 1.9
-                : 1.3
-            ) *
-            unitScale *
-            pulse *
-            (
-              1 +
-              localActivation *
-              0.5
-            );
-
-          const glowRadius =
-            radius *
-            7.5;
-
-          target.globalAlpha =
-            0.19 +
-            localActivation *
-            0.32;
-
-          target.drawImage(
-            this.glowSprites[1],
-            x - glowRadius,
-            y - glowRadius,
-            glowRadius * 2,
-            glowRadius * 2
-          );
-
-          target.globalAlpha =
-            0.78 +
-            localActivation *
-            0.22;
-
-          target.fillStyle =
-            "#e2f2ff";
-
-          target.beginPath();
-
-          target.arc(
-            x,
-            y,
-            radius,
-            0,
-            TAU
-          );
-
-          target.fill();
+      for (const p of c.pts) {
+        const r = clamp(2.5 - p.mag * .42, .85, 3.4) * U * (1 + act * .35);
+        const tint = p.col, gs = r * 9;
+        g.globalCompositeOperation = "lighter";
+        if (!c.sprites) c.sprites = {};
+        const key = tint.join();
+        if (!c.sprites[key]) c.sprites[key] = makeGlowSprite(tint, 64);
+        g.globalAlpha = .5 + act * .3;
+        g.drawImage(c.sprites[key], p.x - gs / 2, p.y - gs / 2, gs, gs);
+        if (p.mag < 1.4) {                       /* soft diffraction spikes on the brightest stars */
+          const sl = r * 9;
+          g.globalAlpha = .16 + act * .1; g.strokeStyle = rgb(tint); g.lineWidth = .8;
+          g.beginPath(); g.moveTo(p.x - sl, p.y); g.lineTo(p.x + sl, p.y); g.moveTo(p.x, p.y - sl); g.lineTo(p.x, p.y + sl); g.stroke();
         }
-      );
-    }
+        g.globalCompositeOperation = "source-over";
+        g.globalAlpha = .95; g.fillStyle = rgb(mixc(tint, [255, 255, 255], .55));
+        g.beginPath(); g.arc(p.x, p.y, r * .62, 0, TAU); g.fill();
 
-    target.restore();
+        if (settings.labels && p.mag < 2.1) {
+          g.globalAlpha = .4; g.fillStyle = "#cfe2ff"; g.textAlign = "left";
+          g.font = `${Math.round(10 * U)}px ui-rounded,Segoe UI,system-ui,sans-serif`;
+          g.fillText(p.name, p.x + r + 6 * U, p.y + 3 * U); g.textAlign = "center";
+        }
+      }
+      g.globalAlpha = 1;
 
-    /*
-      Foreground stars.
-    */
-    for (
-      const star of
-      this.stars
-    ) {
-      const twinkle =
-        0.7 +
-        0.3 *
-        Math.sin(
-          time *
-          star.twinkle +
-          star.phase
-        );
-
-      const activation =
-        settings.interactive
-          ? motion.at(
-              star.x /
-              worldWidth,
-
-              star.y /
-              worldHeight
-            ) *
-            settings.response
-          : 0;
-
-      const alpha =
-        clamp(
-          star.base *
-          twinkle +
-          activation *
-          0.8,
-          0,
-          1
-        );
-
-      target.fillStyle =
-        this.starColors[
-          star.tint
-        ];
-
-      if (
-        star.radius > 1.1
-      ) {
-        const size =
-          star.radius *
-          10 *
-          unitScale *
-          (
-            1 +
-            activation *
-            0.5
-          );
-
-        target.globalAlpha =
-          alpha *
-          0.7;
-
-        target.drawImage(
-          this.glowSprites[
-            star.tint
-          ],
-          star.x -
-          size / 2,
-          star.y -
-          size / 2,
-          size,
-          size
-        );
-
-        target.globalAlpha =
-          alpha;
-
-        target.beginPath();
-
-        target.arc(
-          star.x,
-          star.y,
-          Math.max(
-            0.7,
-            star.radius *
-            0.52
-          ),
-          0,
-          TAU
-        );
-
-        target.fill();
-      } else {
-        target.globalAlpha =
-          alpha;
-
-        target.fillRect(
-          star.x,
-          star.y,
-          star.radius *
-          1.3,
-          star.radius *
-          1.3
-        );
+      if (settings.labels) {
+        g.fillStyle = "rgba(200,222,250,.62)";
+        g.font = `italic ${Math.round(15 * U)}px Georgia,"Times New Roman",serif`;
+        g.fillText(c.name, c.lx, c.ly);
+        g.fillStyle = "rgba(170,200,235,.42)";
+        g.font = `${Math.round(10.5 * U)}px ui-rounded,Segoe UI,system-ui,sans-serif`;
+        g.fillText(c.sub, c.lx, c.ly + 16 * U);
       }
     }
+    g.restore();
 
-    target
-      .globalCompositeOperation =
-      "lighter";
-
-    for (
-      const particle of
-      this.movementDust
-    ) {
-      target.globalAlpha =
-        Math.sin(
-          Math.PI *
-          particle.life /
-          particle.maximumLife
-        ) *
-        0.3;
-
-      target.drawImage(
-        this.glowSprites[1],
-        particle.x -
-        particle.radius,
-        particle.y -
-        particle.radius,
-        particle.radius * 2,
-        particle.radius * 2
-      );
+    /* movement dust */
+    g.save(); g.globalCompositeOperation = "lighter";
+    for (const p of this.dust) {
+      g.globalAlpha = Math.sin(Math.PI * p.life / p.max) * .3;
+      g.drawImage(this.glow[0], p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);
     }
 
-    target.lineCap =
-      "round";
+    /* shooting stars: bright head, tapering tail, faint lingering train */
+    g.lineCap = "round";
+    for (const s of this.shooters) {
+      const fade = Math.sin(Math.PI * s.life / s.max), sp = Math.hypot(s.vx, s.vy);
+      const len = 230 * U * (.4 + .6 * fade);
+      const tx = s.x - s.vx / sp * len, ty = s.y - s.vy / sp * len;
+      const gr = g.createLinearGradient(s.x, s.y, tx, ty);
+      gr.addColorStop(0, `rgba(255,255,255,${(fade * .95).toFixed(3)})`);
+      gr.addColorStop(.25, `rgba(205,225,255,${(fade * .5).toFixed(3)})`);
+      gr.addColorStop(1, "rgba(140,190,255,0)");
+      g.strokeStyle = gr; g.lineWidth = 2 * U; g.globalAlpha = 1;
+      g.beginPath(); g.moveTo(s.x, s.y); g.lineTo(tx, ty); g.stroke();
+      const hs = 18 * U; g.globalAlpha = fade;
+      g.drawImage(this.glow[0], s.x - hs, s.y - hs, hs * 2, hs * 2);
+    }
+    g.restore();
 
-    for (
-      const shooter of
-      this.shooters
-    ) {
-      const fade =
-        Math.sin(
-          Math.PI *
-          shooter.life /
-          shooter.maximumLife
-        );
-
-      const length =
-        170 *
-        unitScale;
-
-      const speed =
-        Math.hypot(
-          shooter.velocityX,
-          shooter.velocityY
-        );
-
-      const tailX =
-        shooter.x -
-        shooter.velocityX /
-        speed *
-        length;
-
-      const tailY =
-        shooter.y -
-        shooter.velocityY /
-        speed *
-        length;
-
-      const gradient =
-        target
-          .createLinearGradient(
-            shooter.x,
-            shooter.y,
-            tailX,
-            tailY
-          );
-
-      gradient.addColorStop(
-        0,
-        "rgba(255,255,255," +
-        fade *
-        0.85 +
-        ")"
-      );
-
-      gradient.addColorStop(
-        1,
-        "rgba(150,195,255,0)"
-      );
-
-      target.strokeStyle =
-        gradient;
-
-      target.lineWidth =
-        1.8 *
-        unitScale;
-
-      target.globalAlpha =
-        1;
-
-      target.beginPath();
-
-      target.moveTo(
-        shooter.x,
-        shooter.y
-      );
-
-      target.lineTo(
-        tailX,
-        tailY
-      );
-
-      target.stroke();
+    if (this.sat) {
+      const e = Math.pow(Math.sin(Math.PI * this.sat.life / this.sat.max), .5);
+      g.globalAlpha = e * .8; g.fillStyle = "#f4f7ff";
+      g.fillRect(this.sat.x, this.sat.y, 1.7 * U, 1.7 * U);
+      g.globalAlpha = 1;
     }
 
-    target
-      .globalCompositeOperation =
-      "source-over";
-
-    target.globalAlpha =
-      1;
+    g.drawImage(this.fg, 0, 0);
   }
 };
 
 /* =========================================================
-   NATURAL SKY AND BUTTERFLIES
+   SKY: clouds, hills and realistic flying birds
    ========================================================= */
 
-scenes.sky = {
-  label:
-    "Sky & Butterflies",
+/* ---- bird species: wing geometry in units of wingspan ---- */
+const SPECIES = {
+  gull: {
+    id: "gull", span: .21, speed: 125, freq: 3.0, amp: .72,
+    arm: .3, chord: .19, secW: .075, nSec: 10, nPri: 8, priLen: .25, priW: .042, handOff: .1,
+    glide: [.22, -.2], sw1: .05, sw2: .2, covDepth: .1,
+    tailN: 6, tailLen: .15, tailSpread: .3, tailW: .05, bodyH: .082, headR: .034, beak: "gull",
+    colors: { covert: [244, 246, 248], sec: [168, 180, 192], pri0: [188, 197, 206], pri1: [30, 32, 38], body: [247, 249, 251],
+      back: [142, 156, 170], head: [248, 250, 252], beak: [240, 192, 62], tail: [246, 248, 250] }
+  },
+  eagle: {
+    id: "eagle", span: .28, speed: 88, freq: 1.7, amp: .52,
+    arm: .28, chord: .24, secW: .095, nSec: 10, nPri: 8, priLen: .3, priW: .055, handOff: .1,
+    glide: [.07, .05], sw1: .0, sw2: .07, covDepth: .125,
+    tailN: 7, tailLen: .17, tailSpread: .46, tailW: .06, bodyH: .1, headR: .04, beak: "eagle",
+    colors: { covert: [104, 76, 52], sec: [60, 44, 31], pri0: [66, 49, 36], pri1: [26, 19, 14], body: [58, 42, 30],
+      back: [50, 36, 25], head: [246, 244, 238], beak: [238, 186, 54], tail: [247, 247, 243] }
+  }
+};
 
-  variants: [
-    "Golden hour",
-    "Dawn",
-    "Day"
-  ],
+const warpPhase = p => { p = ((p % 1) + 1) % 1; return p < .4 ? Math.PI * p / .4 : Math.PI + Math.PI * (p - .4) / .6; };
+const norm3 = v => { const l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l, v[1] / l, v[2] / l]; };
+
+scenes.sky = {
+  label: "Sky & Birds",
+  variants: ["Golden hour", "Dawn", "Day"],
 
   palettes: [
-    {
-      stops: [
-        [0,"#1a1346"],
-        [.35,"#6a2f6e"],
-        [.6,"#d2566a"],
-        [.8,"#ff9a55"],
-        [1,"#ffd08a"]
-      ],
-      sun:[.72,.78],
-      glow:[255,190,110],
-      highlight:"#ffd7b0",
-      shadow:"#b4527a",
-      hillFront:"#2a1238",
-      hillBack:"#43204f",
-      sparkle:[255,232,190]
-    },
-    {
-      stops: [
-        [0,"#2c3c7a"],
-        [.4,"#8a7fb8"],
-        [.7,"#f2a7b5"],
-        [1,"#ffd9b8"]
-      ],
-      sun:[.3,.82],
-      glow:[255,210,170],
-      highlight:"#fff0e6",
-      shadow:"#b99ac0",
-      hillFront:"#3a3560",
-      hillBack:"#544c82",
-      sparkle:[255,244,225]
-    },
-    {
-      stops: [
-        [0,"#2f7fd0"],
-        [.6,"#7fb9ee"],
-        [1,"#d6ecfb"]
-      ],
-      sun:[.8,.16],
-      glow:[255,250,220],
-      highlight:"#ffffff",
-      shadow:"#b8cde6",
-      hillFront:"#4a7a9a",
-      hillBack:"#6a98b4",
-      sparkle:[255,252,235]
-    }
+    { stops: [[0, "#1a1346"], [.35, "#6a2f6e"], [.6, "#d2566a"], [.8, "#ff9a55"], [1, "#ffd08a"]],
+      sun: [.72, .78], glow: [255, 190, 110], highlight: "#ffd7b0", shadow: "#b4527a",
+      hills: ["#7a3a6a", "#4d2455", "#2a1238"], tint: [1, .9, .76], haze: [255, 170, 120], sunCore: [255, 236, 200] },
+    { stops: [[0, "#2c3c7a"], [.4, "#8a7fb8"], [.7, "#f2a7b5"], [1, "#ffd9b8"]],
+      sun: [.3, .82], glow: [255, 210, 170], highlight: "#fff0e6", shadow: "#b99ac0",
+      hills: ["#8b78a8", "#5f5489", "#3a3560"], tint: [1, .94, .9], haze: [248, 190, 190], sunCore: [255, 244, 225] },
+    { stops: [[0, "#2f7fd0"], [.6, "#7fb9ee"], [1, "#d6ecfb"]],
+      sun: [.8, .16], glow: [255, 232, 180], highlight: "#ffffff", shadow: "#b8cde6",
+      hills: ["#9bbdd6", "#70a0bb", "#4a7a9a"], tint: [1, 1, 1], haze: [190, 215, 240], sunCore: [255, 255, 245] }
   ],
 
   layers: [
-    {
-      count:5,
-      scale:.45,
-      speed:6,
-      alpha:.55,
-      verticalRange:[.45,.72]
-    },
-    {
-      count:4,
-      scale:.75,
-      speed:11,
-      alpha:.75,
-      verticalRange:[.18,.58]
-    },
-    {
-      count:3,
-      scale:1.15,
-      speed:20,
-      alpha:.85,
-      verticalRange:[-.02,.3]
-    }
+    { count: 5, scale: .45, speed: 6, alpha: .55, vr: [.42, .7] },
+    { count: 4, scale: .75, speed: 11, alpha: .75, vr: [.16, .56] },
+    { count: 3, scale: 1.15, speed: 20, alpha: .8, vr: [-.02, .3] }
   ],
 
-  cloudSprites: [],
-  clouds: [],
-  butterflies: [],
-  sparkles: [],
-  sparkleSprite: null,
-
-  spawnCooldown: 0,
-  nextButterflyId: 0,
-
-  parseHex(value) {
-    const hex =
-      value.replace(
-        "#",
-        ""
-      );
-
-    return [
-      parseInt(
-        hex.slice(0,2),
-        16
-      ),
-      parseInt(
-        hex.slice(2,4),
-        16
-      ),
-      parseInt(
-        hex.slice(4,6),
-        16
-      )
-    ];
-  },
-
-  mixColor(
-    first,
-    second,
-    amount
-  ) {
-    return first.map(
-      (
-        value,
-        index
-      ) =>
-        Math.round(
-          lerp(
-            value,
-            second[index],
-            amount
-          )
-        )
-    );
-  },
-
-  makeCloud(
-    width,
-    height,
-    highlight,
-    shadow
-  ) {
-    const cloudCanvas =
-      document.createElement(
-        "canvas"
-      );
-
-    cloudCanvas.width =
-      width;
-
-    cloudCanvas.height =
-      height;
-
-    const cloudContext =
-      cloudCanvas.getContext(
-        "2d"
-      );
-
-    const topColor =
-      this.parseHex(
-        highlight
-      );
-
-    const bottomColor =
-      this.parseHex(
-        shadow
-      );
-
-    const puffs = [];
-
-    for (
-      let index = 0;
-      index < 34;
-      index++
-    ) {
-      const x =
-        randomBetween(
-          0.12,
-          0.88
-        ) *
-        width;
-
-      const curve =
-        Math.sin(
-          Math.PI *
-          x /
-          width
-        );
-
-      puffs.push({
-        x,
-
-        y:
-          height *
-          (
-            0.74 -
-            0.5 *
-            curve *
-            Math.pow(
-              Math.random(),
-              0.8
-            )
-          ),
-
-        radius:
-          randomBetween(
-            0.1,
-            0.27
-          ) *
-          height *
-          (
-            0.7 +
-            0.6 *
-            curve
-          )
-      });
+  makeCloud(w, h, hi, sh) {
+    const c = mk(w, h), g = c.getContext("2d"), top = hex(hi), bot = hex(sh), puffs = [];
+    for (let i = 0; i < 120; i++) {
+      const x = rnd(.12, .88) * w, curve = Math.sin(Math.PI * x / w);
+      puffs.push({ x, y: h * (.8 - .4 * curve * Math.pow(Math.random(), .8)), r: rnd(.07, .2) * h * (.6 + .7 * curve) });
     }
-
-    puffs.sort(
-      (a,b) =>
-        a.y - b.y
-    );
-
-    for (
-      const puff of
-      puffs
-    ) {
-      const color =
-        this.mixColor(
-          topColor,
-          bottomColor,
-          clamp(
-            puff.y /
-            height *
-            1.1 -
-            0.1,
-            0,
-            1
-          )
-        );
-
-      const gradient =
-        cloudContext
-          .createRadialGradient(
-            puff.x,
-            puff.y,
-            0,
-            puff.x,
-            puff.y,
-            puff.radius
-          );
-
-      gradient.addColorStop(
-        0,
-        rgba(
-          color,
-          0.95
-        )
-      );
-
-      gradient.addColorStop(
-        0.72,
-        rgba(
-          color,
-          0.8
-        )
-      );
-
-      gradient.addColorStop(
-        1,
-        rgba(
-          color,
-          0
-        )
-      );
-
-      cloudContext.fillStyle =
-        gradient;
-
-      cloudContext.fillRect(
-        puff.x -
-        puff.radius,
-
-        puff.y -
-        puff.radius,
-
-        puff.radius * 2,
-        puff.radius * 2
-      );
+    puffs.sort((a, b) => a.y - b.y);
+    for (const p of puffs) {
+      const col = mixc(top, bot, clamp(p.y / h * 1.15 - .12, 0, 1));
+      const gr = g.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+      gr.addColorStop(0, rgba(col, .5)); gr.addColorStop(.5, rgba(col, .34)); gr.addColorStop(1, rgba(col, 0));
+      g.fillStyle = gr; g.fillRect(p.x - p.r, p.y - p.r, p.r * 2, p.r * 2);
     }
-
-    cloudContext
-      .globalCompositeOperation =
-      "destination-out";
-
-    const fade =
-      cloudContext
-        .createLinearGradient(
-          0,
-          height *
-          0.72,
-          0,
-          height
-        );
-
-    fade.addColorStop(
-      0,
-      "rgba(0,0,0,0)"
-    );
-
-    fade.addColorStop(
-      1,
-      "rgba(0,0,0,1)"
-    );
-
-    cloudContext.fillStyle =
-      fade;
-
-    cloudContext.fillRect(
-      0,
-      height *
-      0.72,
-      width,
-      height *
-      0.28
-    );
-
-    return cloudCanvas;
+    g.globalCompositeOperation = "destination-out";
+    const f = g.createLinearGradient(0, h * .7, 0, h);
+    f.addColorStop(0, "rgba(0,0,0,0)"); f.addColorStop(1, "rgba(0,0,0,1)");
+    g.fillStyle = f; g.fillRect(0, h * .7, w, h * .3);
+    return c;
   },
 
   build() {
-    const palette =
-      this.palette =
-      this.palettes[
-        settings.variant.sky
-      ];
+    const P = this.palette = this.palettes[settings.variant.sky];
+    const W = Math.round(worldWidth), H = Math.round(worldHeight), U = unitScale;
+    const bg = this.background = mk(W, H), g = bg.getContext("2d");
 
-    this.background =
-      document.createElement(
-        "canvas"
-      );
+    let gr = g.createLinearGradient(0, 0, 0, H);
+    P.stops.forEach(s => gr.addColorStop(s[0], s[1]));
+    g.fillStyle = gr; g.fillRect(0, 0, W, H);
 
-    this.background.width =
-      Math.max(
-        1,
-        Math.round(
-          worldWidth
-        )
-      );
+    const sx = P.sun[0] * W, sy = P.sun[1] * H, sr = Math.max(W, H) * .55;
+    g.globalCompositeOperation = settings.variant.sky === 2 ? "screen" : "lighter";
+    gr = g.createRadialGradient(sx, sy, 0, sx, sy, sr);
+    gr.addColorStop(0, rgba(P.glow, .55)); gr.addColorStop(.15, rgba(P.glow, .22)); gr.addColorStop(1, rgba(P.glow, 0));
+    g.fillStyle = gr; g.fillRect(0, 0, W, H);
 
-    this.background.height =
-      Math.max(
-        1,
-        Math.round(
-          worldHeight
-        )
-      );
-
-    const background =
-      this.background.getContext(
-        "2d"
-      );
-
-    let gradient =
-      background
-        .createLinearGradient(
-          0,
-          0,
-          0,
-          worldHeight
-        );
-
-    for (
-      const stop of
-      palette.stops
-    ) {
-      gradient.addColorStop(
-        stop[0],
-        stop[1]
-      );
+    /* soft crepuscular rays */
+    for (let i = 0; i < 12; i++) {
+      const a = -Math.PI / 2 + (i / 11 - .5) * 2.6 + Math.sin(i * 7) * .05, w = rnd(.03, .07), L = Math.max(W, H) * 1.3;
+      const rg = g.createLinearGradient(sx, sy, sx + Math.cos(a) * L, sy + Math.sin(a) * L);
+      rg.addColorStop(0, rgba(P.glow, .02)); rg.addColorStop(1, rgba(P.glow, 0));
+      g.fillStyle = rg; g.beginPath(); g.moveTo(sx, sy);
+      g.lineTo(sx + Math.cos(a - w) * L, sy + Math.sin(a - w) * L);
+      g.lineTo(sx + Math.cos(a + w) * L, sy + Math.sin(a + w) * L);
+      g.closePath(); g.fill();
     }
+    /* sun disc */
+    const sd = H * .06;
+    gr = g.createRadialGradient(sx, sy, 0, sx, sy, sd);
+    gr.addColorStop(0, rgba(P.sunCore, 1)); gr.addColorStop(.35, rgba(P.sunCore, .65)); gr.addColorStop(1, rgba(P.sunCore, 0));
+    g.fillStyle = gr; g.fillRect(sx - sd, sy - sd, sd * 2, sd * 2);
+    g.globalCompositeOperation = "source-over";
 
-    background.fillStyle =
-      gradient;
+    this.sunGlow = makeGlowSprite(P.glow, 128);
 
-    background.fillRect(
-      0,
-      0,
-      worldWidth,
-      worldHeight
-    );
+    /* hills with atmospheric depth + treeline */
+    const hills = this.hills = mk(W, H), hc = hills.getContext("2d");
+    const ridge = (base, amp, freq, off) => x => H * base - (fbm(x / (H * .9) * freq + off, off * 1.3, 4) - .5) * 2 * amp * H;
+    [[.80, .075, 1.2, 1.4, 0], [.875, .06, 1.9, 5.2, 1], [.94, .045, 2.7, 9.6, 2]].forEach(l => {
+      const fn = ridge(l[0], l[1], l[2], l[3]), col = hex(P.hills[l[4]]);
+      const top = mixc(col, P.haze, .32 - l[4] * .1);
+      const hg = hc.createLinearGradient(0, H * (l[0] - l[1]), 0, H);
+      hg.addColorStop(0, rgb(top)); hg.addColorStop(1, rgb(col));
+      hc.fillStyle = hg; hc.beginPath(); hc.moveTo(0, H);
+      for (let x = 0; x <= W; x += 3) hc.lineTo(x, fn(x));
+      hc.lineTo(W, H); hc.closePath(); hc.fill();
+      if (l[4] === 2) drawTreeline(hc, fn, W, U, rgb(col), 1.15, 2.3);
+      else if (l[4] === 1) drawTreeline(hc, fn, W, U, rgb(col), .5, 6.6);
+    });
 
-    const sunX =
-      palette.sun[0] *
-      worldWidth;
-
-    const sunY =
-      palette.sun[1] *
-      worldHeight;
-
-    const sunRadius =
-      Math.max(
-        worldWidth,
-        worldHeight
-      ) *
-      0.55;
-
-    background
-      .globalCompositeOperation =
-      "lighter";
-
-    gradient =
-      background
-        .createRadialGradient(
-          sunX,
-          sunY,
-          0,
-          sunX,
-          sunY,
-          sunRadius
-        );
-
-    gradient.addColorStop(
-      0,
-      rgba(
-        palette.glow,
-        0.55
-      )
-    );
-
-    gradient.addColorStop(
-      0.15,
-      rgba(
-        palette.glow,
-        0.22
-      )
-    );
-
-    gradient.addColorStop(
-      1,
-      rgba(
-        palette.glow,
-        0
-      )
-    );
-
-    background.fillStyle =
-      gradient;
-
-    background.fillRect(
-      0,
-      0,
-      worldWidth,
-      worldHeight
-    );
-
-    background
-      .globalCompositeOperation =
-      "source-over";
-
-    this.sunGlow =
-      makeGlowSprite(
-        palette.glow,
-        128
-      );
-
-    this.sparkleSprite =
-      makeGlowSprite(
-        palette.sparkle,
-        48
-      );
-
-    /*
-      Natural hill layers.
-    */
-    this.hills =
-      document.createElement(
-        "canvas"
-      );
-
-    this.hills.width =
-      Math.max(
-        1,
-        Math.round(
-          worldWidth
-        )
-      );
-
-    this.hills.height =
-      Math.max(
-        1,
-        Math.round(
-          worldHeight
-        )
-      );
-
-    const hillContext =
-      this.hills.getContext(
-        "2d"
-      );
-
-    const hillLayers = [
-      [
-        palette.hillBack,
-        .88,
-        .06,
-        1.7,
-        .4
-      ],
-      [
-        palette.hillFront,
-        .94,
-        .05,
-        2.6,
-        1.9
-      ]
-    ];
-
-    for (
-      const hill of
-      hillLayers
-    ) {
-      const color =
-        hill[0];
-
-      const base =
-        hill[1];
-
-      const amplitude =
-        hill[2];
-
-      const frequency =
-        hill[3];
-
-      const phase =
-        hill[4];
-
-      hillContext.fillStyle =
-        color;
-
-      hillContext.beginPath();
-
-      hillContext.moveTo(
-        0,
-        worldHeight
-      );
-
-      for (
-        let index = 0;
-        index <= 64;
-        index++
-      ) {
-        const position =
-          index / 64;
-
-        const y =
-          worldHeight *
-          (
-            base -
-            amplitude *
-            (
-              Math.sin(
-                position *
-                frequency *
-                3 +
-                phase
-              ) *
-              0.6 +
-              Math.sin(
-                position *
-                frequency *
-                7.3 +
-                phase *
-                2
-              ) *
-              0.4
-            )
-          );
-
-        hillContext.lineTo(
-          position *
-          worldWidth,
-          y
-        );
-      }
-
-      hillContext.lineTo(
-        worldWidth,
-        worldHeight
-      );
-
-      hillContext.closePath();
-      hillContext.fill();
-    }
-
-    /*
-      Pre-rendered cloud sprites.
-    */
-    this.cloudSprites =
-      Array.from(
-        {
-          length: 7
-        },
-        () =>
-          this.makeCloud(
-            520,
-            190,
-            palette.highlight,
-            palette.shadow
-          )
-      );
-
+    this.cloudSprites = Array.from({ length: 7 }, () => this.makeCloud(640, 230, P.highlight, P.shadow));
     this.clouds = [];
-
-    this.layers.forEach(
-      (
-        layer,
-        layerIndex
-      ) => {
-        const count =
-          Math.max(
-            1,
-            Math.round(
-              layer.count *
-              settings.detail
-            )
-          );
-
-        for (
-          let index = 0;
-          index < count;
-          index++
-        ) {
-          const width =
-            520 *
-            layer.scale *
-            unitScale *
-            randomBetween(
-              0.85,
-              1.2
-            );
-
-          const height =
-            width *
-            190 /
-            520;
-
-          this.clouds.push({
-            layer:
-              layerIndex,
-
-            width,
-            height,
-
-            x:
-              (
-                index +
-                Math.random()
-              ) /
-              count *
-              (
-                worldWidth +
-                width
-              ) -
-              width,
-
-            y:
-              randomBetween(
-                layer.verticalRange[0],
-                layer.verticalRange[1]
-              ) *
-              worldHeight,
-
-            sprite:
-              this.cloudSprites[
-                (
-                  Math.random() *
-                  this.cloudSprites
-                    .length
-                ) | 0
-              ],
-
-            boost: 0
-          });
-        }
+    this.layers.forEach((layer, li) => {
+      const n = Math.max(1, Math.round(layer.count * settings.detail));
+      for (let i = 0; i < n; i++) {
+        const w = 640 * layer.scale * U * rnd(.85, 1.2), h = w * 230 / 640;
+        this.clouds.push({ layer: li, w, h, x: (i + Math.random()) / n * (W + w) - w,
+          y: rnd(layer.vr[0], layer.vr[1]) * H, sprite: this.cloudSprites[(Math.random() * 7) | 0], boost: 0 });
       }
-    );
+    });
 
-    /*
-      Butterflies only appear when motion is detected.
-    */
-    this.butterflies = [];
-    this.sparkles = [];
+    this.birds = [];
     this.spawnCooldown = 0;
-    this.nextButterflyId = 0;
+    this.ambientTimer = rnd(4, 9);
+    this.nextId = 0;
   },
 
-  butterflyColors: [
-    {
-      wing: "rgba(255, 224, 178, 0.88)",
-      tip: "rgba(245, 178, 130, 0.82)"
-    },
-    {
-      wing: "rgba(255, 206, 224, 0.88)",
-      tip: "rgba(226, 152, 188, 0.82)"
-    },
-    {
-      wing: "rgba(224, 214, 255, 0.88)",
-      tip: "rgba(176, 162, 236, 0.82)"
-    },
-    {
-      wing: "rgba(208, 236, 255, 0.88)",
-      tip: "rgba(154, 198, 238, 0.82)"
-    }
-  ],
-
-  spawnButterfly(x, y) {
-    const maxButterflies =
-      Math.max(
-        3,
-        Math.round(
-          7 * settings.detail
-        )
-      );
-
-    if (
-      this.butterflies.length >=
-      maxButterflies
-    ) {
-      return;
-    }
-
-    const palette =
-      this.butterflyColors[
-        (
-          Math.random() *
-          this.butterflyColors
-            .length
-        ) | 0
-      ];
-
-    const goingRight =
-      Math.random() < 0.5;
-
-    this.butterflies.push({
-      id:
-        this.nextButterflyId++,
-
-      x,
-      y,
-
-      vx:
-        (
-          goingRight
-            ? 1
-            : -1
-        ) *
-        randomBetween(
-          26,
-          44
-        ) *
-        unitScale,
-
-      vy:
-        randomBetween(
-          -10,
-          10
-        ) *
-        unitScale,
-
-      angle: 0,
-
-      size:
-        randomBetween(
-          11,
-          16
-        ) *
-        unitScale,
-
-      wingColor:
-        palette.wing,
-
-      tipColor:
-        palette.tip,
-
-      flap:
-        randomBetween(
-          0,
-          TAU
-        ),
-
-      flapSpeed:
-        randomBetween(
-          8.5,
-          11.5
-        ),
-
-      wavePhase:
-        randomBetween(
-          0,
-          TAU
-        ),
-
-      sparkleAccum: 0,
-
-      life: 0,
-
-      maxLife:
-        randomBetween(
-          6.5,
-          10.5
-        )
-    });
+  /* ---------- bird creation ---------- */
+  pickSpecies() {
+    const t = settings.birdType;
+    if (t === "gull") return SPECIES.gull;
+    if (t === "eagle") return SPECIES.eagle;
+    return Math.random() < .62 ? SPECIES.gull : SPECIES.eagle;
   },
 
-  addSparkle(x, y) {
-    if (
-      this.sparkles.length >=
-      140
-    ) {
-      return;
-    }
-
-    this.sparkles.push({
-      x:
-        x +
-        randomBetween(
-          -6,
-          6
-        ) *
-        unitScale,
-
-      y:
-        y +
-        randomBetween(
-          -6,
-          6
-        ) *
-        unitScale,
-
-      vx:
-        randomBetween(
-          -6,
-          6
-        ) *
-        unitScale,
-
-      vy:
-        randomBetween(
-          -10,
-          -2
-        ) *
-        unitScale,
-
-      size:
-        randomBetween(
-          4.5,
-          9.5
-        ) *
-        unitScale,
-
-      twinklePhase:
-        randomBetween(
-          0,
-          TAU
-        ),
-
-      life: 0,
-
-      maxLife:
-        randomBetween(
-          0.9,
-          1.7
-        )
-    });
+  makePal(sp, depth) {
+    const P = this.palette, k = (1 - depth) * .5, c = sp.colors;
+    const f = col => mixc([col[0] * P.tint[0], col[1] * P.tint[1], col[2] * P.tint[2]], P.haze, k);
+    const sh = (col, d) => [col[0] + d, col[1] + d, col[2] + d];
+    return {
+      covert: rgb(f(c.covert)), body: rgb(f(c.body)), back: rgb(f(c.back)), head: rgb(f(c.head)),
+      beak: rgb(f(c.beak)), tail: rgb(f(c.tail)), eye: rgb(f([22, 18, 16])),
+      tailEdge: rgb(f(sh(c.tail, -22))),
+      sec: Array.from({ length: sp.nSec }, (_, i) => rgb(f(sh(c.sec, ((i % 3) - 1) * 7)))),
+      priA: rgb(f(c.pri0)), priB: rgb(f(c.pri1))
+    };
   },
 
-  update(delta, time) {
-    for (
-      const cloud of
-      this.clouds
-    ) {
-      const layer =
-        this.layers[
-          cloud.layer
-        ];
+  spawnBird(sp, x, y, dir, depth, phase, speedMul) {
+    const H = worldHeight;
+    const b = {
+      id: this.nextId++, sp, dir, depth, seed: Math.random() * 100,
+      size: sp.span * H * (.34 + .66 * depth),
+      x, y, vy: 0, cruiseY: y, targetY: y, pickT: rnd(.3, 1.5),
+      mode: "flap", modeT: rnd(1.5, 3.5), flapAmt: 1, phase: phase,
+      freq: sp.freq * rnd(.92, 1.08), roll: 0, rollTarget: 0, rollT: rnd(2, 5), pitch: 0,
+      speedMul: speedMul * rnd(.94, 1.06), pal: this.makePal(sp, depth)
+    };
+    this.birds.push(b);
+    return b;
+  },
 
-      let activation =
-        0;
+  spawnGroup(y, ambient) {
+    const sp = this.pickSpecies(), W = worldWidth, H = worldHeight;
+    const maxB = 6;   // hard limit: never more than 6 birds on screen
+    if (this.birds.length >= maxB) return;
+    const dir = Math.random() < .5 ? 1 : -1;
+    const depth = ambient ? rnd(.3, .42) : rnd(.62, 1);
+    const n = sp.id === "gull" ? 1 + (Math.random() < .5 ? 1 : 0) + (Math.random() < .25 ? 1 : 0) : (Math.random() < .25 ? 2 : 1);
+    const baseSize = sp.span * H * (.34 + .66 * depth), mul = rnd(.9, 1.1);
+    const y0 = clamp(y, H * .12, H * .66);
+    for (let k = 0; k < n && this.birds.length < maxB; k++) {
+      const x = dir > 0 ? -baseSize * .8 - k * baseSize * rnd(.9, 1.7) : W + baseSize * .8 + k * baseSize * rnd(.9, 1.7);
+      const b = this.spawnBird(sp, x, y0 + rnd(-.05, .05) * H * (k ? 1 : 0), dir, clamp(depth + rnd(-.04, .04), .25, 1), Math.random(), mul);
+      b.cruiseY = b.y;
+    }
+  },
 
-      if (
-        settings.interactive
-      ) {
-        activation =
-          Math.max(
-            motion.at(
-              (
-                cloud.x +
-                cloud.width *
-                0.2
-              ) /
-              worldWidth,
+  nextMode(b) {
+    const sp = b.sp;
+    if (sp.id === "gull") {
+      if (b.mode === "flap") { b.mode = "glide"; b.modeT = rnd(1.6, 4); } else { b.mode = "flap"; b.modeT = rnd(2, 4.5); }
+    } else {
+      if (b.mode === "flap") { b.mode = "glide"; b.modeT = rnd(4, 9); } else { b.mode = "flap"; b.modeT = rnd(1.8, 3.2); }
+    }
+  },
 
-              cloud.y /
-              worldHeight
-            ),
-
-            motion.at(
-              (
-                cloud.x +
-                cloud.width *
-                0.5
-              ) /
-              worldWidth,
-
-              cloud.y /
-              worldHeight
-            ),
-
-            motion.at(
-              (
-                cloud.x +
-                cloud.width *
-                0.8
-              ) /
-              worldWidth,
-
-              cloud.y /
-              worldHeight
-            )
-          ) *
-          settings.response;
+  /* ---------- simulation ---------- */
+  update(dt, time) {
+    const W = worldWidth, H = worldHeight, U = unitScale;
+    for (const c of this.clouds) {
+      const layer = this.layers[c.layer];
+      let act = 0;
+      if (settings.interactive) {
+        act = Math.max(motion.at((c.x + c.w * .2) / W, c.y / H), motion.at((c.x + c.w * .5) / W, c.y / H), motion.at((c.x + c.w * .8) / W, c.y / H)) * settings.response;
       }
+      c.boost += (act * 55 * U - c.boost) * dt * .8;
+      c.x += (layer.speed * U * settings.speed + c.boost) * dt;
+      if (c.x > W + 20) c.x = -c.w;
+    }
 
-      cloud.boost +=
-        (
-          activation *
-          55 *
-          unitScale -
-          cloud.boost
-        ) *
-        delta *
-        0.8;
+    this.spawnCooldown = Math.max(0, this.spawnCooldown - dt);
+    if (settings.interactive && settings.response > .02 && motion.activity > .035 && this.spawnCooldown <= 0 && motion.hotPoints.length) {
+      const p = motion.hotPoints[(Math.random() * motion.hotPoints.length) | 0];
+      this.spawnGroup(p.y * H, false);
+      this.spawnCooldown = clamp(3.2 - motion.activity * 1.6, 1.2, 3.4) / Math.max(.3, settings.response);
+    }
 
-      cloud.x +=
-        (
-          layer.speed *
-          unitScale *
-          settings.speed +
-          cloud.boost
-        ) *
-        delta;
+    /* very distant lone bird now and then, even in calm mode */
+    this.ambientTimer -= dt;
+    if (this.ambientTimer <= 0) {
+      if (this.birds.length < 2) this.spawnGroup(rnd(.2, .5) * H, true);
+      this.ambientTimer = rnd(26, 55);
+    }
 
-      if (
-        cloud.x >
-        worldWidth + 20
-      ) {
-        cloud.x =
-          -cloud.width;
+    const speedF = .35 + .9 * settings.speed;
+    for (const b of this.birds) {
+      const sp = b.sp;
+      b.modeT -= dt;
+      if (b.modeT <= 0) this.nextMode(b);
+
+      b.flapAmt += ((b.mode === "flap" ? 1 : 0) - b.flapAmt) * Math.min(1, dt * 2.2);
+      const f = b.flapAmt;
+      b.phase += dt * b.freq * (.6 + .4 * settings.speed) * (.3 + .7 * f);
+
+      /* choose a target altitude: follow movement if there is some, otherwise wander */
+      b.pickT -= dt;
+      if (b.pickT <= 0) {
+        b.pickT = rnd(1.2, 2.8);
+        if (settings.interactive && motion.hotPoints.length && motion.activity > .04 && Math.random() < .7) {
+          const p = motion.hotPoints[(Math.random() * motion.hotPoints.length) | 0];
+          b.targetY = clamp(p.y * H, H * .1, H * .72);
+        } else b.targetY = clamp(b.cruiseY + rnd(-.07, .07) * H, H * .08, H * .72);
       }
+      const want = clamp((b.targetY - b.y) * .45, -55 * U * b.depth, 55 * U * b.depth);
+      if (want < -12 * U && b.mode !== "flap" && b.modeT > .7 && b.flapAmt < .5 && sp.id === "gull") { b.mode = "flap"; b.modeT = rnd(1.8, 3); }
+      const climbCap = b.mode === "flap" ? 1 : (sp.id === "eagle" ? .55 : .2);
+      const vyT = want < 0 ? want * climbCap : want * .8 + 5 * U * (1 - f);
+      b.vy += (vyT - b.vy) * Math.min(1, dt * 1.5);
+
+      const surge = 1 + .05 * f * Math.sin(warpPhase(b.phase) + 1.2);
+      const vx = sp.speed * U * b.depth * speedF * b.speedMul * (.88 + .22 * f) * surge;
+      b.x += b.dir * vx * dt;
+      b.y += b.vy * dt;
+      b.y = clamp(b.y, H * .06, H * .78);
+
+      const pt = clamp(Math.atan2(-b.vy, vx) * .8, -.3, .3);
+      b.pitch += (pt - b.pitch) * Math.min(1, dt * 2);
+      b.rollT -= dt;
+      if (b.rollT <= 0) { b.rollT = rnd(2.5, 6); b.rollTarget = Math.random() < .35 ? 0 : rnd(-.22, .22); }
+      b.roll += (b.rollTarget - b.roll) * Math.min(1, dt * .9);
     }
-
-    this.spawnCooldown =
-      Math.max(
-        0,
-        this.spawnCooldown -
-        delta
-      );
-
-    /*
-      Spawn simple butterflies only when motion is detected.
-    */
-    if (
-      settings.interactive &&
-      settings.response > 0.02 &&
-      motion.activity > 0.035 &&
-      this.spawnCooldown <= 0 &&
-      motion.hotPoints.length
-    ) {
-      const point =
-        motion.hotPoints[
-          (
-            Math.random() *
-            motion.hotPoints.length
-          ) | 0
-        ];
-
-      this.spawnButterfly(
-        clamp(
-          point.x *
-          worldWidth,
-          worldWidth * 0.08,
-          worldWidth * 0.92
-        ),
-
-        clamp(
-          point.y *
-          worldHeight,
-          worldHeight * 0.14,
-          worldHeight * 0.72
-        )
-      );
-
-      this.spawnCooldown =
-        clamp(
-          1.35 -
-          motion.activity *
-          0.7,
-          0.45,
-          1.4
-        ) /
-        Math.max(
-          0.25,
-          settings.response
-        );
-    }
-
-    for (
-      const b of
-      this.butterflies
-    ) {
-      b.life +=
-        delta;
-
-      const gentleLift =
-        Math.cos(
-          time * 1.6 +
-          b.wavePhase
-        ) *
-        14 *
-        unitScale;
-
-      const targetVy =
-        gentleLift;
-
-      b.vy +=
-        (
-          targetVy -
-          b.vy
-        ) *
-        Math.min(
-          1,
-          delta * 1.8
-        );
-
-      b.x +=
-        b.vx *
-        delta *
-        settings.speed;
-
-      b.y +=
-        b.vy *
-        delta *
-        settings.speed;
-
-      b.y =
-        clamp(
-          b.y,
-          worldHeight * 0.1,
-          worldHeight * 0.78
-        );
-
-      b.angle =
-        Math.atan2(
-          b.vy,
-          b.vx
-        ) *
-        0.35;
-
-      b.flap +=
-        delta *
-        b.flapSpeed *
-        Math.max(
-          0.4,
-          settings.speed
-        );
-
-      /*
-        Soft sparkle trail along the flight path.
-      */
-      b.sparkleAccum +=
-        delta *
-        Math.max(
-          0.4,
-          settings.speed
-        );
-
-      if (
-        b.sparkleAccum >= 0.14
-      ) {
-        b.sparkleAccum = 0;
-
-        this.addSparkle(
-          b.x -
-          Math.sign(b.vx || 1) *
-          b.size *
-          0.35,
-
-          b.y
-        );
-      }
-    }
-
-    this.butterflies =
-      this.butterflies.filter(
-        b =>
-          b.life < b.maxLife &&
-          b.x > -40 * unitScale &&
-          b.x < worldWidth + 40 * unitScale
-      );
-
-    for (
-      const s of
-      this.sparkles
-    ) {
-      s.life +=
-        delta;
-
-      s.x +=
-        s.vx *
-        delta *
-        settings.speed;
-
-      s.y +=
-        s.vy *
-        delta *
-        settings.speed;
-    }
-
-    this.sparkles =
-      this.sparkles.filter(
-        s =>
-          s.life < s.maxLife
-      );
+    this.birds = this.birds.filter(b => b.dir > 0 ? b.x < worldWidth + b.size * 1.6 : b.x > -b.size * 1.6);
   },
 
-  drawButterfly(
-    target,
-    b,
-    time
-  ) {
-    const fadeIn =
-      clamp(
-        b.life / 0.6,
-        0,
-        1
-      );
+  /* ---------- rendering of one bird ---------- */
+  drawBird(g, b, time) {
+    const sp = b.sp, pal = b.pal, S = b.size, f = b.flapAmt;
+    const psi = warpPhase(b.phase), c = Math.cos(psi), sn = Math.sin(psi);
+    const lagC = Math.cos(warpPhase(b.phase - .12));
+    const p = ((b.phase % 1) + 1) % 1;
+    const fold = f * (p > .4 ? Math.sin(Math.PI * (p - .4) / .6) : 0);
+    const flutter = (1 - f) * Math.sin(time * 4.3 + b.seed) * .025;
 
-    const fadeOut =
-      clamp(
-        (b.maxLife - b.life) / 1.1,
-        0,
-        1
-      );
+    const phi1 = lerp(sp.glide[0] + flutter, .1 + sp.amp * c, f);
+    const phi2 = lerp(sp.glide[0] + sp.glide[1] + flutter * 1.6, .08 + sp.amp * 1.15 * lagC, f);
+    const sw1 = sp.sw1 + f * .05 * (1 - c) * .5, sw2 = sp.sw2 + fold * .45, hs = 1 - fold * .3;
+    const bend = sn * .2 * f;
 
-    const alpha =
-      fadeIn * fadeOut;
+    const bx = b.x, by = b.y + c * .022 * f * S, dir = b.dir;
+    const cr = Math.cos(b.roll), sr = Math.sin(b.roll);
+    const pitch = b.pitch - c * .05 * f, cp = Math.cos(pitch), spn = Math.sin(pitch);
+    const T = (x, y, z) => {
+      const y2 = y * cr - z * sr, z2 = y * sr + z * cr;
+      const x3 = x * cp - y2 * spn, y3 = x * spn + y2 * cp;
+      return [bx + dir * (x3 * .95 + z2 * .34) * S, by + (-y3 + z2 * .15) * S];
+    };
 
-    if (alpha <= 0) {
-      return;
+    g.lineWidth = .6; g.strokeStyle = "rgba(0,0,0,.17)"; g.lineJoin = "round";
+    const feather = (R, Tp, w, fill) => {
+      const dx = Tp[0] - R[0], dy = Tp[1] - R[1], l = Math.hypot(dx, dy) || 1, nx = -dy / l * w, ny = dx / l * w;
+      const mx = (R[0] + Tp[0]) / 2, my = (R[1] + Tp[1]) / 2;
+      g.beginPath();
+      g.moveTo(R[0] + nx * .5, R[1] + ny * .5);
+      g.quadraticCurveTo(mx + nx * 1.12, my + ny * 1.12, Tp[0], Tp[1]);
+      g.quadraticCurveTo(mx - nx * 1.0, my - ny * 1.0, R[0] - nx * .5, R[1] - ny * .5);
+      g.closePath(); g.fillStyle = fill; g.fill(); g.stroke();
+    };
+    const add = (a, v, s) => [a[0] + v[0] * s, a[1] + v[1] * s, a[2] + v[2] * s];
+
+    /* ---- wing: flight feathers built from shoulder -> wrist -> hand ---- */
+    const drawWing = s => {
+      const S0 = [.05, .02, s * .03];
+      const da = norm3([-sw1, Math.sin(phi1), s * Math.cos(phi1)]);
+      const Wp = add(S0, da, sp.arm);
+      const dh = norm3([-sw2, Math.sin(phi2), s * Math.cos(phi2)]);
+      const nz = da[1] / (Math.hypot(da[1], da[2]) || 1);
+      const fs = .4 + .6 * clamp(Math.abs(nz) * .9 + Math.abs(da[2]) * .3, 0, 1);
+
+      /* secondaries */
+      for (let i = 0; i < sp.nSec; i++) {
+        const t = (i + .5) / sp.nSec, root = add(S0, da, sp.arm * t);
+        const len = sp.chord * (.82 + .26 * Math.sin(Math.PI * t * .92));
+        const lean = .18 + .1 * t;
+        let d = norm3([-1 + da[0] * lean, da[1] * lean + sn * .2 * f * (.4 + t), da[2] * lean]);
+        d[1] += -.04 + sn * .2 * f * (.4 + t) * .3;
+        const tip = add(root, norm3(d), len);
+        feather(T(root[0], root[1], root[2]), T(tip[0], tip[1], tip[2]), sp.secW * S * fs, pal.sec[i]);
+      }
+      /* primaries (the "fingers") */
+      for (let j = 0; j < sp.nPri; j++) {
+        const u = j / (sp.nPri - 1);
+        const root = add(Wp, dh, sp.handOff * (.05 + .85 * u) * hs);
+        const a = lerp(.55, 1.43, Math.pow(u, .8));
+        const dd = norm3([dh[0] * Math.sin(a) - Math.cos(a), dh[1] * Math.sin(a) + bend * (.4 + u) + .12 * (1 - f) * u, dh[2] * Math.sin(a)]);
+        const len = sp.priLen * (.68 + .32 * Math.pow(u, .7)) * (.82 + .18 * hs);
+        const tip = add(root, dd, len);
+        const R = T(root[0], root[1], root[2]), Tp = T(tip[0], tip[1], tip[2]);
+        const gr = g.createLinearGradient(R[0], R[1], Tp[0], Tp[1]);
+        gr.addColorStop(0, pal.priA); gr.addColorStop(.5, pal.priA); gr.addColorStop(1, pal.priB);
+        feather(R, Tp, sp.priW * S * fs, gr);
+      }
+      /* coverts hide the feather roots */
+      const cd = sp.covDepth, back = [-1, bend * .3, 0];
+      const poly = [S0, Wp, add(Wp, dh, .09 * hs), add(add(Wp, dh, .09 * hs), back, .055), add(Wp, back, cd), add(S0, back, cd * 1.1)];
+      const sp2 = poly.map(q => T(q[0], q[1], q[2])), nP = sp2.length;
+      g.beginPath();
+      g.moveTo((sp2[nP - 1][0] + sp2[0][0]) / 2, (sp2[nP - 1][1] + sp2[0][1]) / 2);
+      for (let i = 0; i < nP; i++) {
+        const a = sp2[i], b2 = sp2[(i + 1) % nP];
+        g.quadraticCurveTo(a[0], a[1], (a[0] + b2[0]) / 2, (a[1] + b2[1]) / 2);
+      }
+      g.closePath(); g.fillStyle = pal.covert; g.fill();
+    };
+
+    /* far wing first */
+    drawWing(-1);
+
+    /* ---- tail fan ---- */
+    const TB = [-.12, 0, 0];
+    const spread = sp.tailSpread * (.7 + .3 * (1 - f * .5));
+    g.lineWidth = .5;
+    for (let k = 0; k < sp.tailN; k++) {
+      const a = (k / (sp.tailN - 1) - .5) * 2 * spread;
+      const d = norm3([-Math.cos(a), -.05 + sn * .04 * f, Math.sin(a)]);
+      const tip = add(TB, d, sp.tailLen);
+      feather(T(TB[0], TB[1], TB[2]), T(tip[0], tip[1], tip[2]), sp.tailW * S * .8, k % 2 ? pal.tail : pal.tailEdge);
     }
 
-    const wingOpen =
-      0.28 +
-      Math.abs(
-        Math.sin(b.flap)
-      ) *
-      0.72;
-
-    const s =
-      b.size;
-
-    const dir =
-      b.vx >= 0
-        ? 1
-        : -1;
-
-    target.save();
-
-    target.translate(
-      b.x,
-      b.y
-    );
-
-    target.rotate(
-      b.angle
-    );
-
-    target.scale(
-      dir,
-      1
-    );
-
-    target.globalAlpha =
-      alpha;
-
-    /*
-      Simple, natural upper and lower wings.
-    */
-    for (
-      const side of
-      [-1, 1]
-    ) {
-      target.save();
-
-      target.scale(
-        1,
-        side * wingOpen
-      );
-
-      const grad =
-        target.createLinearGradient(
-          0,
-          0,
-          0,
-          -s
-        );
-
-      grad.addColorStop(
-        0,
-        b.wingColor
-      );
-
-      grad.addColorStop(
-        1,
-        b.tipColor
-      );
-
-      target.fillStyle =
-        grad;
-
-      target.beginPath();
-
-      target.moveTo(
-        0,
-        0
-      );
-
-      target.quadraticCurveTo(
-        s * 0.55,
-        -s * 0.95,
-        s * 0.15,
-        -s * 1.05
-      );
-
-      target.quadraticCurveTo(
-        -s * 0.45,
-        -s * 0.65,
-        -s * 0.15,
-        0
-      );
-
-      target.closePath();
-      target.fill();
-
-      target.restore();
+    /* ---- body ---- */
+    const bh = sp.bodyH / .082;
+    const BS = .74, Pt = (x, y) => T(x * BS, y * bh, 0);
+    const path = pts => { g.beginPath(); pts.forEach((q, i) => { if (q.length === 2) { const r = Pt(q[0], q[1]); i ? g.lineTo(r[0], r[1]) : g.moveTo(r[0], r[1]); } else { const c1 = Pt(q[0], q[1]), r = Pt(q[2], q[3]); g.quadraticCurveTo(c1[0], c1[1], r[0], r[1]); } }); };
+    g.lineWidth = .5;
+    path([[.3, .04], [.2, .082, .08, .056], [-.05, .072, -.17, .012], [-.17, -.014], [-.04, -.08, .1, -.076], [.22, -.072, .31, -.022]]);
+    g.closePath(); g.fillStyle = pal.body; g.fill();
+    if (sp.id === "gull") {                       /* slate mantle */
+      path([[.27, .046], [.14, .088, -.1, .036], [-.16, .014], [-.14, -.004], [.06, .03, .27, .018]]);
+      g.closePath(); g.fillStyle = pal.back; g.fill();
+    } else {                                      /* eagle: slightly lighter chest feathering */
+      path([[.26, -.02], [.12, -.07, -.02, -.05], [.08, -.01, .26, -.0]]);
+      g.closePath(); g.fillStyle = pal.covert; g.globalAlpha *= .5; g.fill(); g.globalAlpha /= .5;
     }
+    /* head */
+    const hc = Pt(.335, .02), hr = sp.headR * S * .92;
+    g.beginPath(); g.arc(hc[0], hc[1], hr, 0, TAU); g.fillStyle = pal.head; g.fill();
+    const hn = path([[.31, .03], [.27, .055, .24, .04]]);  /* neck blend */
+    /* beak */
+    const B = (x, y) => Pt(x, y);
+    if (sp.beak === "gull") {
+      const a = B(.362, .03), bb = B(.432, .01), cc = B(.362, .0);
+      g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(bb[0], bb[1]); g.lineTo(cc[0], cc[1]); g.closePath(); g.fillStyle = pal.beak; g.fill();
+    } else {
+      const a = B(.366, .036), q1 = B(.43, .042), e = B(.443, -.006), q2 = B(.41, .004), z = B(.366, -.004);
+      g.beginPath(); g.moveTo(a[0], a[1]); g.quadraticCurveTo(q1[0], q1[1], e[0], e[1]); g.quadraticCurveTo(q2[0], q2[1], z[0], z[1]);
+      g.closePath(); g.fillStyle = pal.beak; g.fill();
+    }
+    const eye = Pt(.35, .032);
+    g.beginPath(); g.arc(eye[0], eye[1], Math.max(.7, S * (sp.id === "eagle" ? .0075 : .006)), 0, TAU); g.fillStyle = pal.eye; g.fill();
 
-    /*
-      Delicate body.
-    */
-    target.fillStyle =
-      "rgba(65, 45, 68, 0.72)";
-
-    target.beginPath();
-
-    target.ellipse(
-      0,
-      0,
-      s * 0.34,
-      s * 0.08,
-      0,
-      0,
-      TAU
-    );
-
-    target.fill();
-
-    target.restore();
+    /* near wing last, in front of the body */
+    drawWing(1);
   },
 
-  draw(target, time) {
-    const palette =
-      this.palette;
+  draw(g, time) {
+    const P = this.palette, W = worldWidth, H = worldHeight;
+    g.drawImage(this.background, 0, 0);
 
-    target.drawImage(
-      this.background,
-      0,
-      0
-    );
+    g.globalCompositeOperation = "lighter";
+    g.globalAlpha = .12 + .05 * Math.sin(time * .3);
+    const sr = Math.max(W, H) * .22;
+    g.drawImage(this.sunGlow, P.sun[0] * W - sr, P.sun[1] * H - sr, sr * 2, sr * 2);
+    g.globalCompositeOperation = "source-over";
 
-    target
-      .globalCompositeOperation =
-      "lighter";
+    const cloudLayer = li => {
+      const layer = this.layers[li];
+      for (const c of this.clouds) {
+        if (c.layer !== li) continue;
+        g.globalAlpha = clamp(layer.alpha + c.boost / (120 * unitScale) * .15, 0, 1);
+        g.drawImage(c.sprite, c.x, c.y, c.w, c.h);
+      }
+    };
+    cloudLayer(0);
+    g.globalAlpha = 1;
+    g.drawImage(this.hills, 0, 0);
+    cloudLayer(1);
 
-    target.globalAlpha =
-      0.12 +
-      0.05 *
-      Math.sin(
-        time *
-        0.3
-      );
-
-    const sunRadius =
-      Math.max(
-        worldWidth,
-        worldHeight
-      ) *
-      0.22;
-
-    target.drawImage(
-      this.sunGlow,
-
-      palette.sun[0] *
-      worldWidth -
-      sunRadius,
-
-      palette.sun[1] *
-      worldHeight -
-      sunRadius,
-
-      sunRadius * 2,
-      sunRadius * 2
-    );
-
-    target
-      .globalCompositeOperation =
-      "source-over";
-
-    const drawCloudLayer =
-      layerIndex => {
-        const layer =
-          this.layers[
-            layerIndex
-          ];
-
-        for (
-          const cloud of
-          this.clouds.filter(
-            item =>
-              item.layer ===
-              layerIndex
-          )
-        ) {
-          target.globalAlpha =
-            clamp(
-              layer.alpha +
-              cloud.boost /
-              (
-                120 *
-                unitScale
-              ) *
-              0.15,
-              0,
-              1
-            );
-
-          target.drawImage(
-            cloud.sprite,
-            cloud.x,
-            cloud.y,
-            cloud.width,
-            cloud.height
-          );
-        }
-      };
-
-    drawCloudLayer(0);
-
-    target.globalAlpha =
-      1;
-
-    target.drawImage(
-      this.hills,
-      0,
-      0
-    );
-
-    drawCloudLayer(1);
-
-    /*
-      Soft sparkles where the butterflies fly.
-    */
-    target
-      .globalCompositeOperation =
-      "lighter";
-
-    for (
-      const s of
-      this.sparkles
-    ) {
-      const progress =
-        s.life / s.maxLife;
-
-      const envelope =
-        Math.sin(
-          Math.PI * progress
-        );
-
-      const twinkle =
-        0.65 +
-        0.35 *
-        Math.sin(
-          time * 9 +
-          s.twinklePhase
-        );
-
-      const radius =
-        s.size *
-        (0.6 + 0.4 * envelope);
-
-      target.globalAlpha =
-        clamp(
-          envelope * twinkle * 0.55,
-          0,
-          1
-        );
-
-      target.drawImage(
-        this.sparkleSprite,
-        s.x - radius,
-        s.y - radius,
-        radius * 2,
-        radius * 2
-      );
+    const sorted = this.birds.slice().sort((a, b) => a.depth - b.depth);
+    for (const b of sorted) {
+      g.globalAlpha = clamp(.55 + .45 * b.depth, 0, 1);
+      this.drawBird(g, b, time);
     }
+    g.globalAlpha = 1;
 
-    target
-      .globalCompositeOperation =
-      "source-over";
+    cloudLayer(2);
 
-    target.globalAlpha =
-      1;
-
-    for (
-      const b of
-      this.butterflies
-    ) {
-      this.drawButterfly(
-        target,
-        b,
-        time
-      );
-    }
-
-    drawCloudLayer(2);
-
-    target.globalAlpha =
-      1;
+    /* sun shines through / backlights the front clouds */
+    g.globalCompositeOperation = "lighter";
+    g.globalAlpha = settings.variant.sky === 2 ? .22 : .3;
+    const sr2 = Math.max(W, H) * .16;
+    g.drawImage(this.sunGlow, P.sun[0] * W - sr2, P.sun[1] * H - sr2, sr2 * 2, sr2 * 2);
+    g.globalCompositeOperation = "source-over";
+    g.globalAlpha = 1;
   }
 };
 
 /* =========================================================
    SCENE CONTROLS
    ========================================================= */
+const sceneKeys = ["galaxy", "sky"];
 
-const sceneKeys = [
-  "galaxy",
-  "sky"
-];
-
-function setScene(
-  name,
-  notify = true
-) {
-  if (!scenes[name]) {
-    return;
-  }
-
-  settings.scene =
-    name;
-
-  saveSettings();
-
-  scenes[name].build();
-  syncPanel();
-
-  if (notify) {
-    showToast(
-      scenes[name].label +
-      " · " +
-      scenes[name].variants[
-        settings.variant[name]
-      ]
-    );
-  }
+function setScene(name, notify = true) {
+  if (!scenes[name]) return;
+  settings.scene = name; saveSettings();
+  scenes[name].build(); syncPanel();
+  if (notify) showToast(scenes[name].label + " · " + scenes[name].variants[settings.variant[name]]);
 }
-
-function stepScene(direction) {
-  const current =
-    sceneKeys.indexOf(
-      settings.scene
-    );
-
-  setScene(
-    sceneKeys[
-      (
-        current +
-        direction +
-        sceneKeys.length
-      ) %
-      sceneKeys.length
-    ]
-  );
+function stepScene(d) {
+  const cur = sceneKeys.indexOf(settings.scene);
+  setScene(sceneKeys[(cur + d + sceneKeys.length) % sceneKeys.length]);
 }
-
-function stepVariant(direction) {
-  const scene =
-    scenes[
-      settings.scene
-    ];
-
-  settings.variant[
-    settings.scene
-  ] =
-    (
-      settings.variant[
-        settings.scene
-      ] +
-      direction +
-      scene.variants.length
-    ) %
-    scene.variants.length;
-
-  saveSettings();
-
-  scene.build();
-  syncPanel();
-
-  showToast(
-    scene.label +
-    " · " +
-    scene.variants[
-      settings.variant[
-        settings.scene
-      ]
-    ]
-  );
+function stepVariant(d) {
+  const sc = scenes[settings.scene];
+  settings.variant[settings.scene] = (settings.variant[settings.scene] + d + sc.variants.length) % sc.variants.length;
+  saveSettings(); sc.build(); syncPanel();
+  showToast(sc.label + " · " + sc.variants[settings.variant[settings.scene]]);
 }
+const BIRD_TYPES = ["mixed", "gull", "eagle"], BIRD_LABEL = { mixed: "Gulls + eagles", gull: "Seagulls", eagle: "Eagles" };
+function cycleBirds() {
+  settings.birdType = BIRD_TYPES[(BIRD_TYPES.indexOf(settings.birdType) + 1) % 3];
+  saveSettings(); syncPanel();
+  if (settings.scene === "sky") scenes.sky.birds = [];
+  showToast("Birds: " + BIRD_LABEL[settings.birdType]);
+}
+function toggleLines() { settings.lines = !settings.lines; saveSettings(); syncPanel(); showToast("Constellation lines " + (settings.lines ? "on" : "off")); }
+function toggleLabels() { settings.labels = !settings.labels; saveSettings(); syncPanel(); showToast("Constellation names " + (settings.labels ? "on" : "off")); }
 
 /* =========================================================
    FOCUS ZONE
    ========================================================= */
+let zoneStart = null, temporaryZone = null;
+const makeZone = (s, ex, ey) => ({ x0: Math.min(s.x, ex), y0: Math.min(s.y, ey), x1: Math.max(s.x, ex), y1: Math.max(s.y, ey) });
 
-let zoneStart = null;
-let temporaryZone = null;
-
-function makeZone(
-  start,
-  endX,
-  endY
-) {
-  return {
-    x0:
-      Math.min(
-        start.x,
-        endX
-      ),
-
-    y0:
-      Math.min(
-        start.y,
-        endY
-      ),
-
-    x1:
-      Math.max(
-        start.x,
-        endX
-      ),
-
-    y1:
-      Math.max(
-        start.y,
-        endY
-      )
-  };
-}
-
-window.addEventListener(
-  "pointerdown",
-  event => {
-    if (
-      !drawingZone ||
-      panel.contains(
-        event.target
-      )
-    ) {
-      return;
-    }
-
-    zoneStart = {
-      x:
-        clamp(
-          event.clientX /
-          screenWidth,
-          0,
-          1
-        ),
-
-      y:
-        clamp(
-          event.clientY /
-          screenHeight,
-          0,
-          1
-        )
-    };
-
-    temporaryZone =
-      makeZone(
-        zoneStart,
-        zoneStart.x,
-        zoneStart.y
-      );
+window.addEventListener("pointerdown", e => {
+  if (!drawingZone || panel.contains(e.target)) return;
+  zoneStart = { x: clamp(e.clientX / screenWidth, 0, 1), y: clamp(e.clientY / screenHeight, 0, 1) };
+  temporaryZone = makeZone(zoneStart, zoneStart.x, zoneStart.y);
+});
+window.addEventListener("pointermove", e => {
+  if (!drawingZone || !zoneStart) return;
+  temporaryZone = makeZone(zoneStart, clamp(e.clientX / screenWidth, 0, 1), clamp(e.clientY / screenHeight, 0, 1));
+});
+window.addEventListener("pointerup", () => {
+  if (!drawingZone || !zoneStart || !temporaryZone) return;
+  if (temporaryZone.x1 - temporaryZone.x0 > .04 && temporaryZone.y1 - temporaryZone.y0 > .04) {
+    settings.zone = temporaryZone; saveSettings(); showToast("Focus zone saved");
   }
-);
-
-window.addEventListener(
-  "pointermove",
-  event => {
-    if (
-      !drawingZone ||
-      !zoneStart
-    ) {
-      return;
-    }
-
-    temporaryZone =
-      makeZone(
-        zoneStart,
-
-        clamp(
-          event.clientX /
-          screenWidth,
-          0,
-          1
-        ),
-
-        clamp(
-          event.clientY /
-          screenHeight,
-          0,
-          1
-        )
-      );
-  }
-);
-
-window.addEventListener(
-  "pointerup",
-  () => {
-    if (
-      !drawingZone ||
-      !zoneStart ||
-      !temporaryZone
-    ) {
-      return;
-    }
-
-    if (
-      temporaryZone.x1 -
-      temporaryZone.x0 >
-      0.04 &&
-      temporaryZone.y1 -
-      temporaryZone.y0 >
-      0.04
-    ) {
-      settings.zone =
-        temporaryZone;
-
-      saveSettings();
-
-      showToast(
-        "Focus zone saved"
-      );
-    }
-
-    zoneStart = null;
-    temporaryZone = null;
-    drawingZone = false;
-
-    syncPanel();
-    updateCursor();
-  }
-);
+  zoneStart = null; temporaryZone = null; drawingZone = false;
+  syncPanel(); updateCursor();
+});
 
 /* =========================================================
-   PANEL SYNC AND CONTROLS
+   PANEL SYNC + CONTROLS
    ========================================================= */
-
-function percent(value) {
-  return (
-    Math.round(
-      value *
-      100
-    ) +
-    "%"
-  );
-}
-
-function signedPercent(value) {
-  const number =
-    Math.round(
-      value *
-      100
-    );
-
-  return (
-    (
-      number > 0
-        ? "+"
-        : ""
-    ) +
-    number +
-    "%"
-  );
-}
+const percent = v => Math.round(v * 100) + "%";
+const signedPercent = v => { const n = Math.round(v * 100); return (n > 0 ? "+" : "") + n + "%"; };
 
 function syncPanel() {
-  element(
-    "sceneSelect"
-  ).value =
-    settings.scene;
-
-  const scene =
-    scenes[
-      settings.scene
-    ];
-
-  element(
-    "variantButton"
-  ).textContent =
-    "Look: " +
-    scene.variants[
-      settings.variant[
-        settings.scene
-      ]
-    ];
-
-  element(
-    "calmButton"
-  ).classList.toggle(
-    "on",
-    !settings.interactive
-  );
-
-  element(
-    "interactiveButton"
-  ).classList.toggle(
-    "on",
-    settings.interactive
-  );
-
-  element(
-    "mirrorButton"
-  ).classList.toggle(
-    "on",
-    settings.mirror
-  );
-
-  element(
-    "flipButton"
-  ).classList.toggle(
-    "on",
-    settings.flip
-  );
-
-  element(
-    "debugButton"
-  ).classList.toggle(
-    "on",
-    settings.debug
-  );
-
-  element(
-    "demoButton"
-  ).classList.toggle(
-    "on",
-    settings.demo
-  );
-
-  element(
-    "zoneButton"
-  ).classList.toggle(
-    "on",
-    drawingZone
-  );
-
-  element(
-    "cameraButton"
-  ).classList.toggle(
-    "on",
-    motion.hasCamera
-  );
-
-  element(
-    "cameraStatus"
-  ).textContent =
-    motion.hasCamera
-      ? "Camera: on"
-      : "Camera: off";
-
-  element(
-    "cameraStatus"
-  ).className =
-    motion.hasCamera
-      ? "status-pill ok"
-      : "status-pill";
+  $("sceneSelect").value = settings.scene;
+  const sc = scenes[settings.scene];
+  $("variantButton").textContent = "Look: " + sc.variants[settings.variant[settings.scene]];
+  $("calmButton").classList.toggle("on", !settings.interactive);
+  $("interactiveButton").classList.toggle("on", settings.interactive);
+  $("mirrorButton").classList.toggle("on", settings.mirror);
+  $("flipButton").classList.toggle("on", settings.flip);
+  $("debugButton").classList.toggle("on", settings.debug);
+  $("demoButton").classList.toggle("on", settings.demo);
+  $("zoneButton").classList.toggle("on", drawingZone);
+  $("cameraButton").classList.toggle("on", motion.hasCamera);
+  $("birdButton").textContent = "Birds: " + { mixed: "Mix", gull: "Gulls", eagle: "Eagles" }[settings.birdType];
+  $("linesButton").textContent = "Lines: " + (settings.lines ? "on" : "off");
+  $("labelsButton").textContent = "Names: " + (settings.labels ? "on" : "off");
+  $("linesButton").classList.toggle("on", settings.lines);
+  $("labelsButton").classList.toggle("on", settings.labels);
+  $("cameraStatus").textContent = motion.hasCamera ? "Camera: on" : "Camera: off";
+  $("cameraStatus").className = motion.hasCamera ? "status-pill ok" : "status-pill";
 
   const controls = [
-    ["speedRange",settings.speed*100,"speedValue",percent(settings.speed)],
-    ["responseRange",settings.response*100,"responseValue",percent(settings.response)],
-    ["detailRange",settings.detail*100,"detailValue",percent(settings.detail)],
-    ["brightnessRange",settings.brightness*100,"brightnessValue",percent(settings.brightness)],
-    ["sceneZoomRange",settings.sceneZoom*100,"sceneZoomValue",percent(settings.sceneZoom)],
-    ["sceneXRange",settings.sceneX*100,"sceneXValue",signedPercent(settings.sceneX)],
-    ["sceneYRange",settings.sceneY*100,"sceneYValue",signedPercent(settings.sceneY)],
-    ["sensitivityRange",settings.sensitivity*100,"sensitivityValue",settings.sensitivity.toFixed(2)],
-    ["capRange",settings.maximumArea*100,"capValue",percent(settings.maximumArea)],
-    ["cameraZoomRange",settings.cameraZoom*100,"cameraZoomValue",settings.cameraZoom.toFixed(2)+"×"],
-    ["cameraXRange",settings.cameraX*100,"cameraXValue",signedPercent(settings.cameraX)],
-    ["cameraYRange",settings.cameraY*100,"cameraYValue",signedPercent(settings.cameraY)],
-    ["cameraHeightRange",settings.cameraHeight*100,"cameraHeightValue",settings.cameraHeight.toFixed(2)+"×"],
-    ["gapRange",settings.projectorGap,"gapValue",settings.projectorGap.toFixed(2)]
+    ["speedRange", settings.speed * 100, "speedValue", percent(settings.speed)],
+    ["responseRange", settings.response * 100, "responseValue", percent(settings.response)],
+    ["detailRange", settings.detail * 100, "detailValue", percent(settings.detail)],
+    ["brightnessRange", settings.brightness * 100, "brightnessValue", percent(settings.brightness)],
+    ["sceneZoomRange", settings.sceneZoom * 100, "sceneZoomValue", percent(settings.sceneZoom)],
+    ["sceneXRange", settings.sceneX * 100, "sceneXValue", signedPercent(settings.sceneX)],
+    ["sceneYRange", settings.sceneY * 100, "sceneYValue", signedPercent(settings.sceneY)],
+    ["sensitivityRange", settings.sensitivity * 100, "sensitivityValue", settings.sensitivity.toFixed(2)],
+    ["capRange", settings.maximumArea * 100, "capValue", percent(settings.maximumArea)],
+    ["cameraZoomRange", settings.cameraZoom * 100, "cameraZoomValue", settings.cameraZoom.toFixed(2) + "×"],
+    ["cameraXRange", settings.cameraX * 100, "cameraXValue", signedPercent(settings.cameraX)],
+    ["cameraYRange", settings.cameraY * 100, "cameraYValue", signedPercent(settings.cameraY)],
+    ["cameraHeightRange", settings.cameraHeight * 100, "cameraHeightValue", settings.cameraHeight.toFixed(2) + "×"],
+    ["gapRange", settings.projectorGap, "gapValue", settings.projectorGap.toFixed(2)]
   ];
+  for (const c of controls) { $(c[0]).value = c[1]; $(c[2]).textContent = c[3]; }
 
-  for (
-    const control of
-    controls
-  ) {
-    element(
-      control[0]
-    ).value =
-      control[1];
-
-    element(
-      control[2]
-    ).textContent =
-      control[3];
-  }
-
-  document
-    .querySelectorAll(
-      "#projectorTotal button"
-    )
-    .forEach(
-      button => {
-        button.classList.toggle(
-          "on",
-          Number(
-            button.dataset.total
-          ) ===
-          settings.projectorTotal
-        );
-      }
-    );
-
-  document
-    .querySelectorAll(
-      "#projectorUnit button"
-    )
-    .forEach(
-      button => {
-        const unit =
-          Number(
-            button.dataset.unit
-          );
-
-        button.disabled =
-          unit >
-          settings.projectorTotal;
-
-        button.classList.toggle(
-          "on",
-          unit ===
-          settings.projectorUnit
-        );
-      }
-    );
-
-  element(
-    "projectorValue"
-  ).textContent =
-    settings.projectorTotal ===
-    1
-      ? "Full image"
-      : settings.projectorUnit +
-        " of " +
-        settings.projectorTotal;
-
+  document.querySelectorAll("#projectorTotal button").forEach(b => b.classList.toggle("on", Number(b.dataset.total) === settings.projectorTotal));
+  document.querySelectorAll("#projectorUnit button").forEach(b => {
+    const u = Number(b.dataset.unit);
+    b.disabled = u > settings.projectorTotal;
+    b.classList.toggle("on", u === settings.projectorUnit);
+  });
+  $("projectorValue").textContent = settings.projectorTotal === 1 ? "Full image" : settings.projectorUnit + " of " + settings.projectorTotal;
   updateCursor();
 }
 
-function bindRange(
-  id,
-  callback
-) {
-  const input =
-    element(id);
-
-  input.addEventListener(
-    "input",
-    () => {
-      callback(
-        Number(
-          input.value
-        )
-      );
-
-      saveSettings();
-      syncPanel();
-    }
-  );
-
-  input.addEventListener(
-    "change",
-    () => input.blur()
-  );
+function bindRange(id, cb) {
+  const input = $(id);
+  input.addEventListener("input", () => { cb(Number(input.value)); saveSettings(); syncPanel(); });
+  input.addEventListener("change", () => input.blur());
 }
 
-element(
-  "previousScene"
-).onclick =
-  () => stepScene(-1);
-
-element(
-  "nextScene"
-).onclick =
-  () => stepScene(1);
-
-element(
-  "sceneSelect"
-).onchange =
-  event =>
-    setScene(
-      event.target.value
-    );
-
-element(
-  "previousVariant"
-).onclick =
-  () => stepVariant(-1);
-
-element(
-  "nextVariant"
-).onclick =
-  () => stepVariant(1);
-
-element(
-  "variantButton"
-).onclick =
-  () => stepVariant(1);
-
-element(
-  "calmButton"
-).onclick =
-  () => {
-    settings.interactive =
-      false;
-
-    saveSettings();
-    syncPanel();
-
-    showToast(
-      "Calm mode"
-    );
-  };
-
-element(
-  "interactiveButton"
-).onclick =
-  () => {
-    settings.interactive =
-      true;
-
-    saveSettings();
-    syncPanel();
-
-    showToast(
-      "Interactive mode"
-    );
-  };
-
-bindRange(
-  "speedRange",
-  value =>
-    settings.speed =
-      value / 100
-);
-
-bindRange(
-  "responseRange",
-  value =>
-    settings.response =
-      value / 100
-);
-
-bindRange(
-  "detailRange",
-  value => {
-    settings.detail =
-      value / 100;
-
-    scenes[
-      settings.scene
-    ].build();
-  }
-);
-
-bindRange(
-  "brightnessRange",
-  value =>
-    settings.brightness =
-      value / 100
-);
-
-bindRange(
-  "sceneZoomRange",
-  value =>
-    settings.sceneZoom =
-      value / 100
-);
-
-bindRange(
-  "sceneXRange",
-  value =>
-    settings.sceneX =
-      value / 100
-);
-
-bindRange(
-  "sceneYRange",
-  value =>
-    settings.sceneY =
-      value / 100
-);
-
-bindRange(
-  "sensitivityRange",
-  value =>
-    settings.sensitivity =
-      value / 100
-);
-
-bindRange(
-  "capRange",
-  value =>
-    settings.maximumArea =
-      value / 100
-);
-
-bindRange(
-  "cameraZoomRange",
-  value => {
-    settings.cameraZoom =
-      value / 100;
-
-    motion.primed =
-      false;
-  }
-);
-
-bindRange(
-  "cameraXRange",
-  value => {
-    settings.cameraX =
-      value / 100;
-
-    motion.primed =
-      false;
-  }
-);
-
-bindRange(
-  "cameraYRange",
-  value => {
-    settings.cameraY =
-      value / 100;
-
-    motion.primed =
-      false;
-  }
-);
-
-bindRange(
-  "cameraHeightRange",
-  value => {
-    settings.cameraHeight =
-      value / 100;
-
-    motion.primed =
-      false;
-  }
-);
-
-bindRange(
-  "gapRange",
-  value => {
-    settings.projectorGap =
-      value;
-
-    updateProjectorWorld();
-
-    scenes[
-      settings.scene
-    ].build();
-  }
-);
-
-element(
-  "pictureLeft"
-).onclick =
-  () => {
-    settings.pictureRotation =
-      (
-        settings.pictureRotation +
-        3
-      ) %
-      4;
-
-    saveSettings();
-    syncPanel();
-  };
-
-element(
-  "pictureRight"
-).onclick =
-  () => {
-    settings.pictureRotation =
-      (
-        settings.pictureRotation +
-        1
-      ) %
-      4;
-
-    saveSettings();
-    syncPanel();
-  };
-
-element(
-  "cameraButton"
-).onclick =
-  () => {
-    if (
-      motion.hasCamera
-    ) {
-      stopCamera();
-    } else {
-      startCamera(
-        settings.cameraId
-      );
-    }
-  };
-
-element(
-  "nextCameraButton"
-).onclick =
-  nextCamera;
-
-element(
-  "listCameraButton"
-).onclick =
-  listCameras;
-
-element(
-  "mirrorButton"
-).onclick =
-  () => {
-    settings.mirror =
-      !settings.mirror;
-
-    motion.primed =
-      false;
-
-    saveSettings();
-    syncPanel();
-  };
-
-element(
-  "flipButton"
-).onclick =
-  () => {
-    settings.flip =
-      !settings.flip;
-
-    motion.primed =
-      false;
-
-    saveSettings();
-    syncPanel();
-  };
-
-element(
-  "cameraRotateLeft"
-).onclick =
-  () => {
-    settings.cameraRotation =
-      (
-        settings.cameraRotation +
-        3
-      ) %
-      4;
-
-    motion.primed =
-      false;
-
-    saveSettings();
-    syncPanel();
-  };
-
-element(
-  "cameraRotateRight"
-).onclick =
-  () => {
-    settings.cameraRotation =
-      (
-        settings.cameraRotation +
-        1
-      ) %
-      4;
-
-    motion.primed =
-      false;
-
-    saveSettings();
-    syncPanel();
-  };
-
-element(
-  "debugButton"
-).onclick =
-  () => {
-    settings.debug =
-      !settings.debug;
-
-    saveSettings();
-    syncPanel();
-  };
-
-element(
-  "demoButton"
-).onclick =
-  () => {
-    settings.demo =
-      !settings.demo;
-
-    saveSettings();
-    syncPanel();
-  };
-
-element(
-  "zoneButton"
-).onclick =
-  () => {
-    drawingZone =
-      !drawingZone;
-
-    zoneStart = null;
-    temporaryZone = null;
-
-    syncPanel();
-    updateCursor();
-
-    showToast(
-      drawingZone
-        ? "Drag over the patient area"
-        : "Zone drawing cancelled"
-    );
-  };
-
-element(
-  "clearZoneButton"
-).onclick =
-  () => {
-    settings.zone = null;
-
-    saveSettings();
-    syncPanel();
-  };
-
-document
-  .querySelectorAll(
-    "#projectorTotal button"
-  )
-  .forEach(
-    button => {
-      button.onclick =
-        () => {
-          settings.projectorTotal =
-            clamp(
-              Number(
-                button.dataset.total
-              ),
-              1,
-              4
-            );
-
-          settings.projectorUnit =
-            clamp(
-              settings.projectorUnit,
-              1,
-              settings.projectorTotal
-            );
-
-          saveSettings();
-          updateProjectorWorld();
-
-          scenes[
-            settings.scene
-          ].build();
-
-          syncPanel();
-        };
-    }
-  );
-
-document
-  .querySelectorAll(
-    "#projectorUnit button"
-  )
-  .forEach(
-    button => {
-      button.onclick =
-        () => {
-          const requested =
-            Number(
-              button.dataset.unit
-            );
-
-          if (
-            requested <=
-            settings.projectorTotal
-          ) {
-            settings.projectorUnit =
-              requested;
-
-            saveSettings();
-            updateProjectorWorld();
-
-            scenes[
-              settings.scene
-            ].build();
-
-            syncPanel();
-          }
-        };
-    }
-  );
-
-document
-  .querySelectorAll(
-    "[data-preset]"
-  )
-  .forEach(
-    button => {
-      button.onclick =
-        () => {
-          const preset =
-            button.dataset.preset;
-
-          if (
-            preset ===
-            "sleep"
-          ) {
-            Object.assign(
-              settings,
-              {
-                interactive:false,
-                brightness:.48,
-                speed:.34,
-                response:.3,
-                detail:.68
-              }
-            );
-          }
-
-          if (
-            preset ===
-            "calm"
-          ) {
-            Object.assign(
-              settings,
-              {
-                interactive:false,
-                brightness:.82,
-                speed:.58,
-                response:.55,
-                detail:.92
-              }
-            );
-          }
-
-          if (
-            preset ===
-            "engage"
-          ) {
-            Object.assign(
-              settings,
-              {
-                interactive:true,
-                brightness:1,
-                speed:.82,
-                response:1,
-                detail:1.08
-              }
-            );
-          }
-
-          saveSettings();
-
-          scenes[
-            settings.scene
-          ].build();
-
-          syncPanel();
-
-          showToast(
-            preset +
-            " preset"
-          );
-        };
-    }
-  );
+$("previousScene").onclick = () => stepScene(-1);
+$("nextScene").onclick = () => stepScene(1);
+$("sceneSelect").onchange = e => setScene(e.target.value);
+$("previousVariant").onclick = () => stepVariant(-1);
+$("nextVariant").onclick = () => stepVariant(1);
+$("variantButton").onclick = () => stepVariant(1);
+$("birdButton").onclick = cycleBirds;
+$("linesButton").onclick = toggleLines;
+$("labelsButton").onclick = toggleLabels;
+$("calmButton").onclick = () => { settings.interactive = false; saveSettings(); syncPanel(); showToast("Calm mode"); };
+$("interactiveButton").onclick = () => { settings.interactive = true; saveSettings(); syncPanel(); showToast("Interactive mode"); };
+
+bindRange("speedRange", v => settings.speed = v / 100);
+bindRange("responseRange", v => settings.response = v / 100);
+bindRange("detailRange", v => { settings.detail = v / 100; scenes[settings.scene].build(); });
+bindRange("brightnessRange", v => settings.brightness = v / 100);
+bindRange("sceneZoomRange", v => settings.sceneZoom = v / 100);
+bindRange("sceneXRange", v => settings.sceneX = v / 100);
+bindRange("sceneYRange", v => settings.sceneY = v / 100);
+bindRange("sensitivityRange", v => settings.sensitivity = v / 100);
+bindRange("capRange", v => settings.maximumArea = v / 100);
+bindRange("cameraZoomRange", v => { settings.cameraZoom = v / 100; motion.primed = false; });
+bindRange("cameraXRange", v => { settings.cameraX = v / 100; motion.primed = false; });
+bindRange("cameraYRange", v => { settings.cameraY = v / 100; motion.primed = false; });
+bindRange("cameraHeightRange", v => { settings.cameraHeight = v / 100; motion.primed = false; });
+bindRange("gapRange", v => { settings.projectorGap = v; updateProjectorWorld(); scenes[settings.scene].build(); });
+
+$("pictureLeft").onclick = () => { settings.pictureRotation = (settings.pictureRotation + 3) % 4; saveSettings(); syncPanel(); };
+$("pictureRight").onclick = () => { settings.pictureRotation = (settings.pictureRotation + 1) % 4; saveSettings(); syncPanel(); };
+$("cameraButton").onclick = () => { if (motion.hasCamera) stopCamera(); else startCamera(settings.cameraId); };
+$("nextCameraButton").onclick = nextCamera;
+$("listCameraButton").onclick = listCameras;
+$("mirrorButton").onclick = () => { settings.mirror = !settings.mirror; motion.primed = false; saveSettings(); syncPanel(); };
+$("flipButton").onclick = () => { settings.flip = !settings.flip; motion.primed = false; saveSettings(); syncPanel(); };
+$("cameraRotateLeft").onclick = () => { settings.cameraRotation = (settings.cameraRotation + 3) % 4; motion.primed = false; saveSettings(); syncPanel(); };
+$("cameraRotateRight").onclick = () => { settings.cameraRotation = (settings.cameraRotation + 1) % 4; motion.primed = false; saveSettings(); syncPanel(); };
+$("debugButton").onclick = () => { settings.debug = !settings.debug; saveSettings(); syncPanel(); };
+$("demoButton").onclick = () => { settings.demo = !settings.demo; saveSettings(); syncPanel(); };
+$("zoneButton").onclick = () => {
+  drawingZone = !drawingZone; zoneStart = null; temporaryZone = null;
+  syncPanel(); updateCursor();
+  showToast(drawingZone ? "Drag over the patient area" : "Zone drawing cancelled");
+};
+$("clearZoneButton").onclick = () => { settings.zone = null; saveSettings(); syncPanel(); };
+
+document.querySelectorAll("#projectorTotal button").forEach(b => b.onclick = () => {
+  settings.projectorTotal = clamp(Number(b.dataset.total), 1, 4);
+  settings.projectorUnit = clamp(settings.projectorUnit, 1, settings.projectorTotal);
+  saveSettings(); updateProjectorWorld(); scenes[settings.scene].build(); syncPanel();
+});
+document.querySelectorAll("#projectorUnit button").forEach(b => b.onclick = () => {
+  const r = Number(b.dataset.unit);
+  if (r <= settings.projectorTotal) { settings.projectorUnit = r; saveSettings(); updateProjectorWorld(); scenes[settings.scene].build(); syncPanel(); }
+});
+
+document.querySelectorAll("[data-preset]").forEach(b => b.onclick = () => {
+  const pr = b.dataset.preset;
+  if (pr === "sleep") Object.assign(settings, { interactive: false, brightness: .48, speed: .34, response: .3, detail: .68 });
+  if (pr === "calm") Object.assign(settings, { interactive: false, brightness: .82, speed: .58, response: .55, detail: .92 });
+  if (pr === "engage") Object.assign(settings, { interactive: true, brightness: 1, speed: .82, response: 1, detail: 1.08 });
+  saveSettings(); scenes[settings.scene].build(); syncPanel(); showToast(pr + " preset");
+});
 
 function toggleFullscreen() {
-  if (
-    document.fullscreenElement
-  ) {
-    document.exitFullscreen();
-  } else {
-    document
-      .documentElement
-      .requestFullscreen()
-      .catch(
-        () => {}
-      );
-  }
+  if (document.fullscreenElement) document.exitFullscreen();
+  else document.documentElement.requestFullscreen().catch(() => {});
 }
-
 function resetCamera() {
-  Object.assign(
-    settings,
-    {
-      mirror:false,
-      flip:false,
-      sensitivity:1,
-      maximumArea:.5,
-      cameraZoom:1,
-      cameraHeight:1,
-      cameraX:0,
-      cameraY:0,
-      cameraRotation:0
-    }
-  );
-
-  motion.primed =
-    false;
-
-  saveSettings();
-  syncPanel();
-
-  showToast(
-    "Camera alignment reset"
-  );
+  Object.assign(settings, { mirror: false, flip: false, sensitivity: 1, maximumArea: .5, cameraZoom: 1, cameraHeight: 1, cameraX: 0, cameraY: 0, cameraRotation: 0 });
+  motion.primed = false; saveSettings(); syncPanel(); showToast("Camera alignment reset");
 }
-
-element(
-  "fullscreenButton"
-).onclick =
-  toggleFullscreen;
-
-element(
-  "resetCameraButton"
-).onclick =
-  resetCamera;
-
-element(
-  "resetAllButton"
-).onclick =
-  () => {
-    localStorage.removeItem(
-      STORAGE_KEY
-    );
-
-    location.reload();
-  };
+$("fullscreenButton").onclick = toggleFullscreen;
+$("resetCameraButton").onclick = resetCamera;
+$("resetAllButton").onclick = () => { localStorage.removeItem(STORAGE_KEY); location.reload(); };
 
 /* =========================================================
    KEYBOARD
    ========================================================= */
+window.addEventListener("keydown", e => {
+  const t = e.target;
+  if (t && (t.tagName === "SELECT" || (t.tagName === "INPUT" && t.type === "range")) && e.key !== "Tab" && e.key !== "Escape") return;
+  if (e.key === "Tab") { e.preventDefault(); togglePanel(); return; }
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
 
-window.addEventListener(
-  "keydown",
-  event => {
-    const target =
-      event.target;
+  const key = e.key.toLowerCase();
+  let handled = true;
+  const nudge = (prop, d) => { settings[prop] = clamp(settings[prop] + d, -.5, .5); };
 
-    if (
-      target &&
-      (
-        target.tagName ===
-        "SELECT" ||
-        (
-          target.tagName ===
-          "INPUT" &&
-          target.type ===
-          "range"
-        )
-      ) &&
-      event.key !== "Tab" &&
-      event.key !== "Escape"
-    ) {
-      return;
-    }
+  if (e.shiftKey && e.key === "ArrowLeft") nudge("cameraX", -.02);
+  else if (e.shiftKey && e.key === "ArrowRight") nudge("cameraX", .02);
+  else if (e.shiftKey && e.key === "ArrowUp") nudge("cameraY", -.02);
+  else if (e.shiftKey && e.key === "ArrowDown") nudge("cameraY", .02);
+  else if (e.key === "ArrowLeft") settings.pictureRotation = (settings.pictureRotation + 3) % 4;
+  else if (e.key === "ArrowRight") settings.pictureRotation = (settings.pictureRotation + 1) % 4;
+  else if (e.key === "ArrowUp") settings.cameraRotation = (settings.cameraRotation + 1) % 4;
+  else if (e.key === "ArrowDown") settings.cameraRotation = (settings.cameraRotation + 3) % 4;
+  else if (key === "1") { setScene("galaxy"); return; }
+  else if (key === "2") { setScene("sky"); return; }
+  else if (key === "n") { stepScene(1); return; }
+  else if (key === "t") { stepVariant(e.shiftKey ? -1 : 1); return; }
+  else if (key === "b") { cycleBirds(); return; }
+  else if (key === "l") { toggleLabels(); return; }
+  else if (key === "k") { toggleLines(); return; }
+  else if (key === "m") settings.mirror = !settings.mirror;
+  else if (key === "v") settings.flip = !settings.flip;
+  else if (key === "c") { nextCamera(); return; }
+  else if (key === "i") { listCameras(); return; }
+  else if (key === "d") settings.debug = !settings.debug;
+  else if (key === "a") settings.demo = !settings.demo;
+  else if (key === "-" || key === "_") settings.sensitivity = clamp(settings.sensitivity / 1.15, .4, 3);
+  else if (key === "+" || key === "=") settings.sensitivity = clamp(settings.sensitivity * 1.15, .4, 3);
+  else if (key === ",") settings.cameraZoom = clamp(settings.cameraZoom - .05, .5, 3);
+  else if (key === ".") settings.cameraZoom = clamp(settings.cameraZoom + .05, .5, 3);
+  else if (key === "0") { resetCamera(); return; }
+  else if (key === "f") { toggleFullscreen(); return; }
+  else if (key === "h") { hintElement.classList.toggle("show"); return; }
+  else if (e.key === "Escape") {
+    if (drawingZone) { drawingZone = false; temporaryZone = null; zoneStart = null; syncPanel(); updateCursor(); }
+    else togglePanel(false);
+    return;
+  } else handled = false;
 
-    if (
-      event.key === "Tab"
-    ) {
-      event.preventDefault();
-      togglePanel();
-      return;
-    }
-
-    if (
-      event.ctrlKey ||
-      event.metaKey ||
-      event.altKey
-    ) {
-      return;
-    }
-
-    const key =
-      event.key.toLowerCase();
-
-    let handled =
-      true;
-
-    if (
-      event.shiftKey &&
-      event.key ===
-      "ArrowLeft"
-    ) {
-      settings.cameraX =
-        clamp(
-          settings.cameraX -
-          0.02,
-          -0.5,
-          0.5
-        );
-    } else if (
-      event.shiftKey &&
-      event.key ===
-      "ArrowRight"
-    ) {
-      settings.cameraX =
-        clamp(
-          settings.cameraX +
-          0.02,
-          -0.5,
-          0.5
-        );
-    } else if (
-      event.shiftKey &&
-      event.key ===
-      "ArrowUp"
-    ) {
-      settings.cameraY =
-        clamp(
-          settings.cameraY -
-          0.02,
-          -0.5,
-          0.5
-        );
-    } else if (
-      event.shiftKey &&
-      event.key ===
-      "ArrowDown"
-    ) {
-      settings.cameraY =
-        clamp(
-          settings.cameraY +
-          0.02,
-          -0.5,
-          0.5
-        );
-    } else if (
-      event.key ===
-      "ArrowLeft"
-    ) {
-      settings.pictureRotation =
-        (
-          settings.pictureRotation +
-          3
-        ) %
-        4;
-    } else if (
-      event.key ===
-      "ArrowRight"
-    ) {
-      settings.pictureRotation =
-        (
-          settings.pictureRotation +
-          1
-        ) %
-        4;
-    } else if (
-      event.key ===
-      "ArrowUp"
-    ) {
-      settings.cameraRotation =
-        (
-          settings.cameraRotation +
-          1
-        ) %
-        4;
-    } else if (
-      event.key ===
-      "ArrowDown"
-    ) {
-      settings.cameraRotation =
-        (
-          settings.cameraRotation +
-          3
-        ) %
-        4;
-    } else if (
-      key === "1"
-    ) {
-      setScene(
-        "galaxy"
-      );
-
-      return;
-    } else if (
-      key === "2"
-    ) {
-      setScene(
-        "sky"
-      );
-
-      return;
-    } else if (
-      key === "n"
-    ) {
-      stepScene(1);
-      return;
-    } else if (
-      key === "t"
-    ) {
-      stepVariant(
-        event.shiftKey
-          ? -1
-          : 1
-      );
-
-      return;
-    } else if (
-      key === "m"
-    ) {
-      settings.mirror =
-        !settings.mirror;
-    } else if (
-      key === "v"
-    ) {
-      settings.flip =
-        !settings.flip;
-    } else if (
-      key === "c"
-    ) {
-      nextCamera();
-      return;
-    } else if (
-      key === "i"
-    ) {
-      listCameras();
-      return;
-    } else if (
-      key === "d"
-    ) {
-      settings.debug =
-        !settings.debug;
-    } else if (
-      key === "a"
-    ) {
-      settings.demo =
-        !settings.demo;
-    } else if (
-      key === "-" ||
-      key === "_"
-    ) {
-      settings.sensitivity =
-        clamp(
-          settings.sensitivity /
-          1.15,
-          0.4,
-          3
-        );
-    } else if (
-      key === "+" ||
-      key === "="
-    ) {
-      settings.sensitivity =
-        clamp(
-          settings.sensitivity *
-          1.15,
-          0.4,
-          3
-        );
-    } else if (
-      key === ","
-    ) {
-      settings.cameraZoom =
-        clamp(
-          settings.cameraZoom -
-          0.05,
-          0.5,
-          3
-        );
-    } else if (
-      key === "."
-    ) {
-      settings.cameraZoom =
-        clamp(
-          settings.cameraZoom +
-          0.05,
-          0.5,
-          3
-        );
-    } else if (
-      key === "0"
-    ) {
-      resetCamera();
-      return;
-    } else if (
-      key === "f"
-    ) {
-      toggleFullscreen();
-      return;
-    } else if (
-      key === "h"
-    ) {
-      hintElement
-        .classList
-        .toggle(
-          "show"
-        );
-
-      return;
-    } else if (
-      event.key ===
-      "Escape"
-    ) {
-      if (drawingZone) {
-        drawingZone = false;
-        temporaryZone = null;
-        zoneStart = null;
-
-        syncPanel();
-        updateCursor();
-      } else {
-        togglePanel(false);
-      }
-
-      return;
-    } else {
-      handled =
-        false;
-    }
-
-    if (handled) {
-      event.preventDefault();
-
-      motion.primed =
-        false;
-
-      saveSettings();
-      syncPanel();
-    }
-  }
-);
+  if (handled) { e.preventDefault(); motion.primed = false; saveSettings(); syncPanel(); }
+});
 
 /* =========================================================
    OVERLAYS
    ========================================================= */
-
 function drawOverlays() {
   if (settings.debug) {
-    const cellWidth =
-      screenWidth /
-      GRID_WIDTH;
-
-    const cellHeight =
-      screenHeight /
-      GRID_HEIGHT;
-
+    const cw = screenWidth / GW, ch = screenHeight / GH;
     context.save();
-
-    for (
-      let index = 0;
-      index < GRID_COUNT;
-      index++
-    ) {
-      const value =
-        motion.grid[index];
-
-      if (value < 0.05) {
-        continue;
-      }
-
-      context.fillStyle =
-        "rgba(80,255,220," +
-        Math.min(
-          0.62,
-          value *
-          0.62
-        ) +
-        ")";
-
-      context.fillRect(
-        (
-          index %
-          GRID_WIDTH
-        ) *
-        cellWidth,
-
-        (
-          (
-            index /
-            GRID_WIDTH
-          ) | 0
-        ) *
-        cellHeight,
-
-        cellWidth + 1,
-        cellHeight + 1
-      );
+    for (let i = 0; i < GN; i++) {
+      const v = motion.grid[i];
+      if (v < .05) continue;
+      context.fillStyle = "rgba(80,255,220," + Math.min(.62, v * .62) + ")";
+      context.fillRect((i % GW) * cw, ((i / GW) | 0) * ch, cw + 1, ch + 1);
     }
-
-    if (
-      motion.hasCamera
-    ) {
-      context.globalAlpha =
-        0.72;
-
-      context.drawImage(
-        motionCanvas,
-        14,
-        14,
-        256,
-        144
-      );
-
-      context.globalAlpha =
-        1;
-
-      context.strokeStyle =
-        "#fff";
-
-      context.strokeRect(
-        14,
-        14,
-        256,
-        144
-      );
+    if (motion.hasCamera) {
+      context.globalAlpha = .72; context.drawImage(motionCanvas, 14, 14, 256, 144);
+      context.globalAlpha = 1; context.strokeStyle = "#fff"; context.strokeRect(14, 14, 256, 144);
     }
-
     context.restore();
   }
-
-  const zone =
-    temporaryZone ||
-    settings.zone;
-
-  if (
-    zone &&
-    (
-      drawingZone ||
-      settings.debug
-    )
-  ) {
+  const z = temporaryZone || settings.zone;
+  if (z && (drawingZone || settings.debug)) {
     context.save();
-
-    context.strokeStyle =
-      "rgba(255,255,255,.9)";
-
-    context.lineWidth =
-      2;
-
-    context.setLineDash(
-      [9,7]
-    );
-
-    context.strokeRect(
-      zone.x0 *
-      screenWidth,
-
-      zone.y0 *
-      screenHeight,
-
-      (
-        zone.x1 -
-        zone.x0
-      ) *
-      screenWidth,
-
-      (
-        zone.y1 -
-        zone.y0
-      ) *
-      screenHeight
-    );
-
+    context.strokeStyle = "rgba(255,255,255,.9)"; context.lineWidth = 2; context.setLineDash([9, 7]);
+    context.strokeRect(z.x0 * screenWidth, z.y0 * screenHeight, (z.x1 - z.x0) * screenWidth, (z.y1 - z.y0) * screenHeight);
     context.restore();
   }
 }
@@ -5849,208 +1664,61 @@ function drawOverlays() {
 /* =========================================================
    MAIN LOOP
    ========================================================= */
-
-let lastFrame =
-  performance.now();
+let lastFrame = performance.now();
 
 function frame(now) {
-  const delta =
-    Math.min(
-      0.05,
-      (
-        now -
-        lastFrame
-      ) /
-      1000
-    );
-
-  lastFrame =
-    now;
-
+  const dt = Math.min(.05, (now - lastFrame) / 1000);
+  lastFrame = now;
   stepMotion(now);
+  const time = now / 1000, scene = scenes[settings.scene];
+  scene.update(dt, time);
 
-  const time =
-    now /
-    1000;
+  worldContext.setTransform(1, 0, 0, 1, 0, 0);
+  worldContext.globalAlpha = 1;
+  worldContext.globalCompositeOperation = "source-over";
+  worldContext.fillStyle = "#000";
+  worldContext.fillRect(0, 0, worldWidth, worldHeight);
+  scene.draw(worldContext, time);
 
-  const scene =
-    scenes[
-      settings.scene
-    ];
-
-  scene.update(
-    delta,
-    time
-  );
-
-  worldContext.setTransform(
-    1,0,0,1,0,0
-  );
-
-  worldContext.fillStyle =
-    "#000";
-
-  worldContext.fillRect(
-    0,
-    0,
-    worldWidth,
-    worldHeight
-  );
-
-  scene.draw(
-    worldContext,
-    time
-  );
-
-  context.setTransform(
-    1,0,0,1,0,0
-  );
-
-  context.fillStyle =
-    "#000";
-
-  context.fillRect(
-    0,
-    0,
-    screenWidth,
-    screenHeight
-  );
+  context.setTransform(1, 0, 0, 1, 0, 0);
+  context.fillStyle = "#000";
+  context.fillRect(0, 0, screenWidth, screenHeight);
 
   context.save();
-
-  context.translate(
-    screenWidth / 2,
-    screenHeight / 2
-  );
-
-  context.rotate(
-    settings.pictureRotation *
-    Math.PI /
-    2
-  );
-
-  if (
-    settings.pictureRotation %
-    2
-  ) {
-    context.scale(
-      screenHeight /
-      screenWidth,
-
-      screenWidth /
-      screenHeight
-    );
-  }
-
-  context.translate(
-    settings.sceneX *
-    screenWidth,
-
-    settings.sceneY *
-    screenHeight
-  );
-
-  context.scale(
-    settings.sceneZoom,
-    settings.sceneZoom
-  );
-
-  context.drawImage(
-    worldCanvas,
-
-    worldOffsetX,
-    0,
-    screenWidth,
-    screenHeight,
-
-    -screenWidth / 2,
-    -screenHeight / 2,
-    screenWidth,
-    screenHeight
-  );
-
+  context.translate(screenWidth / 2, screenHeight / 2);
+  context.rotate(settings.pictureRotation * Math.PI / 2);
+  if (settings.pictureRotation % 2) context.scale(screenHeight / screenWidth, screenWidth / screenHeight);
+  context.translate(settings.sceneX * screenWidth, settings.sceneY * screenHeight);
+  context.scale(settings.sceneZoom, settings.sceneZoom);
+  context.drawImage(worldCanvas, worldOffsetX, 0, screenWidth, screenHeight, -screenWidth / 2, -screenHeight / 2, screenWidth, screenHeight);
   context.restore();
+
+  /* a soft vignette only when a single projector shows the whole picture (it would show seams otherwise) */
+  if (settings.projectorTotal === 1 && vignette) context.drawImage(vignette, 0, 0);
 
   drawOverlays();
 
-  if (
-    settings.brightness <
-    1
-  ) {
-    context.fillStyle =
-      "rgba(0,0,0," +
-      (
-        1 -
-        settings.brightness
-      ) +
-      ")";
-
-    context.fillRect(
-      0,
-      0,
-      screenWidth,
-      screenHeight
-    );
-  } else if (
-    settings.brightness >
-    1
-  ) {
+  if (settings.brightness < 1) {
+    context.fillStyle = "rgba(0,0,0," + (1 - settings.brightness) + ")";
+    context.fillRect(0, 0, screenWidth, screenHeight);
+  } else if (settings.brightness > 1) {
     context.save();
-
-    context
-      .globalCompositeOperation =
-      "screen";
-
-    context.fillStyle =
-      "rgba(255,255,255," +
-      (
-        (
-          settings.brightness -
-          1
-        ) *
-        0.24
-      ) +
-      ")";
-
-    context.fillRect(
-      0,
-      0,
-      screenWidth,
-      screenHeight
-    );
-
+    context.globalCompositeOperation = "screen";
+    context.fillStyle = "rgba(255,255,255," + ((settings.brightness - 1) * .24) + ")";
+    context.fillRect(0, 0, screenWidth, screenHeight);
     context.restore();
   }
-
-  requestAnimationFrame(
-    frame
-  );
+  requestAnimationFrame(frame);
 }
 
 /* =========================================================
    STARTUP
    ========================================================= */
-
 resize();
 syncPanel();
-
-if (
-  query.get("panel") ===
-  "1"
-) {
-  togglePanel(true);
-}
-
-/*
-  Automatic camera startup retained from the working version.
-*/
-startCamera(
-  settings.cameraId
-);
-
-requestAnimationFrame(
-  frame
-);
+if (query.get("panel") === "1") togglePanel(true);
+startCamera(settings.cameraId);
+requestAnimationFrame(frame);
 
 })();
 </script>
