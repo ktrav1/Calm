@@ -1,0 +1,6012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Patient Room Ambient Studio</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<style>
+html,body{
+  margin:0;width:100%;height:100%;overflow:hidden;
+  background:#000;color:#fff;
+  font-family:ui-rounded,"SF Pro Rounded","Segoe UI",system-ui,sans-serif
+}
+*{box-sizing:border-box}
+body.idle{cursor:none}
+#stage{position:fixed;inset:0;width:100%;height:100%;display:block}
+#video{position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none}
+
+#toast{
+  position:fixed;z-index:20;left:50%;top:22px;max-width:84vw;
+  padding:10px 20px;border:1px solid rgba(125,211,252,.3);
+  border-radius:999px;background:rgba(5,13,27,.92);color:#fff;
+  font-size:14px;text-align:center;pointer-events:none;opacity:0;
+  transform:translate(-50%,-18px);transition:.35s
+}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+#status{
+  position:fixed;z-index:15;left:50%;bottom:14px;max-width:92vw;
+  transform:translateX(-50%);color:rgba(255,255,255,.68);
+  font-size:12px;text-align:center;pointer-events:none
+}
+
+#hint{
+  position:fixed;z-index:16;left:50%;bottom:14px;max-width:94vw;
+  padding:9px 16px;border-radius:14px;background:rgba(5,13,27,.92);
+  color:#d9efff;font-size:12px;line-height:1.55;text-align:center;
+  pointer-events:none;opacity:0;transform:translateX(-50%);transition:.35s
+}
+#hint.show{opacity:1}
+
+#panel{
+  position:fixed;z-index:30;left:12px;top:12px;display:none;width:318px;
+  max-height:calc(100vh - 24px);overflow-y:auto;padding:12px 14px 15px;
+  border:1px solid rgba(80,220,200,.35);border-radius:14px;
+  background:rgba(8,12,22,.95);box-shadow:0 16px 40px rgba(0,0,0,.72);
+  color:#fff;font-size:12px;line-height:1.35;cursor:default
+}
+#panel.open{display:block}
+#panel *{box-sizing:border-box}
+
+.panel-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:8px;font-size:14px
+}
+
+section{
+  margin-top:7px;padding:9px 0 3px;
+  border-top:1px solid rgba(255,255,255,.1)
+}
+section h4{
+  margin:0 0 7px;color:#6ee7d0;font-size:11px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase
+}
+
+.row{display:flex;gap:5px;align-items:center;margin-bottom:6px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:6px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:6px}
+
+button,select{
+  min-width:0;padding:6px 7px;border:1px solid rgba(255,255,255,.16);
+  border-radius:8px;background:rgba(255,255,255,.07);color:#e8eef8;
+  font:inherit;cursor:pointer
+}
+button:hover{background:rgba(255,255,255,.15)}
+button.on{border-color:#3ce0aa;background:rgba(60,220,170,.25);color:#fff}
+button:disabled{cursor:default;opacity:.35}
+select{width:100%}
+
+label{
+  display:flex;justify-content:space-between;
+  margin-bottom:2px;color:#cbd5e1
+}
+label b{
+  color:#6ee7d0;font-family:ui-monospace,Menlo,Consolas,monospace;
+  font-weight:600
+}
+
+input[type=range]{
+  width:100%;margin:0 0 8px;accent-color:#3ce0aa
+}
+
+.small{
+  margin-bottom:6px;color:#94a3b8;
+  font-size:10.5px;line-height:1.45
+}
+.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.status-pill{
+  padding:6px 7px;border-radius:7px;
+  background:rgba(255,255,255,.06);color:#cbd5e1
+}
+.ok{color:#bbf7d0}
+.bad{color:#fecaca}
+
+kbd{
+  padding:1px 4px;border-radius:4px;background:rgba(255,255,255,.12);
+  font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px
+}
+</style>
+</head>
+
+<body class="idle">
+
+<canvas id="stage"></canvas>
+<video id="video" autoplay muted playsinline></video>
+
+<div id="toast"></div>
+<div id="status"></div>
+
+<div id="hint">
+  <b>Scenes:</b> 1 Galaxy · 2 Sky & Birds · N next · T next look<br>
+  <b>Camera:</b> M mirror · V flip · C next camera · I list cameras ·
+  D motion view · A demo motion · − / + sensitivity<br>
+  <b>Alignment:</b> ← / → picture rotation · ↑ / ↓ camera rotation ·
+  Shift+arrows camera position · , / . camera zoom · 0 reset<br>
+  <b>Display:</b> F fullscreen · H help · Tab or double-click controller
+</div>
+
+<aside id="panel">
+
+  <div class="panel-head">
+    <b>Patient Room Studio</b>
+    <button id="closePanel" type="button">×</button>
+  </div>
+
+  <div class="small">
+    Camera frames are processed locally in a small 64 × 36 motion grid.
+    Nothing is recorded, stored, or uploaded.
+  </div>
+
+  <section>
+    <h4>Scene <kbd>1</kbd> <kbd>2</kbd></h4>
+
+    <div class="row">
+      <button id="previousScene">◀</button>
+
+      <select id="sceneSelect">
+        <option value="galaxy">Galaxy & Constellations</option>
+        <option value="sky">Sky & Birds</option>
+      </select>
+
+      <button id="nextScene">▶</button>
+    </div>
+
+    <div class="row">
+      <button id="previousVariant">◀</button>
+      <button id="variantButton" style="flex:1"></button>
+      <button id="nextVariant">▶</button>
+    </div>
+
+    <div class="grid2">
+      <button id="calmButton">Calm mode</button>
+      <button id="interactiveButton">Interactive mode</button>
+    </div>
+
+    <label>Scene speed <b id="speedValue"></b></label>
+    <input id="speedRange" type="range" min="20" max="160" step="5">
+
+    <label>Interaction strength <b id="responseValue"></b></label>
+    <input id="responseRange" type="range" min="0" max="150" step="5">
+
+    <label>Visual detail <b id="detailValue"></b></label>
+    <input id="detailRange" type="range" min="30" max="140" step="5">
+
+    <label>Brightness <b id="brightnessValue"></b></label>
+    <input id="brightnessRange" type="range" min="15" max="150" step="5">
+  </section>
+
+  <section>
+    <h4>Picture placement</h4>
+
+    <label>Scene zoom <b id="sceneZoomValue"></b></label>
+    <input id="sceneZoomRange" type="range" min="50" max="180" step="1">
+
+    <label>Shift left / right <b id="sceneXValue"></b></label>
+    <input id="sceneXRange" type="range" min="-50" max="50" step="1">
+
+    <label>Shift up / down <b id="sceneYValue"></b></label>
+    <input id="sceneYRange" type="range" min="-50" max="50" step="1">
+
+    <div class="grid2">
+      <button id="pictureLeft">Rotate left</button>
+      <button id="pictureRight">Rotate right</button>
+    </div>
+  </section>
+
+  <section>
+    <h4>Camera & interaction</h4>
+
+    <div class="grid3">
+      <button id="cameraButton">Camera</button>
+      <button id="mirrorButton">Mirror</button>
+      <button id="flipButton">Flip</button>
+    </div>
+
+    <div class="grid2">
+      <button id="nextCameraButton">Next camera</button>
+      <button id="listCameraButton">List cameras</button>
+    </div>
+
+    <label>Sensitivity <b id="sensitivityValue"></b></label>
+    <input id="sensitivityRange" type="range" min="40" max="300" step="5">
+
+    <label>Maximum lit area <b id="capValue"></b></label>
+    <input id="capRange" type="range" min="10" max="90" step="5">
+
+    <label>Camera zoom <b id="cameraZoomValue"></b></label>
+    <input id="cameraZoomRange" type="range" min="50" max="300" step="5">
+
+    <label>Camera left / right <b id="cameraXValue"></b></label>
+    <input id="cameraXRange" type="range" min="-50" max="50" step="1">
+
+    <label>Camera up / down <b id="cameraYValue"></b></label>
+    <input id="cameraYRange" type="range" min="-50" max="50" step="1">
+
+    <label>Camera vertical stretch <b id="cameraHeightValue"></b></label>
+    <input id="cameraHeightRange" type="range" min="50" max="200" step="5">
+
+    <div class="grid2">
+      <button id="cameraRotateLeft">Camera ↶</button>
+      <button id="cameraRotateRight">Camera ↷</button>
+    </div>
+
+    <div class="grid2">
+      <button id="debugButton">Motion view</button>
+      <button id="demoButton">Demo motion</button>
+    </div>
+
+    <div class="grid2">
+      <button id="zoneButton">Draw focus zone</button>
+      <button id="clearZoneButton">Clear zone</button>
+    </div>
+
+    <div class="status-grid">
+      <div id="cameraStatus" class="status-pill">Camera: starting</div>
+      <div id="motionStatus" class="status-pill">Motion: 0%</div>
+    </div>
+  </section>
+
+  <section>
+    <h4>Projectors</h4>
+
+    <label>Projectors sharing image <b id="projectorValue"></b></label>
+
+    <div class="grid4" id="projectorTotal">
+      <button data-total="1">1</button>
+      <button data-total="2">2</button>
+      <button data-total="3">3</button>
+      <button data-total="4">4</button>
+    </div>
+
+    <label>This PC displays</label>
+
+    <div class="grid4" id="projectorUnit">
+      <button data-unit="1">1st</button>
+      <button data-unit="2">2nd</button>
+      <button data-unit="3">3rd</button>
+      <button data-unit="4">4th</button>
+    </div>
+
+    <label>Gap between projectors <b id="gapValue"></b></label>
+    <input id="gapRange" type="range" min="0" max="2" step=".05">
+  </section>
+
+  <section>
+    <h4>Presets</h4>
+
+    <div class="grid3">
+      <button data-preset="sleep">Sleep</button>
+      <button data-preset="calm">Calm</button>
+      <button data-preset="engage">Engage</button>
+    </div>
+
+    <div class="grid2">
+      <button id="fullscreenButton">Fullscreen</button>
+      <button id="resetCameraButton">Reset camera</button>
+    </div>
+
+    <button id="resetAllButton" style="width:100%">
+      Reset all saved settings
+    </button>
+  </section>
+
+</aside>
+
+<script>
+(() => {
+"use strict";
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+const TAU = Math.PI * 2;
+
+const clamp = (value, minimum, maximum) =>
+  Math.max(minimum, Math.min(maximum, value));
+
+const lerp = (a, b, amount) =>
+  a + (b - a) * amount;
+
+const randomBetween = (a, b) =>
+  a + Math.random() * (b - a);
+
+const element = id =>
+  document.getElementById(id);
+
+function rgba(color, alpha) {
+  return `rgba(${color[0]},${color[1]},${color[2]},${alpha})`;
+}
+
+function makeGlowSprite(color, size = 96) {
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = size;
+
+  const localContext =
+    canvas.getContext("2d");
+
+  const gradient =
+    localContext.createRadialGradient(
+      size / 2,
+      size / 2,
+      0,
+      size / 2,
+      size / 2,
+      size / 2
+    );
+
+  gradient.addColorStop(0, rgba(color, 1));
+  gradient.addColorStop(0.24, rgba(color, 0.4));
+  gradient.addColorStop(1, rgba(color, 0));
+
+  localContext.fillStyle = gradient;
+  localContext.fillRect(0, 0, size, size);
+
+  return canvas;
+}
+
+/* =========================================================
+   SETTINGS
+   ========================================================= */
+
+const STORAGE_KEY =
+  "patientRoomGalaxyNaturalSky.v1";
+
+const defaults = {
+  scene: "galaxy",
+  interactive: false,
+
+  variant: {
+    galaxy: 0,
+    sky: 0
+  },
+
+  speed: 0.7,
+  response: 0.7,
+  detail: 1,
+  brightness: 0.92,
+
+  sceneZoom: 1,
+  sceneX: 0,
+  sceneY: 0,
+  pictureRotation: 0,
+
+  mirror: false,
+  flip: false,
+
+  sensitivity: 1,
+  maximumArea: 0.5,
+
+  cameraZoom: 1,
+  cameraHeight: 1,
+  cameraX: 0,
+  cameraY: 0,
+  cameraRotation: 0,
+
+  debug: false,
+  demo: false,
+  zone: null,
+
+  cameraId: "",
+
+  projectorTotal: 1,
+  projectorUnit: 1,
+  projectorGap: 0
+};
+
+let settings;
+
+try {
+  const stored =
+    JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "{}"
+    );
+
+  settings = Object.assign({}, defaults, stored, {
+    variant: Object.assign(
+      {},
+      defaults.variant,
+      stored.variant || {}
+    )
+  });
+} catch (error) {
+  settings =
+    JSON.parse(
+      JSON.stringify(defaults)
+    );
+}
+
+const query =
+  new URLSearchParams(location.search);
+
+if (
+  ["galaxy", "sky"].includes(
+    query.get("scene")
+  )
+) {
+  settings.scene =
+    query.get("scene");
+}
+
+const noCamera =
+  query.get("nocam") === "1";
+
+function saveSettings() {
+  try {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(settings)
+    );
+  } catch (error) {}
+}
+
+/* =========================================================
+   CANVAS
+   ========================================================= */
+
+const stage =
+  element("stage");
+
+const context =
+  stage.getContext("2d");
+
+const video =
+  element("video");
+
+const worldCanvas =
+  document.createElement("canvas");
+
+const worldContext =
+  worldCanvas.getContext("2d");
+
+let screenWidth = 1;
+let screenHeight = 1;
+let worldWidth = 1;
+let worldHeight = 1;
+let worldOffsetX = 0;
+let unitScale = 1;
+
+function updateProjectorWorld() {
+  const gapPixels =
+    settings.projectorGap *
+    screenWidth;
+
+  worldWidth =
+    screenWidth *
+    settings.projectorTotal +
+    gapPixels *
+    (
+      settings.projectorTotal - 1
+    );
+
+  worldHeight =
+    screenHeight;
+
+  worldOffsetX =
+    (
+      settings.projectorUnit - 1
+    ) *
+    (
+      screenWidth +
+      gapPixels
+    );
+
+  worldCanvas.width =
+    Math.max(
+      1,
+      Math.round(worldWidth)
+    );
+
+  worldCanvas.height =
+    Math.max(
+      1,
+      Math.round(worldHeight)
+    );
+}
+
+function resize() {
+  screenWidth =
+    stage.width =
+    innerWidth;
+
+  screenHeight =
+    stage.height =
+    innerHeight;
+
+  unitScale =
+    screenHeight / 720;
+
+  updateProjectorWorld();
+
+  if (
+    scenes[settings.scene]
+  ) {
+    scenes[
+      settings.scene
+    ].build();
+  }
+}
+
+window.addEventListener(
+  "resize",
+  resize
+);
+
+/* =========================================================
+   PANEL AND TOAST
+   ========================================================= */
+
+const panel =
+  element("panel");
+
+const toastElement =
+  element("toast");
+
+const statusElement =
+  element("status");
+
+const hintElement =
+  element("hint");
+
+let drawingZone = false;
+let toastTimer = 0;
+let idleTimer = 0;
+
+function showToast(
+  message,
+  duration = 2200
+) {
+  toastElement.textContent =
+    message;
+
+  toastElement.classList.add(
+    "show"
+  );
+
+  clearTimeout(toastTimer);
+
+  toastTimer = setTimeout(
+    () =>
+      toastElement.classList.remove(
+        "show"
+      ),
+    duration
+  );
+}
+
+function updateCursor() {
+  document.body.classList.toggle(
+    "idle",
+    !panel.classList.contains("open") &&
+    !drawingZone
+  );
+}
+
+function togglePanel(force) {
+  const open =
+    typeof force === "boolean"
+      ? force
+      : !panel.classList.contains(
+          "open"
+        );
+
+  panel.classList.toggle(
+    "open",
+    open
+  );
+
+  updateCursor();
+  syncPanel();
+}
+
+element("closePanel").onclick =
+  () => togglePanel(false);
+
+window.addEventListener(
+  "dblclick",
+  event => {
+    if (
+      !panel.contains(
+        event.target
+      )
+    ) {
+      togglePanel();
+    }
+  }
+);
+
+window.addEventListener(
+  "mousemove",
+  () => {
+    document.body.classList.remove(
+      "idle"
+    );
+
+    clearTimeout(idleTimer);
+
+    idleTimer =
+      setTimeout(
+        updateCursor,
+        2500
+      );
+  }
+);
+
+/* =========================================================
+   MOTION ENGINE
+   ========================================================= */
+
+const GRID_WIDTH = 64;
+const GRID_HEIGHT = 36;
+const GRID_COUNT =
+  GRID_WIDTH * GRID_HEIGHT;
+
+const motionCanvas =
+  document.createElement("canvas");
+
+motionCanvas.width =
+  GRID_WIDTH;
+
+motionCanvas.height =
+  GRID_HEIGHT;
+
+const motionContext =
+  motionCanvas.getContext(
+    "2d",
+    {
+      willReadFrequently: true
+    }
+  );
+
+const motion = {
+  raw:
+    new Float32Array(
+      GRID_COUNT
+    ),
+
+  grid:
+    new Float32Array(
+      GRID_COUNT
+    ),
+
+  previous:
+    new Float32Array(
+      GRID_COUNT
+    ),
+
+  activity: 0,
+  hotPoints: [],
+  hasCamera: false,
+  primed: false,
+
+  at(normalizedX, normalizedY) {
+    if (
+      settings.zone &&
+      (
+        normalizedX <
+          settings.zone.x0 ||
+        normalizedX >
+          settings.zone.x1 ||
+        normalizedY <
+          settings.zone.y0 ||
+        normalizedY >
+          settings.zone.y1
+      )
+    ) {
+      return 0;
+    }
+
+    const x =
+      (
+        normalizedX *
+        GRID_WIDTH
+      ) | 0;
+
+    const y =
+      (
+        normalizedY *
+        GRID_HEIGHT
+      ) | 0;
+
+    if (
+      x < 0 ||
+      y < 0 ||
+      x >= GRID_WIDTH ||
+      y >= GRID_HEIGHT
+    ) {
+      return 0;
+    }
+
+    return this.grid[
+      y * GRID_WIDTH + x
+    ];
+  }
+};
+
+let lastCaptureTime = 0;
+
+function finishMotion() {
+  let activeCells = 0;
+  let sum = 0;
+
+  for (
+    let index = 0;
+    index < GRID_COUNT;
+    index++
+  ) {
+    if (
+      motion.raw[index] > 0.2
+    ) {
+      activeCells++;
+    }
+  }
+
+  const activeRatio =
+    activeCells /
+    GRID_COUNT;
+
+  const areaGain =
+    activeRatio >
+    settings.maximumArea
+      ? settings.maximumArea /
+        activeRatio
+      : 1;
+
+  for (
+    let index = 0;
+    index < GRID_COUNT;
+    index++
+  ) {
+    motion.grid[index] =
+      motion.raw[index] *
+      areaGain;
+
+    sum +=
+      motion.grid[index];
+  }
+
+  motion.activity =
+    clamp(
+      sum /
+      GRID_COUNT *
+      4,
+      0,
+      1
+    );
+
+  const candidates = [];
+
+  for (
+    let index = 0;
+    index < GRID_COUNT;
+    index++
+  ) {
+    if (
+      motion.grid[index] > 0.35
+    ) {
+      candidates.push(index);
+    }
+  }
+
+  motion.hotPoints = [];
+
+  for (
+    let count = 0;
+    count < 8 &&
+    candidates.length;
+    count++
+  ) {
+    const selected =
+      candidates.splice(
+        (
+          Math.random() *
+          candidates.length
+        ) | 0,
+        1
+      )[0];
+
+    motion.hotPoints.push({
+      x:
+        (
+          (
+            selected %
+            GRID_WIDTH
+          ) +
+          0.5
+        ) /
+        GRID_WIDTH,
+
+      y:
+        (
+          (
+            (
+              selected /
+              GRID_WIDTH
+            ) | 0
+          ) +
+          0.5
+        ) /
+        GRID_HEIGHT,
+
+      value:
+        motion.grid[selected]
+    });
+  }
+
+  element(
+    "motionStatus"
+  ).textContent =
+    "Motion: " +
+    Math.round(
+      motion.activity * 100
+    ) +
+    "%";
+}
+
+function stepMotion(now) {
+  if (
+    now -
+    lastCaptureTime <
+    50
+  ) {
+    return;
+  }
+
+  lastCaptureTime = now;
+
+  if (settings.demo) {
+    for (
+      let index = 0;
+      index < GRID_COUNT;
+      index++
+    ) {
+      motion.raw[index] *=
+        0.84;
+    }
+
+    const centerX =
+      (
+        0.5 +
+        Math.sin(
+          now * 0.00055
+        ) *
+        0.34
+      ) *
+      GRID_WIDTH;
+
+    const centerY =
+      (
+        0.5 +
+        Math.sin(
+          now * 0.0008
+        ) *
+        0.22
+      ) *
+      GRID_HEIGHT;
+
+    for (
+      let y = 0;
+      y < GRID_HEIGHT;
+      y++
+    ) {
+      for (
+        let x = 0;
+        x < GRID_WIDTH;
+        x++
+      ) {
+        const distance =
+          Math.hypot(
+            x - centerX,
+            y - centerY
+          );
+
+        if (distance < 5) {
+          const index =
+            y *
+            GRID_WIDTH +
+            x;
+
+          motion.raw[index] =
+            Math.max(
+              motion.raw[index],
+              1 -
+              distance / 5
+            );
+        }
+      }
+    }
+
+    finishMotion();
+    return;
+  }
+
+  if (
+    motion.hasCamera &&
+    video.readyState >= 2
+  ) {
+    motionContext.setTransform(
+      1, 0, 0, 1, 0, 0
+    );
+
+    motionContext.fillStyle =
+      "#000";
+
+    motionContext.fillRect(
+      0,
+      0,
+      GRID_WIDTH,
+      GRID_HEIGHT
+    );
+
+    motionContext.translate(
+      GRID_WIDTH / 2 +
+      settings.cameraX *
+      GRID_WIDTH,
+
+      GRID_HEIGHT / 2 +
+      settings.cameraY *
+      GRID_HEIGHT
+    );
+
+    motionContext.rotate(
+      settings.cameraRotation *
+      Math.PI / 2
+    );
+
+    motionContext.scale(
+      (
+        settings.mirror
+          ? -1
+          : 1
+      ) *
+      settings.cameraZoom,
+
+      (
+        settings.flip
+          ? -1
+          : 1
+      ) *
+      settings.cameraZoom *
+      settings.cameraHeight
+    );
+
+    const odd =
+      settings.cameraRotation %
+      2;
+
+    const drawWidth =
+      odd
+        ? GRID_HEIGHT
+        : GRID_WIDTH;
+
+    const drawHeight =
+      odd
+        ? GRID_WIDTH
+        : GRID_HEIGHT;
+
+    motionContext.drawImage(
+      video,
+      -drawWidth / 2,
+      -drawHeight / 2,
+      drawWidth,
+      drawHeight
+    );
+
+    const pixels =
+      motionContext.getImageData(
+        0,
+        0,
+        GRID_WIDTH,
+        GRID_HEIGHT
+      ).data;
+
+    const threshold =
+      Math.max(
+        5,
+        34 -
+        28 *
+        settings.sensitivity
+      );
+
+    for (
+      let index = 0;
+      index < GRID_COUNT;
+      index++
+    ) {
+      const pixel =
+        index * 4;
+
+      const luminance =
+        pixels[pixel] *
+        0.3 +
+        pixels[pixel + 1] *
+        0.59 +
+        pixels[pixel + 2] *
+        0.11;
+
+      if (!motion.primed) {
+        motion.previous[index] =
+          luminance;
+      }
+
+      const difference =
+        Math.abs(
+          luminance -
+          motion.previous[index]
+        );
+
+      motion.previous[index] +=
+        (
+          luminance -
+          motion.previous[index]
+        ) *
+        0.5;
+
+      const amount =
+        clamp(
+          (
+            difference -
+            threshold
+          ) /
+          30,
+          0,
+          1
+        );
+
+      motion.raw[index] =
+        Math.min(
+          1,
+          motion.raw[index] *
+          0.8 +
+          amount *
+          0.55
+        );
+    }
+
+    motion.primed = true;
+  } else {
+    for (
+      let index = 0;
+      index < GRID_COUNT;
+      index++
+    ) {
+      motion.raw[index] *=
+        0.88;
+    }
+  }
+
+  finishMotion();
+}
+
+/* Mouse movement fallback */
+window.addEventListener(
+  "mousemove",
+  event => {
+    if (
+      motion.hasCamera ||
+      drawingZone
+    ) {
+      return;
+    }
+
+    const centerX =
+      event.clientX /
+      innerWidth *
+      GRID_WIDTH;
+
+    const centerY =
+      event.clientY /
+      innerHeight *
+      GRID_HEIGHT;
+
+    for (
+      let y =
+        Math.max(
+          0,
+          (
+            centerY - 4
+          ) | 0
+        );
+
+      y <
+        Math.min(
+          GRID_HEIGHT,
+          centerY + 5
+        );
+
+      y++
+    ) {
+      for (
+        let x =
+          Math.max(
+            0,
+            (
+              centerX - 4
+            ) | 0
+          );
+
+        x <
+          Math.min(
+            GRID_WIDTH,
+            centerX + 5
+          );
+
+        x++
+      ) {
+        const influence =
+          1 -
+          Math.hypot(
+            x - centerX,
+            y - centerY
+          ) /
+          4.5;
+
+        if (influence > 0) {
+          const index =
+            y *
+            GRID_WIDTH +
+            x;
+
+          motion.raw[index] =
+            Math.max(
+              motion.raw[index],
+              influence *
+              0.9
+            );
+        }
+      }
+    }
+  }
+);
+
+/* =========================================================
+   CAMERA
+   ========================================================= */
+
+let stream = null;
+let cameraDevices = [];
+let cameraAttempts = 0;
+
+function isDepthCamera(label) {
+  return (
+    /depth|infrared|\bir\b|ir camera/i
+  ).test(label || "");
+}
+
+async function refreshCameraList() {
+  try {
+    if (
+      !navigator.mediaDevices ||
+      !navigator.mediaDevices
+        .enumerateDevices
+    ) {
+      cameraDevices = [];
+      return;
+    }
+
+    const devices =
+      await navigator.mediaDevices
+        .enumerateDevices();
+
+    cameraDevices =
+      devices.filter(
+        device =>
+          device.kind ===
+          "videoinput"
+      );
+  } catch (error) {
+    cameraDevices = [];
+  }
+}
+
+function stopCamera() {
+  if (stream) {
+    stream
+      .getTracks()
+      .forEach(
+        track =>
+          track.stop()
+      );
+  }
+
+  stream = null;
+  motion.hasCamera = false;
+  motion.primed = false;
+
+  syncPanel();
+}
+
+async function startCamera(deviceId) {
+  stopCamera();
+
+  if (
+    noCamera ||
+    !navigator.mediaDevices ||
+    !navigator.mediaDevices
+      .getUserMedia
+  ) {
+    element(
+      "cameraStatus"
+    ).textContent =
+      "Camera: unavailable";
+
+    element(
+      "cameraStatus"
+    ).className =
+      "status-pill bad";
+
+    statusElement.textContent =
+      "Camera unavailable. Move the mouse or use Demo Motion.";
+
+    return;
+  }
+
+  try {
+    const videoConstraints = {
+      width: {
+        ideal: 640
+      },
+      height: {
+        ideal: 480
+      }
+    };
+
+    if (deviceId) {
+      videoConstraints.deviceId = {
+        exact: deviceId
+      };
+    }
+
+    stream =
+      await navigator.mediaDevices
+        .getUserMedia({
+          video:
+            videoConstraints,
+          audio: false
+        });
+
+    video.srcObject =
+      stream;
+
+    await video.play();
+
+    motion.hasCamera = true;
+    motion.primed = false;
+
+    await refreshCameraList();
+
+    const track =
+      stream
+        .getVideoTracks()[0];
+
+    const activeDeviceId =
+      track
+        .getSettings()
+        .deviceId;
+
+    settings.cameraId =
+      activeDeviceId || "";
+
+    saveSettings();
+
+    element(
+      "cameraStatus"
+    ).textContent =
+      "Camera: on";
+
+    element(
+      "cameraStatus"
+    ).className =
+      "status-pill ok";
+
+    statusElement.textContent =
+      "";
+
+    /*
+      Prefer RGB instead of a depth or infrared RealSense stream.
+    */
+    if (
+      !deviceId &&
+      isDepthCamera(
+        track.label
+      ) &&
+      cameraAttempts++ < 1
+    ) {
+      const rgbCamera =
+        cameraDevices.find(
+          device =>
+            !isDepthCamera(
+              device.label
+            )
+        );
+
+      if (rgbCamera) {
+        settings.cameraId =
+          rgbCamera.deviceId;
+
+        saveSettings();
+
+        return startCamera(
+          rgbCamera.deviceId
+        );
+      }
+    }
+
+    showToast(
+      "Camera: " +
+      (
+        track.label ||
+        "camera"
+      ),
+      4000
+    );
+  } catch (error) {
+    if (deviceId) {
+      settings.cameraId = "";
+      saveSettings();
+
+      return startCamera("");
+    }
+
+    motion.hasCamera = false;
+
+    element(
+      "cameraStatus"
+    ).textContent =
+      "Camera: unavailable";
+
+    element(
+      "cameraStatus"
+    ).className =
+      "status-pill bad";
+
+    statusElement.textContent =
+      "Camera unavailable. Move the mouse or use Demo Motion.";
+
+    showToast(
+      "Camera could not open: " +
+      (
+        error.message ||
+        error.name ||
+        "camera error"
+      ),
+      5000
+    );
+
+    syncPanel();
+  }
+}
+
+async function nextCamera() {
+  await refreshCameraList();
+
+  if (
+    cameraDevices.length < 2
+  ) {
+    showToast(
+      cameraDevices.length
+        ? "Only one camera was found."
+        : "No cameras were found."
+    );
+
+    return;
+  }
+
+  const currentId =
+    stream
+      ? stream
+          .getVideoTracks()[0]
+          .getSettings()
+          .deviceId
+      : "";
+
+  const currentIndex =
+    cameraDevices.findIndex(
+      device =>
+        device.deviceId ===
+        currentId
+    );
+
+  const next =
+    cameraDevices[
+      (
+        currentIndex +
+        1 +
+        cameraDevices.length
+      ) %
+      cameraDevices.length
+    ];
+
+  settings.cameraId =
+    next.deviceId;
+
+  saveSettings();
+
+  startCamera(
+    next.deviceId
+  );
+}
+
+async function listCameras() {
+  await refreshCameraList();
+
+  const names =
+    cameraDevices.map(
+      (camera, index) =>
+        (
+          index + 1
+        ) +
+        ". " +
+        (
+          camera.label ||
+          "Camera"
+        )
+    );
+
+  showToast(
+    names.length
+      ? names.join(" | ")
+      : "No cameras were found.",
+    8000
+  );
+}
+
+/* =========================================================
+   SCENES
+   ========================================================= */
+
+const scenes = {};
+
+/* =========================================================
+   GALAXY, MILKY WAY AND CONSTELLATIONS
+   ========================================================= */
+
+scenes.galaxy = {
+  label:
+    "Galaxy & Constellations",
+
+  variants: [
+    "Natural Milky Way",
+    "Aurora Milky Way",
+    "Rose Nebula"
+  ],
+
+  palettes: [
+    {
+      top: "#01040a",
+      middle: "#07101b",
+      bottom: "#10161c",
+      nebula: [
+        [107,111,137],
+        [96,132,170],
+        [181,151,119]
+      ]
+    },
+    {
+      top: "#010709",
+      middle: "#05222d",
+      bottom: "#06151c",
+      nebula: [
+        [32,205,169],
+        [44,128,219],
+        [116,80,221]
+      ]
+    },
+    {
+      top: "#08030d",
+      middle: "#2b0c33",
+      bottom: "#190b25",
+      nebula: [
+        [255,104,167],
+        [144,83,255],
+        [255,155,97]
+      ]
+    }
+  ],
+
+  stars: [],
+  constellations: [],
+  movementDust: [],
+  shooters: [],
+
+  nextShooter: 7,
+  lastMovementShooter: 0,
+
+  build() {
+    const palette =
+      this.palettes[
+        settings.variant.galaxy
+      ];
+
+    this.background =
+      document.createElement(
+        "canvas"
+      );
+
+    this.background.width =
+      Math.max(
+        1,
+        Math.round(worldWidth)
+      );
+
+    this.background.height =
+      Math.max(
+        1,
+        Math.round(worldHeight)
+      );
+
+    const background =
+      this.background.getContext(
+        "2d"
+      );
+
+    let gradient =
+      background
+        .createLinearGradient(
+          0,
+          0,
+          0,
+          worldHeight
+        );
+
+    gradient.addColorStop(
+      0,
+      palette.top
+    );
+
+    gradient.addColorStop(
+      0.62,
+      palette.middle
+    );
+
+    gradient.addColorStop(
+      1,
+      palette.bottom
+    );
+
+    background.fillStyle =
+      gradient;
+
+    background.fillRect(
+      0,
+      0,
+      worldWidth,
+      worldHeight
+    );
+
+    /*
+      Diagonal Milky Way path.
+    */
+    const startX =
+      worldWidth *
+      0.73;
+
+    const startY =
+      worldHeight *
+      0.97;
+
+    const endX =
+      worldWidth *
+      0.4;
+
+    const endY =
+      -worldHeight *
+      0.08;
+
+    const pathX =
+      endX - startX;
+
+    const pathY =
+      endY - startY;
+
+    const pathLength =
+      Math.hypot(
+        pathX,
+        pathY
+      );
+
+    const normalX =
+      -pathY /
+      pathLength;
+
+    const normalY =
+      pathX /
+      pathLength;
+
+    background.save();
+
+    background
+      .globalCompositeOperation =
+      "screen";
+
+    /*
+      Wide soft Milky Way haze.
+    */
+    for (
+      let index = 0;
+      index < 250;
+      index++
+    ) {
+      const position =
+        Math.random();
+
+      const spread =
+        (
+          Math.random() +
+          Math.random() +
+          Math.random() -
+          1.5
+        ) *
+        worldHeight *
+        0.2;
+
+      const wave =
+        Math.sin(
+          position * 17
+        ) *
+        worldHeight *
+        0.017;
+
+      const x =
+        startX +
+        pathX *
+        position +
+        normalX *
+        (
+          spread +
+          wave
+        );
+
+      const y =
+        startY +
+        pathY *
+        position +
+        normalY *
+        (
+          spread +
+          wave
+        );
+
+      const radius =
+        randomBetween(
+          45,
+          155
+        ) *
+        unitScale;
+
+      const warmth =
+        Math.exp(
+          -Math.pow(
+            (
+              position -
+              0.2
+            ) /
+            0.25,
+            2
+          )
+        );
+
+      const color =
+        warmth >
+        0.3
+          ? [220,196,166]
+          : [154,178,206];
+
+      const haze =
+        background
+          .createRadialGradient(
+            x,
+            y,
+            0,
+            x,
+            y,
+            radius
+          );
+
+      haze.addColorStop(
+        0,
+        rgba(
+          color,
+          randomBetween(
+            0.01,
+            0.036
+          )
+        )
+      );
+
+      haze.addColorStop(
+        1,
+        rgba(
+          color,
+          0
+        )
+      );
+
+      background.fillStyle =
+        haze;
+
+      background.fillRect(
+        x - radius,
+        y - radius,
+        radius * 2,
+        radius * 2
+      );
+    }
+
+    /*
+      Dense Milky Way star dust.
+    */
+    const dustCount =
+      Math.round(
+        7200 *
+        settings.detail
+      );
+
+    for (
+      let index = 0;
+      index < dustCount;
+      index++
+    ) {
+      const position =
+        Math.random();
+
+      const spread =
+        (
+          Math.random() +
+          Math.random() +
+          Math.random() +
+          Math.random() -
+          2
+        ) *
+        worldHeight *
+        0.115;
+
+      const irregularity =
+        Math.sin(
+          position * 21
+        ) *
+        worldHeight *
+        0.018 +
+        Math.sin(
+          position * 47
+        ) *
+        worldHeight *
+        0.008;
+
+      const x =
+        startX +
+        pathX *
+        position +
+        normalX *
+        (
+          spread +
+          irregularity
+        );
+
+      const y =
+        startY +
+        pathY *
+        position +
+        normalY *
+        (
+          spread +
+          irregularity
+        );
+
+      const coreStrength =
+        Math.exp(
+          -Math.pow(
+            (
+              position -
+              0.2
+            ) /
+            0.2,
+            2
+          )
+        );
+
+      const upperStrength =
+        Math.exp(
+          -Math.pow(
+            (
+              position -
+              0.68
+            ) /
+            0.35,
+            2
+          )
+        );
+
+      const color =
+        coreStrength >
+        0.38
+          ? [230,209,178]
+          : upperStrength >
+            0.35
+            ? [170,194,220]
+            : [204,210,216];
+
+      const alpha =
+        randomBetween(
+          0.035,
+          0.3
+        ) *
+        (
+          0.52 +
+          coreStrength *
+          0.75
+        );
+
+      const size =
+        Math.random() <
+        0.95
+          ? randomBetween(
+              0.35,
+              1.1
+            )
+          : randomBetween(
+              1.1,
+              2
+            );
+
+      background.fillStyle =
+        rgba(
+          color,
+          alpha
+        );
+
+      background.fillRect(
+        x,
+        y,
+        size,
+        size
+      );
+    }
+
+    /*
+      Brighter knots.
+    */
+    for (
+      let index = 0;
+      index < 42;
+      index++
+    ) {
+      const position =
+        randomBetween(
+          0.05,
+          0.93
+        );
+
+      const spread =
+        randomBetween(
+          -0.065,
+          0.065
+        ) *
+        worldHeight;
+
+      const x =
+        startX +
+        pathX *
+        position +
+        normalX *
+        spread;
+
+      const y =
+        startY +
+        pathY *
+        position +
+        normalY *
+        spread;
+
+      const radius =
+        randomBetween(
+          18,
+          70
+        ) *
+        unitScale;
+
+      const color =
+        position <
+        0.36
+          ? [236,211,177]
+          : [174,199,225];
+
+      const knot =
+        background
+          .createRadialGradient(
+            x,
+            y,
+            0,
+            x,
+            y,
+            radius
+          );
+
+      knot.addColorStop(
+        0,
+        rgba(
+          color,
+          randomBetween(
+            0.035,
+            0.105
+          )
+        )
+      );
+
+      knot.addColorStop(
+        1,
+        rgba(
+          color,
+          0
+        )
+      );
+
+      background.fillStyle =
+        knot;
+
+      background.fillRect(
+        x - radius,
+        y - radius,
+        radius * 2,
+        radius * 2
+      );
+    }
+
+    background.restore();
+
+    /*
+      Dark dust lanes.
+    */
+    background.save();
+    background.lineCap =
+      "round";
+
+    for (
+      let lane = 0;
+      lane < 8;
+      lane++
+    ) {
+      const offset =
+        randomBetween(
+          -0.05,
+          0.05
+        ) *
+        worldHeight;
+
+      background.strokeStyle =
+        "rgba(0,3,9," +
+        randomBetween(
+          0.035,
+          0.09
+        ) +
+        ")";
+
+      background.lineWidth =
+        randomBetween(
+          9,
+          28
+        ) *
+        unitScale;
+
+      background.beginPath();
+
+      for (
+        let step = 0;
+        step <= 34;
+        step++
+      ) {
+        const position =
+          step / 34;
+
+        const wave =
+          Math.sin(
+            position *
+            19 +
+            lane *
+            1.7
+          ) *
+          worldHeight *
+          0.017 +
+          Math.sin(
+            position *
+            43 +
+            lane
+          ) *
+          worldHeight *
+          0.006;
+
+        const x =
+          startX +
+          pathX *
+          position +
+          normalX *
+          (
+            offset +
+            wave
+          );
+
+        const y =
+          startY +
+          pathY *
+          position +
+          normalY *
+          (
+            offset +
+            wave
+          );
+
+        if (step === 0) {
+          background.moveTo(
+            x,
+            y
+          );
+        } else {
+          background.lineTo(
+            x,
+            y
+          );
+        }
+      }
+
+      background.stroke();
+    }
+
+    background.restore();
+
+    /*
+      Soft warm horizon illumination.
+    */
+    const horizon =
+      background
+        .createRadialGradient(
+          worldWidth *
+          0.72,
+
+          worldHeight *
+          0.92,
+
+          0,
+
+          worldWidth *
+          0.72,
+
+          worldHeight *
+          0.92,
+
+          worldHeight *
+          0.32
+        );
+
+    horizon.addColorStop(
+      0,
+      settings.variant.galaxy ===
+      0
+        ? "rgba(255,185,105,.18)"
+        : rgba(
+            palette.nebula[2],
+            0.14
+          )
+    );
+
+    horizon.addColorStop(
+      0.35,
+      "rgba(255,145,80,.055)"
+    );
+
+    horizon.addColorStop(
+      1,
+      "rgba(255,120,70,0)"
+    );
+
+    background.fillStyle =
+      horizon;
+
+    background.fillRect(
+      0,
+      worldHeight *
+      0.52,
+      worldWidth,
+      worldHeight *
+      0.48
+    );
+
+    /*
+      Mountain silhouette.
+    */
+    const mountains = [
+      [0,.928],[.06,.917],[.13,.931],[.20,.912],
+      [.27,.928],[.34,.895],[.40,.917],[.46,.876],
+      [.51,.91],[.58,.897],[.65,.925],[.72,.903],
+      [.79,.919],[.86,.89],[.93,.916],[1,.899]
+    ];
+
+    background.fillStyle =
+      "#010203";
+
+    background.beginPath();
+
+    background.moveTo(
+      0,
+      worldHeight
+    );
+
+    for (
+      const point of
+      mountains
+    ) {
+      background.lineTo(
+        point[0] *
+        worldWidth,
+
+        point[1] *
+        worldHeight
+      );
+    }
+
+    background.lineTo(
+      worldWidth,
+      worldHeight
+    );
+
+    background.closePath();
+    background.fill();
+
+    this.glowSprites = [
+      makeGlowSprite(
+        [255,255,255]
+      ),
+      makeGlowSprite(
+        [171,207,255]
+      ),
+      makeGlowSprite(
+        [255,220,180]
+      )
+    ];
+
+    this.starColors = [
+      "#ffffff",
+      "#cfe2ff",
+      "#ffe7cb"
+    ];
+
+    const starCount =
+      clamp(
+        worldWidth *
+        worldHeight /
+        2100 *
+        settings.detail,
+        400,
+        1600
+      ) | 0;
+
+    this.stars =
+      Array.from(
+        {
+          length:
+            starCount
+        },
+        () => ({
+          x:
+            randomBetween(
+              0,
+              worldWidth
+            ),
+
+          y:
+            randomBetween(
+              0,
+              worldHeight *
+              0.91
+            ),
+
+          radius:
+            0.35 +
+            Math.pow(
+              Math.random(),
+              3
+            ) *
+            1.8,
+
+          phase:
+            randomBetween(
+              0,
+              TAU
+            ),
+
+          twinkle:
+            randomBetween(
+              0.3,
+              1.45
+            ),
+
+          base:
+            randomBetween(
+              0.3,
+              0.9
+            ),
+
+          tint:
+            (
+              Math.random() *
+              3
+            ) | 0,
+
+          velocity:
+            -randomBetween(
+              0.06,
+              0.35
+            )
+        })
+      );
+
+    /*
+      Four subtle constellations.
+    */
+    this.constellations = [
+      {
+        points: [
+          [.08,.18],[.14,.14],[.20,.20],
+          [.27,.15],[.33,.21],[.39,.17]
+        ],
+        links: [
+          [0,1],[1,2],[2,3],[3,4],[4,5]
+        ]
+      },
+      {
+        points: [
+          [.69,.17],[.76,.13],[.83,.19],
+          [.79,.28],[.69,.17],[.75,.35]
+        ],
+        links: [
+          [0,1],[1,2],[2,3],[3,4],[3,5]
+        ]
+      },
+      {
+        points: [
+          [.09,.51],[.15,.46],[.21,.50],
+          [.27,.44],[.33,.49]
+        ],
+        links: [
+          [0,1],[1,2],[2,3],[3,4]
+        ]
+      },
+      {
+        points: [
+          [.52,.37],[.58,.33],[.64,.38],
+          [.62,.47],[.56,.49],[.52,.37]
+        ],
+        links: [
+          [0,1],[1,2],[2,3],[3,4],[4,5]
+        ]
+      }
+    ];
+
+    this.movementDust = [];
+    this.shooters = [];
+  },
+
+  shoot(x, y) {
+    const direction =
+      Math.random() <
+      0.5
+        ? 1
+        : -1;
+
+    const angle =
+      randomBetween(
+        0.35,
+        0.6
+      );
+
+    const speed =
+      randomBetween(
+        380,
+        520
+      ) *
+      unitScale;
+
+    this.shooters.push({
+      x,
+      y,
+
+      velocityX:
+        Math.cos(angle) *
+        speed *
+        direction,
+
+      velocityY:
+        Math.sin(angle) *
+        speed,
+
+      life: 0,
+
+      maximumLife:
+        randomBetween(
+          1.3,
+          1.9
+        )
+    });
+  },
+
+  update(delta, time) {
+    for (
+      const star of
+      this.stars
+    ) {
+      star.x +=
+        star.velocity *
+        delta *
+        unitScale *
+        settings.speed;
+
+      if (star.x < -4) {
+        star.x =
+          worldWidth + 4;
+      }
+    }
+
+    this.nextShooter -=
+      delta *
+      settings.speed;
+
+    if (
+      this.nextShooter <= 0 &&
+      this.shooters.length < 2
+    ) {
+      this.shoot(
+        randomBetween(
+          0.1,
+          0.9
+        ) *
+        worldWidth,
+
+        randomBetween(
+          0.03,
+          0.35
+        ) *
+        worldHeight
+      );
+
+      this.nextShooter =
+        randomBetween(
+          14,
+          25
+        );
+    }
+
+    if (
+      settings.interactive &&
+      motion.activity > 0.04 &&
+      time -
+      this.lastMovementShooter >
+      5 &&
+      motion.hotPoints.length
+    ) {
+      const point =
+        motion.hotPoints[0];
+
+      this.shoot(
+        point.x *
+        worldWidth,
+
+        point.y *
+        worldHeight *
+        0.65
+      );
+
+      this.lastMovementShooter =
+        time;
+    }
+
+    if (settings.interactive) {
+      for (
+        const point of
+        motion.hotPoints.slice(
+          0,
+          2
+        )
+      ) {
+        if (
+          this.movementDust.length <
+          170 &&
+          Math.random() <
+          0.45 *
+          settings.response
+        ) {
+          this.movementDust.push({
+            x:
+              point.x *
+              worldWidth +
+              randomBetween(
+                -14,
+                14
+              ),
+
+            y:
+              point.y *
+              worldHeight +
+              randomBetween(
+                -14,
+                14
+              ),
+
+            velocityX:
+              randomBetween(
+                -8,
+                8
+              ),
+
+            velocityY:
+              randomBetween(
+                -18,
+                -6
+              ),
+
+            life: 0,
+
+            maximumLife:
+              randomBetween(
+                2.5,
+                4
+              ),
+
+            radius:
+              randomBetween(
+                5,
+                10
+              ) *
+              unitScale
+          });
+        }
+      }
+    }
+
+    for (
+      const particle of
+      this.movementDust
+    ) {
+      particle.x +=
+        particle.velocityX *
+        delta;
+
+      particle.y +=
+        particle.velocityY *
+        delta;
+
+      particle.life +=
+        delta;
+    }
+
+    this.movementDust =
+      this.movementDust.filter(
+        particle =>
+          particle.life <
+          particle.maximumLife
+      );
+
+    for (
+      const shooter of
+      this.shooters
+    ) {
+      shooter.x +=
+        shooter.velocityX *
+        delta;
+
+      shooter.y +=
+        shooter.velocityY *
+        delta;
+
+      shooter.life +=
+        delta;
+    }
+
+    this.shooters =
+      this.shooters.filter(
+        shooter =>
+          shooter.life <
+          shooter.maximumLife
+      );
+  },
+
+  draw(target, time) {
+    target.drawImage(
+      this.background,
+      0,
+      0
+    );
+
+    /*
+      Constellation lines and stars.
+    */
+    target.save();
+
+    target.lineWidth =
+      Math.max(
+        0.55,
+        unitScale *
+        0.72
+      );
+
+    target.lineCap =
+      "round";
+
+    target.lineJoin =
+      "round";
+
+    for (
+      const constellation of
+      this.constellations
+    ) {
+      let activation = 0;
+
+      if (
+        settings.interactive
+      ) {
+        for (
+          const point of
+          constellation.points
+        ) {
+          activation =
+            Math.max(
+              activation,
+              motion.at(
+                point[0],
+                point[1]
+              )
+            );
+        }
+
+        activation *=
+          settings.response;
+      }
+
+      target.shadowColor =
+        "rgba(145,205,255,.65)";
+
+      target.shadowBlur =
+        2.5 +
+        activation *
+        7;
+
+      target.strokeStyle =
+        "rgba(157,206,236," +
+        (
+          0.095 +
+          activation *
+          0.16
+        ) +
+        ")";
+
+      for (
+        const link of
+        constellation.links
+      ) {
+        const start =
+          constellation.points[
+            link[0]
+          ];
+
+        const end =
+          constellation.points[
+            link[1]
+          ];
+
+        target.beginPath();
+
+        target.moveTo(
+          start[0] *
+          worldWidth,
+          start[1] *
+          worldHeight
+        );
+
+        target.lineTo(
+          end[0] *
+          worldWidth,
+          end[1] *
+          worldHeight
+        );
+
+        target.stroke();
+      }
+
+      target.shadowBlur = 0;
+
+      constellation.points.forEach(
+        (
+          point,
+          pointIndex
+        ) => {
+          const x =
+            point[0] *
+            worldWidth;
+
+          const y =
+            point[1] *
+            worldHeight;
+
+          const localActivation =
+            settings.interactive
+              ? motion.at(
+                  point[0],
+                  point[1]
+                ) *
+                settings.response
+              : 0;
+
+          const pulse =
+            0.94 +
+            0.06 *
+            Math.sin(
+              time *
+              0.72 +
+              pointIndex *
+              1.8
+            );
+
+          const radius =
+            (
+              pointIndex %
+              3 === 0
+                ? 1.9
+                : 1.3
+            ) *
+            unitScale *
+            pulse *
+            (
+              1 +
+              localActivation *
+              0.5
+            );
+
+          const glowRadius =
+            radius *
+            7.5;
+
+          target.globalAlpha =
+            0.19 +
+            localActivation *
+            0.32;
+
+          target.drawImage(
+            this.glowSprites[1],
+            x - glowRadius,
+            y - glowRadius,
+            glowRadius * 2,
+            glowRadius * 2
+          );
+
+          target.globalAlpha =
+            0.78 +
+            localActivation *
+            0.22;
+
+          target.fillStyle =
+            "#e2f2ff";
+
+          target.beginPath();
+
+          target.arc(
+            x,
+            y,
+            radius,
+            0,
+            TAU
+          );
+
+          target.fill();
+        }
+      );
+    }
+
+    target.restore();
+
+    /*
+      Foreground stars.
+    */
+    for (
+      const star of
+      this.stars
+    ) {
+      const twinkle =
+        0.7 +
+        0.3 *
+        Math.sin(
+          time *
+          star.twinkle +
+          star.phase
+        );
+
+      const activation =
+        settings.interactive
+          ? motion.at(
+              star.x /
+              worldWidth,
+
+              star.y /
+              worldHeight
+            ) *
+            settings.response
+          : 0;
+
+      const alpha =
+        clamp(
+          star.base *
+          twinkle +
+          activation *
+          0.8,
+          0,
+          1
+        );
+
+      target.fillStyle =
+        this.starColors[
+          star.tint
+        ];
+
+      if (
+        star.radius > 1.1
+      ) {
+        const size =
+          star.radius *
+          10 *
+          unitScale *
+          (
+            1 +
+            activation *
+            0.5
+          );
+
+        target.globalAlpha =
+          alpha *
+          0.7;
+
+        target.drawImage(
+          this.glowSprites[
+            star.tint
+          ],
+          star.x -
+          size / 2,
+          star.y -
+          size / 2,
+          size,
+          size
+        );
+
+        target.globalAlpha =
+          alpha;
+
+        target.beginPath();
+
+        target.arc(
+          star.x,
+          star.y,
+          Math.max(
+            0.7,
+            star.radius *
+            0.52
+          ),
+          0,
+          TAU
+        );
+
+        target.fill();
+      } else {
+        target.globalAlpha =
+          alpha;
+
+        target.fillRect(
+          star.x,
+          star.y,
+          star.radius *
+          1.3,
+          star.radius *
+          1.3
+        );
+      }
+    }
+
+    target
+      .globalCompositeOperation =
+      "lighter";
+
+    for (
+      const particle of
+      this.movementDust
+    ) {
+      target.globalAlpha =
+        Math.sin(
+          Math.PI *
+          particle.life /
+          particle.maximumLife
+        ) *
+        0.3;
+
+      target.drawImage(
+        this.glowSprites[1],
+        particle.x -
+        particle.radius,
+        particle.y -
+        particle.radius,
+        particle.radius * 2,
+        particle.radius * 2
+      );
+    }
+
+    target.lineCap =
+      "round";
+
+    for (
+      const shooter of
+      this.shooters
+    ) {
+      const fade =
+        Math.sin(
+          Math.PI *
+          shooter.life /
+          shooter.maximumLife
+        );
+
+      const length =
+        170 *
+        unitScale;
+
+      const speed =
+        Math.hypot(
+          shooter.velocityX,
+          shooter.velocityY
+        );
+
+      const tailX =
+        shooter.x -
+        shooter.velocityX /
+        speed *
+        length;
+
+      const tailY =
+        shooter.y -
+        shooter.velocityY /
+        speed *
+        length;
+
+      const gradient =
+        target
+          .createLinearGradient(
+            shooter.x,
+            shooter.y,
+            tailX,
+            tailY
+          );
+
+      gradient.addColorStop(
+        0,
+        "rgba(255,255,255," +
+        fade *
+        0.85 +
+        ")"
+      );
+
+      gradient.addColorStop(
+        1,
+        "rgba(150,195,255,0)"
+      );
+
+      target.strokeStyle =
+        gradient;
+
+      target.lineWidth =
+        1.8 *
+        unitScale;
+
+      target.globalAlpha =
+        1;
+
+      target.beginPath();
+
+      target.moveTo(
+        shooter.x,
+        shooter.y
+      );
+
+      target.lineTo(
+        tailX,
+        tailY
+      );
+
+      target.stroke();
+    }
+
+    target
+      .globalCompositeOperation =
+      "source-over";
+
+    target.globalAlpha =
+      1;
+  }
+};
+
+/* =========================================================
+   NATURAL SKY AND BIRDS
+   ========================================================= */
+
+scenes.sky = {
+  label:
+    "Sky & Birds",
+
+  variants: [
+    "Golden hour",
+    "Dawn",
+    "Day"
+  ],
+
+  palettes: [
+    {
+      stops: [
+        [0,"#1a1346"],
+        [.35,"#6a2f6e"],
+        [.6,"#d2566a"],
+        [.8,"#ff9a55"],
+        [1,"#ffd08a"]
+      ],
+      sun:[.72,.78],
+      glow:[255,190,110],
+      highlight:"#ffd7b0",
+      shadow:"#b4527a",
+      hillFront:"#2a1238",
+      hillBack:"#43204f",
+      bird:"rgba(35,15,45,.82)"
+    },
+    {
+      stops: [
+        [0,"#2c3c7a"],
+        [.4,"#8a7fb8"],
+        [.7,"#f2a7b5"],
+        [1,"#ffd9b8"]
+      ],
+      sun:[.3,.82],
+      glow:[255,210,170],
+      highlight:"#fff0e6",
+      shadow:"#b99ac0",
+      hillFront:"#3a3560",
+      hillBack:"#544c82",
+      bird:"rgba(40,35,70,.8)"
+    },
+    {
+      stops: [
+        [0,"#2f7fd0"],
+        [.6,"#7fb9ee"],
+        [1,"#d6ecfb"]
+      ],
+      sun:[.8,.16],
+      glow:[255,250,220],
+      highlight:"#ffffff",
+      shadow:"#b8cde6",
+      hillFront:"#4a7a9a",
+      hillBack:"#6a98b4",
+      bird:"rgba(30,45,60,.75)"
+    }
+  ],
+
+  layers: [
+    {
+      count:5,
+      scale:.45,
+      speed:6,
+      alpha:.55,
+      verticalRange:[.45,.72]
+    },
+    {
+      count:4,
+      scale:.75,
+      speed:11,
+      alpha:.75,
+      verticalRange:[.18,.58]
+    },
+    {
+      count:3,
+      scale:1.15,
+      speed:20,
+      alpha:.85,
+      verticalRange:[-.02,.3]
+    }
+  ],
+
+  cloudSprites: [],
+  clouds: [],
+  birds: [],
+
+  idleTimer: 10,
+  movementTimer: 0,
+  lastSpawn: 0,
+
+  parseHex(value) {
+    const hex =
+      value.replace(
+        "#",
+        ""
+      );
+
+    return [
+      parseInt(
+        hex.slice(0,2),
+        16
+      ),
+      parseInt(
+        hex.slice(2,4),
+        16
+      ),
+      parseInt(
+        hex.slice(4,6),
+        16
+      )
+    ];
+  },
+
+  mixColor(
+    first,
+    second,
+    amount
+  ) {
+    return first.map(
+      (
+        value,
+        index
+      ) =>
+        Math.round(
+          lerp(
+            value,
+            second[index],
+            amount
+          )
+        )
+    );
+  },
+
+  makeCloud(
+    width,
+    height,
+    highlight,
+    shadow
+  ) {
+    const cloudCanvas =
+      document.createElement(
+        "canvas"
+      );
+
+    cloudCanvas.width =
+      width;
+
+    cloudCanvas.height =
+      height;
+
+    const cloudContext =
+      cloudCanvas.getContext(
+        "2d"
+      );
+
+    const topColor =
+      this.parseHex(
+        highlight
+      );
+
+    const bottomColor =
+      this.parseHex(
+        shadow
+      );
+
+    const puffs = [];
+
+    for (
+      let index = 0;
+      index < 34;
+      index++
+    ) {
+      const x =
+        randomBetween(
+          0.12,
+          0.88
+        ) *
+        width;
+
+      const curve =
+        Math.sin(
+          Math.PI *
+          x /
+          width
+        );
+
+      puffs.push({
+        x,
+
+        y:
+          height *
+          (
+            0.74 -
+            0.5 *
+            curve *
+            Math.pow(
+              Math.random(),
+              0.8
+            )
+          ),
+
+        radius:
+          randomBetween(
+            0.1,
+            0.27
+          ) *
+          height *
+          (
+            0.7 +
+            0.6 *
+            curve
+          )
+      });
+    }
+
+    puffs.sort(
+      (a,b) =>
+        a.y - b.y
+    );
+
+    for (
+      const puff of
+      puffs
+    ) {
+      const color =
+        this.mixColor(
+          topColor,
+          bottomColor,
+          clamp(
+            puff.y /
+            height *
+            1.1 -
+            0.1,
+            0,
+            1
+          )
+        );
+
+      const gradient =
+        cloudContext
+          .createRadialGradient(
+            puff.x,
+            puff.y,
+            0,
+            puff.x,
+            puff.y,
+            puff.radius
+          );
+
+      gradient.addColorStop(
+        0,
+        rgba(
+          color,
+          0.95
+        )
+      );
+
+      gradient.addColorStop(
+        0.72,
+        rgba(
+          color,
+          0.8
+        )
+      );
+
+      gradient.addColorStop(
+        1,
+        rgba(
+          color,
+          0
+        )
+      );
+
+      cloudContext.fillStyle =
+        gradient;
+
+      cloudContext.fillRect(
+        puff.x -
+        puff.radius,
+
+        puff.y -
+        puff.radius,
+
+        puff.radius * 2,
+        puff.radius * 2
+      );
+    }
+
+    cloudContext
+      .globalCompositeOperation =
+      "destination-out";
+
+    const fade =
+      cloudContext
+        .createLinearGradient(
+          0,
+          height *
+          0.72,
+          0,
+          height
+        );
+
+    fade.addColorStop(
+      0,
+      "rgba(0,0,0,0)"
+    );
+
+    fade.addColorStop(
+      1,
+      "rgba(0,0,0,1)"
+    );
+
+    cloudContext.fillStyle =
+      fade;
+
+    cloudContext.fillRect(
+      0,
+      height *
+      0.72,
+      width,
+      height *
+      0.28
+    );
+
+    return cloudCanvas;
+  },
+
+  build() {
+    const palette =
+      this.palette =
+      this.palettes[
+        settings.variant.sky
+      ];
+
+    this.background =
+      document.createElement(
+        "canvas"
+      );
+
+    this.background.width =
+      Math.max(
+        1,
+        Math.round(
+          worldWidth
+        )
+      );
+
+    this.background.height =
+      Math.max(
+        1,
+        Math.round(
+          worldHeight
+        )
+      );
+
+    const background =
+      this.background.getContext(
+        "2d"
+      );
+
+    let gradient =
+      background
+        .createLinearGradient(
+          0,
+          0,
+          0,
+          worldHeight
+        );
+
+    for (
+      const stop of
+      palette.stops
+    ) {
+      gradient.addColorStop(
+        stop[0],
+        stop[1]
+      );
+    }
+
+    background.fillStyle =
+      gradient;
+
+    background.fillRect(
+      0,
+      0,
+      worldWidth,
+      worldHeight
+    );
+
+    const sunX =
+      palette.sun[0] *
+      worldWidth;
+
+    const sunY =
+      palette.sun[1] *
+      worldHeight;
+
+    const sunRadius =
+      Math.max(
+        worldWidth,
+        worldHeight
+      ) *
+      0.55;
+
+    background
+      .globalCompositeOperation =
+      "lighter";
+
+    gradient =
+      background
+        .createRadialGradient(
+          sunX,
+          sunY,
+          0,
+          sunX,
+          sunY,
+          sunRadius
+        );
+
+    gradient.addColorStop(
+      0,
+      rgba(
+        palette.glow,
+        0.55
+      )
+    );
+
+    gradient.addColorStop(
+      0.15,
+      rgba(
+        palette.glow,
+        0.22
+      )
+    );
+
+    gradient.addColorStop(
+      1,
+      rgba(
+        palette.glow,
+        0
+      )
+    );
+
+    background.fillStyle =
+      gradient;
+
+    background.fillRect(
+      0,
+      0,
+      worldWidth,
+      worldHeight
+    );
+
+    background
+      .globalCompositeOperation =
+      "source-over";
+
+    this.sunGlow =
+      makeGlowSprite(
+        palette.glow,
+        128
+      );
+
+    /*
+      Natural hill layers.
+    */
+    this.hills =
+      document.createElement(
+        "canvas"
+      );
+
+    this.hills.width =
+      Math.max(
+        1,
+        Math.round(
+          worldWidth
+        )
+      );
+
+    this.hills.height =
+      Math.max(
+        1,
+        Math.round(
+          worldHeight
+        )
+      );
+
+    const hillContext =
+      this.hills.getContext(
+        "2d"
+      );
+
+    const hillLayers = [
+      [
+        palette.hillBack,
+        .88,
+        .06,
+        1.7,
+        .4
+      ],
+      [
+        palette.hillFront,
+        .94,
+        .05,
+        2.6,
+        1.9
+      ]
+    ];
+
+    for (
+      const hill of
+      hillLayers
+    ) {
+      const color =
+        hill[0];
+
+      const base =
+        hill[1];
+
+      const amplitude =
+        hill[2];
+
+      const frequency =
+        hill[3];
+
+      const phase =
+        hill[4];
+
+      hillContext.fillStyle =
+        color;
+
+      hillContext.beginPath();
+
+      hillContext.moveTo(
+        0,
+        worldHeight
+      );
+
+      for (
+        let index = 0;
+        index <= 64;
+        index++
+      ) {
+        const position =
+          index / 64;
+
+        const y =
+          worldHeight *
+          (
+            base -
+            amplitude *
+            (
+              Math.sin(
+                position *
+                frequency *
+                3 +
+                phase
+              ) *
+              0.6 +
+              Math.sin(
+                position *
+                frequency *
+                7.3 +
+                phase *
+                2
+              ) *
+              0.4
+            )
+          );
+
+        hillContext.lineTo(
+          position *
+          worldWidth,
+          y
+        );
+      }
+
+      hillContext.lineTo(
+        worldWidth,
+        worldHeight
+      );
+
+      hillContext.closePath();
+      hillContext.fill();
+    }
+
+    /*
+      Pre-rendered cloud sprites.
+    */
+    this.cloudSprites =
+      Array.from(
+        {
+          length: 7
+        },
+        () =>
+          this.makeCloud(
+            520,
+            190,
+            palette.highlight,
+            palette.shadow
+          )
+      );
+
+    this.clouds = [];
+
+    this.layers.forEach(
+      (
+        layer,
+        layerIndex
+      ) => {
+        const count =
+          Math.max(
+            1,
+            Math.round(
+              layer.count *
+              settings.detail
+            )
+          );
+
+        for (
+          let index = 0;
+          index < count;
+          index++
+        ) {
+          const width =
+            520 *
+            layer.scale *
+            unitScale *
+            randomBetween(
+              0.85,
+              1.2
+            );
+
+          const height =
+            width *
+            190 /
+            520;
+
+          this.clouds.push({
+            layer:
+              layerIndex,
+
+            width,
+            height,
+
+            x:
+              (
+                index +
+                Math.random()
+              ) /
+              count *
+              (
+                worldWidth +
+                width
+              ) -
+              width,
+
+            y:
+              randomBetween(
+                layer.verticalRange[0],
+                layer.verticalRange[1]
+              ) *
+              worldHeight,
+
+            sprite:
+              this.cloudSprites[
+                (
+                  Math.random() *
+                  this.cloudSprites
+                    .length
+                ) | 0
+              ],
+
+            boost: 0
+          });
+        }
+      }
+    );
+
+    this.birds = [];
+
+    this.idleTimer =
+      randomBetween(
+        5,
+        9
+      );
+
+    this.movementTimer =
+      0;
+
+    this.lastSpawn =
+      performance.now() /
+      1000;
+  },
+
+  spawn(type, time) {
+    if (
+      this.birds.length >
+      7
+    ) {
+      return;
+    }
+
+    const direction =
+      Math.random() <
+      0.5
+        ? 1
+        : -1;
+
+    const startY =
+      randomBetween(
+        0.12,
+        0.5
+      ) *
+      worldHeight;
+
+    const startX =
+      direction > 0
+        ? -90 *
+          unitScale
+        : worldWidth +
+          90 *
+          unitScale;
+
+    const makeBird =
+      (
+        birdType,
+        offsetX,
+        offsetY
+      ) => {
+        const isEagle =
+          birdType ===
+          "eagle";
+
+        return {
+          type:
+            birdType,
+
+          direction,
+
+          x:
+            startX -
+            direction *
+            offsetX,
+
+          y:
+            startY +
+            offsetY,
+
+          baseY:
+            startY +
+            offsetY,
+
+          velocityX:
+            direction *
+            (
+              isEagle
+                ? randomBetween(
+                    55,
+                    80
+                  )
+                : randomBetween(
+                    90,
+                    130
+                  )
+            ) *
+            unitScale,
+
+          size:
+            (
+              isEagle
+                ? randomBetween(
+                    26,
+                    34
+                  )
+                : randomBetween(
+                    13,
+                    18
+                  )
+            ) *
+            unitScale,
+
+          phase:
+            randomBetween(
+              0,
+              TAU
+            ),
+
+          flapSpeed:
+            isEagle
+              ? randomBetween(
+                  3.2,
+                  4
+                )
+              : randomBetween(
+                  7,
+                  9
+                ),
+
+          bob:
+            randomBetween(
+              0,
+              TAU
+            ),
+
+          timer:
+            randomBetween(
+              2,
+              5
+            ),
+
+          flapping:
+            !isEagle
+        };
+      };
+
+    if (
+      type === "eagle"
+    ) {
+      this.birds.push(
+        makeBird(
+          "eagle",
+          0,
+          0
+        )
+      );
+    } else {
+      const count =
+        1 +
+        (
+          Math.random() *
+          3
+        ) | 0;
+
+      for (
+        let index = 0;
+        index < count;
+        index++
+      ) {
+        this.birds.push(
+          makeBird(
+            "gull",
+
+            index *
+            46 *
+            unitScale +
+            randomBetween(
+              0,
+              20
+            ),
+
+            randomBetween(
+              -22,
+              22
+            ) *
+            unitScale
+          )
+        );
+      }
+    }
+
+    this.lastSpawn =
+      time;
+  },
+
+  update(delta, time) {
+    for (
+      const cloud of
+      this.clouds
+    ) {
+      const layer =
+        this.layers[
+          cloud.layer
+        ];
+
+      let activation =
+        0;
+
+      if (
+        settings.interactive
+      ) {
+        activation =
+          Math.max(
+            motion.at(
+              (
+                cloud.x +
+                cloud.width *
+                0.2
+              ) /
+              worldWidth,
+
+              cloud.y /
+              worldHeight
+            ),
+
+            motion.at(
+              (
+                cloud.x +
+                cloud.width *
+                0.5
+              ) /
+              worldWidth,
+
+              cloud.y /
+              worldHeight
+            ),
+
+            motion.at(
+              (
+                cloud.x +
+                cloud.width *
+                0.8
+              ) /
+              worldWidth,
+
+              cloud.y /
+              worldHeight
+            )
+          ) *
+          settings.response;
+      }
+
+      cloud.boost +=
+        (
+          activation *
+          55 *
+          unitScale -
+          cloud.boost
+        ) *
+        delta *
+        0.8;
+
+      cloud.x +=
+        (
+          layer.speed *
+          unitScale *
+          settings.speed +
+          cloud.boost
+        ) *
+        delta;
+
+      if (
+        cloud.x >
+        worldWidth + 20
+      ) {
+        cloud.x =
+          -cloud.width;
+      }
+    }
+
+    if (
+      settings.interactive &&
+      motion.activity > 0.03
+    ) {
+      this.movementTimer +=
+        delta *
+        settings.response;
+    } else {
+      this.movementTimer =
+        Math.max(
+          0,
+          this.movementTimer -
+          delta *
+          0.5
+        );
+    }
+
+    if (
+      this.movementTimer > 1.2 &&
+      time -
+      this.lastSpawn > 6 &&
+      this.birds.length < 6
+    ) {
+      this.spawn(
+        Math.random() < 0.3
+          ? "eagle"
+          : "gull",
+        time
+      );
+
+      this.movementTimer =
+        0;
+    }
+
+    this.idleTimer -=
+      delta *
+      settings.speed;
+
+    if (
+      this.idleTimer <= 0
+    ) {
+      this.spawn(
+        Math.random() < 0.35
+          ? "eagle"
+          : "gull",
+        time
+      );
+
+      this.idleTimer =
+        randomBetween(
+          35,
+          55
+        );
+    }
+
+    for (
+      const bird of
+      this.birds
+    ) {
+      bird.x +=
+        bird.velocityX *
+        delta *
+        settings.speed;
+
+      bird.y =
+        bird.baseY +
+        Math.sin(
+          time *
+          0.4 +
+          bird.bob
+        ) *
+        worldHeight *
+        0.03;
+
+      if (
+        bird.type ===
+        "eagle"
+      ) {
+        bird.timer -=
+          delta;
+
+        if (
+          bird.timer <= 0
+        ) {
+          bird.flapping =
+            !bird.flapping;
+
+          bird.timer =
+            bird.flapping
+              ? randomBetween(
+                  2,
+                  3
+                )
+              : randomBetween(
+                  4,
+                  6
+                );
+        }
+      }
+
+      bird.phase +=
+        delta *
+        bird.flapSpeed *
+        (
+          bird.type ===
+          "eagle"
+            ? (
+                bird.flapping
+                  ? 1
+                  : 0.15
+              )
+            : 1
+        );
+    }
+
+    this.birds =
+      this.birds.filter(
+        bird =>
+          bird.velocityX > 0
+            ? bird.x <
+              worldWidth +
+              120 *
+              unitScale
+            : bird.x >
+              -120 *
+              unitScale
+      );
+  },
+
+  drawBird(
+    target,
+    bird
+  ) {
+    const size =
+      bird.size;
+
+    const isEagle =
+      bird.type ===
+      "eagle";
+
+    const wingPosition =
+      isEagle
+        ? (
+            bird.flapping
+              ? Math.sin(
+                  bird.phase
+                )
+              : 0.1 *
+                Math.sin(
+                  bird.phase
+                )
+          )
+        : Math.sin(
+            bird.phase
+          );
+
+    target.save();
+
+    target.translate(
+      bird.x,
+      bird.y
+    );
+
+    target.scale(
+      bird.direction,
+      1
+    );
+
+    target.strokeStyle =
+      this.palette.bird;
+
+    target.fillStyle =
+      this.palette.bird;
+
+    target.lineJoin =
+      "round";
+
+    target.lineCap =
+      "round";
+
+    for (
+      const side of
+      [-1,1]
+    ) {
+      const elbowX =
+        side *
+        size *
+        0.5;
+
+      const elbowY =
+        isEagle
+          ? -size *
+            0.05 -
+            size *
+            0.15 *
+            wingPosition
+          : -size *
+            0.12 -
+            size *
+            0.2 *
+            wingPosition;
+
+      const tipX =
+        side *
+        size;
+
+      const tipY =
+        isEagle
+          ? size *
+            0.02 -
+            size *
+            0.35 *
+            wingPosition
+          : size *
+            0.1 -
+            size *
+            0.6 *
+            wingPosition;
+
+      target.lineWidth =
+        size *
+        (
+          isEagle
+            ? 0.15
+            : 0.18
+        );
+
+      target.beginPath();
+      target.moveTo(0,0);
+      target.lineTo(
+        elbowX,
+        elbowY
+      );
+      target.stroke();
+
+      target.lineWidth =
+        size *
+        (
+          isEagle
+            ? 0.1
+            : 0.09
+        );
+
+      target.beginPath();
+      target.moveTo(
+        elbowX,
+        elbowY
+      );
+      target.lineTo(
+        tipX,
+        tipY
+      );
+      target.stroke();
+
+      if (isEagle) {
+        target.lineWidth =
+          size *
+          0.05;
+
+        for (
+          let feather = -1;
+          feather <= 1;
+          feather++
+        ) {
+          target.beginPath();
+
+          target.moveTo(
+            tipX,
+            tipY
+          );
+
+          target.lineTo(
+            tipX +
+            side *
+            size *
+            0.16,
+
+            tipY +
+            feather *
+            size *
+            0.12
+          );
+
+          target.stroke();
+        }
+      }
+    }
+
+    target.beginPath();
+
+    target.ellipse(
+      0,
+      0,
+      size *
+      0.17,
+      size *
+      0.1,
+      0,
+      0,
+      TAU
+    );
+
+    target.fill();
+
+    if (isEagle) {
+      target.beginPath();
+
+      target.moveTo(
+        -size *
+        0.1,
+        size *
+        0.06
+      );
+
+      target.lineTo(
+        size *
+        0.1,
+        size *
+        0.06
+      );
+
+      target.lineTo(
+        0,
+        size *
+        0.3
+      );
+
+      target.closePath();
+      target.fill();
+    }
+
+    target.restore();
+  },
+
+  draw(target, time) {
+    const palette =
+      this.palette;
+
+    target.drawImage(
+      this.background,
+      0,
+      0
+    );
+
+    target
+      .globalCompositeOperation =
+      "lighter";
+
+    target.globalAlpha =
+      0.12 +
+      0.05 *
+      Math.sin(
+        time *
+        0.3
+      );
+
+    const sunRadius =
+      Math.max(
+        worldWidth,
+        worldHeight
+      ) *
+      0.22;
+
+    target.drawImage(
+      this.sunGlow,
+
+      palette.sun[0] *
+      worldWidth -
+      sunRadius,
+
+      palette.sun[1] *
+      worldHeight -
+      sunRadius,
+
+      sunRadius * 2,
+      sunRadius * 2
+    );
+
+    target
+      .globalCompositeOperation =
+      "source-over";
+
+    const drawCloudLayer =
+      layerIndex => {
+        const layer =
+          this.layers[
+            layerIndex
+          ];
+
+        for (
+          const cloud of
+          this.clouds.filter(
+            item =>
+              item.layer ===
+              layerIndex
+          )
+        ) {
+          target.globalAlpha =
+            clamp(
+              layer.alpha +
+              cloud.boost /
+              (
+                120 *
+                unitScale
+              ) *
+              0.15,
+              0,
+              1
+            );
+
+          target.drawImage(
+            cloud.sprite,
+            cloud.x,
+            cloud.y,
+            cloud.width,
+            cloud.height
+          );
+        }
+      };
+
+    drawCloudLayer(0);
+
+    target.globalAlpha =
+      1;
+
+    target.drawImage(
+      this.hills,
+      0,
+      0
+    );
+
+    drawCloudLayer(1);
+
+    target.globalAlpha =
+      1;
+
+    for (
+      const bird of
+      this.birds
+    ) {
+      this.drawBird(
+        target,
+        bird
+      );
+    }
+
+    drawCloudLayer(2);
+
+    target.globalAlpha =
+      1;
+  }
+};
+
+/* =========================================================
+   SCENE CONTROLS
+   ========================================================= */
+
+const sceneKeys = [
+  "galaxy",
+  "sky"
+];
+
+function setScene(
+  name,
+  notify = true
+) {
+  if (!scenes[name]) {
+    return;
+  }
+
+  settings.scene =
+    name;
+
+  saveSettings();
+
+  scenes[name].build();
+  syncPanel();
+
+  if (notify) {
+    showToast(
+      scenes[name].label +
+      " · " +
+      scenes[name].variants[
+        settings.variant[name]
+      ]
+    );
+  }
+}
+
+function stepScene(direction) {
+  const current =
+    sceneKeys.indexOf(
+      settings.scene
+    );
+
+  setScene(
+    sceneKeys[
+      (
+        current +
+        direction +
+        sceneKeys.length
+      ) %
+      sceneKeys.length
+    ]
+  );
+}
+
+function stepVariant(direction) {
+  const scene =
+    scenes[
+      settings.scene
+    ];
+
+  settings.variant[
+    settings.scene
+  ] =
+    (
+      settings.variant[
+        settings.scene
+      ] +
+      direction +
+      scene.variants.length
+    ) %
+    scene.variants.length;
+
+  saveSettings();
+
+  scene.build();
+  syncPanel();
+
+  showToast(
+    scene.label +
+    " · " +
+    scene.variants[
+      settings.variant[
+        settings.scene
+      ]
+    ]
+  );
+}
+
+/* =========================================================
+   FOCUS ZONE
+   ========================================================= */
+
+let zoneStart = null;
+let temporaryZone = null;
+
+function makeZone(
+  start,
+  endX,
+  endY
+) {
+  return {
+    x0:
+      Math.min(
+        start.x,
+        endX
+      ),
+
+    y0:
+      Math.min(
+        start.y,
+        endY
+      ),
+
+    x1:
+      Math.max(
+        start.x,
+        endX
+      ),
+
+    y1:
+      Math.max(
+        start.y,
+        endY
+      )
+  };
+}
+
+window.addEventListener(
+  "pointerdown",
+  event => {
+    if (
+      !drawingZone ||
+      panel.contains(
+        event.target
+      )
+    ) {
+      return;
+    }
+
+    zoneStart = {
+      x:
+        clamp(
+          event.clientX /
+          screenWidth,
+          0,
+          1
+        ),
+
+      y:
+        clamp(
+          event.clientY /
+          screenHeight,
+          0,
+          1
+        )
+    };
+
+    temporaryZone =
+      makeZone(
+        zoneStart,
+        zoneStart.x,
+        zoneStart.y
+      );
+  }
+);
+
+window.addEventListener(
+  "pointermove",
+  event => {
+    if (
+      !drawingZone ||
+      !zoneStart
+    ) {
+      return;
+    }
+
+    temporaryZone =
+      makeZone(
+        zoneStart,
+
+        clamp(
+          event.clientX /
+          screenWidth,
+          0,
+          1
+        ),
+
+        clamp(
+          event.clientY /
+          screenHeight,
+          0,
+          1
+        )
+      );
+  }
+);
+
+window.addEventListener(
+  "pointerup",
+  () => {
+    if (
+      !drawingZone ||
+      !zoneStart ||
+      !temporaryZone
+    ) {
+      return;
+    }
+
+    if (
+      temporaryZone.x1 -
+      temporaryZone.x0 >
+      0.04 &&
+      temporaryZone.y1 -
+      temporaryZone.y0 >
+      0.04
+    ) {
+      settings.zone =
+        temporaryZone;
+
+      saveSettings();
+
+      showToast(
+        "Focus zone saved"
+      );
+    }
+
+    zoneStart = null;
+    temporaryZone = null;
+    drawingZone = false;
+
+    syncPanel();
+    updateCursor();
+  }
+);
+
+/* =========================================================
+   PANEL SYNC AND CONTROLS
+   ========================================================= */
+
+function percent(value) {
+  return (
+    Math.round(
+      value *
+      100
+    ) +
+    "%"
+  );
+}
+
+function signedPercent(value) {
+  const number =
+    Math.round(
+      value *
+      100
+    );
+
+  return (
+    (
+      number > 0
+        ? "+"
+        : ""
+    ) +
+    number +
+    "%"
+  );
+}
+
+function syncPanel() {
+  element(
+    "sceneSelect"
+  ).value =
+    settings.scene;
+
+  const scene =
+    scenes[
+      settings.scene
+    ];
+
+  element(
+    "variantButton"
+  ).textContent =
+    "Look: " +
+    scene.variants[
+      settings.variant[
+        settings.scene
+      ]
+    ];
+
+  element(
+    "calmButton"
+  ).classList.toggle(
+    "on",
+    !settings.interactive
+  );
+
+  element(
+    "interactiveButton"
+  ).classList.toggle(
+    "on",
+    settings.interactive
+  );
+
+  element(
+    "mirrorButton"
+  ).classList.toggle(
+    "on",
+    settings.mirror
+  );
+
+  element(
+    "flipButton"
+  ).classList.toggle(
+    "on",
+    settings.flip
+  );
+
+  element(
+    "debugButton"
+  ).classList.toggle(
+    "on",
+    settings.debug
+  );
+
+  element(
+    "demoButton"
+  ).classList.toggle(
+    "on",
+    settings.demo
+  );
+
+  element(
+    "zoneButton"
+  ).classList.toggle(
+    "on",
+    drawingZone
+  );
+
+  element(
+    "cameraButton"
+  ).classList.toggle(
+    "on",
+    motion.hasCamera
+  );
+
+  element(
+    "cameraStatus"
+  ).textContent =
+    motion.hasCamera
+      ? "Camera: on"
+      : "Camera: off";
+
+  element(
+    "cameraStatus"
+  ).className =
+    motion.hasCamera
+      ? "status-pill ok"
+      : "status-pill";
+
+  const controls = [
+    ["speedRange",settings.speed*100,"speedValue",percent(settings.speed)],
+    ["responseRange",settings.response*100,"responseValue",percent(settings.response)],
+    ["detailRange",settings.detail*100,"detailValue",percent(settings.detail)],
+    ["brightnessRange",settings.brightness*100,"brightnessValue",percent(settings.brightness)],
+    ["sceneZoomRange",settings.sceneZoom*100,"sceneZoomValue",percent(settings.sceneZoom)],
+    ["sceneXRange",settings.sceneX*100,"sceneXValue",signedPercent(settings.sceneX)],
+    ["sceneYRange",settings.sceneY*100,"sceneYValue",signedPercent(settings.sceneY)],
+    ["sensitivityRange",settings.sensitivity*100,"sensitivityValue",settings.sensitivity.toFixed(2)],
+    ["capRange",settings.maximumArea*100,"capValue",percent(settings.maximumArea)],
+    ["cameraZoomRange",settings.cameraZoom*100,"cameraZoomValue",settings.cameraZoom.toFixed(2)+"×"],
+    ["cameraXRange",settings.cameraX*100,"cameraXValue",signedPercent(settings.cameraX)],
+    ["cameraYRange",settings.cameraY*100,"cameraYValue",signedPercent(settings.cameraY)],
+    ["cameraHeightRange",settings.cameraHeight*100,"cameraHeightValue",settings.cameraHeight.toFixed(2)+"×"],
+    ["gapRange",settings.projectorGap,"gapValue",settings.projectorGap.toFixed(2)]
+  ];
+
+  for (
+    const control of
+    controls
+  ) {
+    element(
+      control[0]
+    ).value =
+      control[1];
+
+    element(
+      control[2]
+    ).textContent =
+      control[3];
+  }
+
+  document
+    .querySelectorAll(
+      "#projectorTotal button"
+    )
+    .forEach(
+      button => {
+        button.classList.toggle(
+          "on",
+          Number(
+            button.dataset.total
+          ) ===
+          settings.projectorTotal
+        );
+      }
+    );
+
+  document
+    .querySelectorAll(
+      "#projectorUnit button"
+    )
+    .forEach(
+      button => {
+        const unit =
+          Number(
+            button.dataset.unit
+          );
+
+        button.disabled =
+          unit >
+          settings.projectorTotal;
+
+        button.classList.toggle(
+          "on",
+          unit ===
+          settings.projectorUnit
+        );
+      }
+    );
+
+  element(
+    "projectorValue"
+  ).textContent =
+    settings.projectorTotal ===
+    1
+      ? "Full image"
+      : settings.projectorUnit +
+        " of " +
+        settings.projectorTotal;
+
+  updateCursor();
+}
+
+function bindRange(
+  id,
+  callback
+) {
+  const input =
+    element(id);
+
+  input.addEventListener(
+    "input",
+    () => {
+      callback(
+        Number(
+          input.value
+        )
+      );
+
+      saveSettings();
+      syncPanel();
+    }
+  );
+
+  input.addEventListener(
+    "change",
+    () => input.blur()
+  );
+}
+
+element(
+  "previousScene"
+).onclick =
+  () => stepScene(-1);
+
+element(
+  "nextScene"
+).onclick =
+  () => stepScene(1);
+
+element(
+  "sceneSelect"
+).onchange =
+  event =>
+    setScene(
+      event.target.value
+    );
+
+element(
+  "previousVariant"
+).onclick =
+  () => stepVariant(-1);
+
+element(
+  "nextVariant"
+).onclick =
+  () => stepVariant(1);
+
+element(
+  "variantButton"
+).onclick =
+  () => stepVariant(1);
+
+element(
+  "calmButton"
+).onclick =
+  () => {
+    settings.interactive =
+      false;
+
+    saveSettings();
+    syncPanel();
+
+    showToast(
+      "Calm mode"
+    );
+  };
+
+element(
+  "interactiveButton"
+).onclick =
+  () => {
+    settings.interactive =
+      true;
+
+    saveSettings();
+    syncPanel();
+
+    showToast(
+      "Interactive mode"
+    );
+  };
+
+bindRange(
+  "speedRange",
+  value =>
+    settings.speed =
+      value / 100
+);
+
+bindRange(
+  "responseRange",
+  value =>
+    settings.response =
+      value / 100
+);
+
+bindRange(
+  "detailRange",
+  value => {
+    settings.detail =
+      value / 100;
+
+    scenes[
+      settings.scene
+    ].build();
+  }
+);
+
+bindRange(
+  "brightnessRange",
+  value =>
+    settings.brightness =
+      value / 100
+);
+
+bindRange(
+  "sceneZoomRange",
+  value =>
+    settings.sceneZoom =
+      value / 100
+);
+
+bindRange(
+  "sceneXRange",
+  value =>
+    settings.sceneX =
+      value / 100
+);
+
+bindRange(
+  "sceneYRange",
+  value =>
+    settings.sceneY =
+      value / 100
+);
+
+bindRange(
+  "sensitivityRange",
+  value =>
+    settings.sensitivity =
+      value / 100
+);
+
+bindRange(
+  "capRange",
+  value =>
+    settings.maximumArea =
+      value / 100
+);
+
+bindRange(
+  "cameraZoomRange",
+  value => {
+    settings.cameraZoom =
+      value / 100;
+
+    motion.primed =
+      false;
+  }
+);
+
+bindRange(
+  "cameraXRange",
+  value => {
+    settings.cameraX =
+      value / 100;
+
+    motion.primed =
+      false;
+  }
+);
+
+bindRange(
+  "cameraYRange",
+  value => {
+    settings.cameraY =
+      value / 100;
+
+    motion.primed =
+      false;
+  }
+);
+
+bindRange(
+  "cameraHeightRange",
+  value => {
+    settings.cameraHeight =
+      value / 100;
+
+    motion.primed =
+      false;
+  }
+);
+
+bindRange(
+  "gapRange",
+  value => {
+    settings.projectorGap =
+      value;
+
+    updateProjectorWorld();
+
+    scenes[
+      settings.scene
+    ].build();
+  }
+);
+
+element(
+  "pictureLeft"
+).onclick =
+  () => {
+    settings.pictureRotation =
+      (
+        settings.pictureRotation +
+        3
+      ) %
+      4;
+
+    saveSettings();
+    syncPanel();
+  };
+
+element(
+  "pictureRight"
+).onclick =
+  () => {
+    settings.pictureRotation =
+      (
+        settings.pictureRotation +
+        1
+      ) %
+      4;
+
+    saveSettings();
+    syncPanel();
+  };
+
+element(
+  "cameraButton"
+).onclick =
+  () => {
+    if (
+      motion.hasCamera
+    ) {
+      stopCamera();
+    } else {
+      startCamera(
+        settings.cameraId
+      );
+    }
+  };
+
+element(
+  "nextCameraButton"
+).onclick =
+  nextCamera;
+
+element(
+  "listCameraButton"
+).onclick =
+  listCameras;
+
+element(
+  "mirrorButton"
+).onclick =
+  () => {
+    settings.mirror =
+      !settings.mirror;
+
+    motion.primed =
+      false;
+
+    saveSettings();
+    syncPanel();
+  };
+
+element(
+  "flipButton"
+).onclick =
+  () => {
+    settings.flip =
+      !settings.flip;
+
+    motion.primed =
+      false;
+
+    saveSettings();
+    syncPanel();
+  };
+
+element(
+  "cameraRotateLeft"
+).onclick =
+  () => {
+    settings.cameraRotation =
+      (
+        settings.cameraRotation +
+        3
+      ) %
+      4;
+
+    motion.primed =
+      false;
+
+    saveSettings();
+    syncPanel();
+  };
+
+element(
+  "cameraRotateRight"
+).onclick =
+  () => {
+    settings.cameraRotation =
+      (
+        settings.cameraRotation +
+        1
+      ) %
+      4;
+
+    motion.primed =
+      false;
+
+    saveSettings();
+    syncPanel();
+  };
+
+element(
+  "debugButton"
+).onclick =
+  () => {
+    settings.debug =
+      !settings.debug;
+
+    saveSettings();
+    syncPanel();
+  };
+
+element(
+  "demoButton"
+).onclick =
+  () => {
+    settings.demo =
+      !settings.demo;
+
+    saveSettings();
+    syncPanel();
+  };
+
+element(
+  "zoneButton"
+).onclick =
+  () => {
+    drawingZone =
+      !drawingZone;
+
+    zoneStart = null;
+    temporaryZone = null;
+
+    syncPanel();
+    updateCursor();
+
+    showToast(
+      drawingZone
+        ? "Drag over the patient area"
+        : "Zone drawing cancelled"
+    );
+  };
+
+element(
+  "clearZoneButton"
+).onclick =
+  () => {
+    settings.zone = null;
+
+    saveSettings();
+    syncPanel();
+  };
+
+document
+  .querySelectorAll(
+    "#projectorTotal button"
+  )
+  .forEach(
+    button => {
+      button.onclick =
+        () => {
+          settings.projectorTotal =
+            clamp(
+              Number(
+                button.dataset.total
+              ),
+              1,
+              4
+            );
+
+          settings.projectorUnit =
+            clamp(
+              settings.projectorUnit,
+              1,
+              settings.projectorTotal
+            );
+
+          saveSettings();
+          updateProjectorWorld();
+
+          scenes[
+            settings.scene
+          ].build();
+
+          syncPanel();
+        };
+    }
+  );
+
+document
+  .querySelectorAll(
+    "#projectorUnit button"
+  )
+  .forEach(
+    button => {
+      button.onclick =
+        () => {
+          const requested =
+            Number(
+              button.dataset.unit
+            );
+
+          if (
+            requested <=
+            settings.projectorTotal
+          ) {
+            settings.projectorUnit =
+              requested;
+
+            saveSettings();
+            updateProjectorWorld();
+
+            scenes[
+              settings.scene
+            ].build();
+
+            syncPanel();
+          }
+        };
+    }
+  );
+
+document
+  .querySelectorAll(
+    "[data-preset]"
+  )
+  .forEach(
+    button => {
+      button.onclick =
+        () => {
+          const preset =
+            button.dataset.preset;
+
+          if (
+            preset ===
+            "sleep"
+          ) {
+            Object.assign(
+              settings,
+              {
+                interactive:false,
+                brightness:.48,
+                speed:.34,
+                response:.3,
+                detail:.68
+              }
+            );
+          }
+
+          if (
+            preset ===
+            "calm"
+          ) {
+            Object.assign(
+              settings,
+              {
+                interactive:false,
+                brightness:.82,
+                speed:.58,
+                response:.55,
+                detail:.92
+              }
+            );
+          }
+
+          if (
+            preset ===
+            "engage"
+          ) {
+            Object.assign(
+              settings,
+              {
+                interactive:true,
+                brightness:1,
+                speed:.82,
+                response:1,
+                detail:1.08
+              }
+            );
+          }
+
+          saveSettings();
+
+          scenes[
+            settings.scene
+          ].build();
+
+          syncPanel();
+
+          showToast(
+            preset +
+            " preset"
+          );
+        };
+    }
+  );
+
+function toggleFullscreen() {
+  if (
+    document.fullscreenElement
+  ) {
+    document.exitFullscreen();
+  } else {
+    document
+      .documentElement
+      .requestFullscreen()
+      .catch(
+        () => {}
+      );
+  }
+}
+
+function resetCamera() {
+  Object.assign(
+    settings,
+    {
+      mirror:false,
+      flip:false,
+      sensitivity:1,
+      maximumArea:.5,
+      cameraZoom:1,
+      cameraHeight:1,
+      cameraX:0,
+      cameraY:0,
+      cameraRotation:0
+    }
+  );
+
+  motion.primed =
+    false;
+
+  saveSettings();
+  syncPanel();
+
+  showToast(
+    "Camera alignment reset"
+  );
+}
+
+element(
+  "fullscreenButton"
+).onclick =
+  toggleFullscreen;
+
+element(
+  "resetCameraButton"
+).onclick =
+  resetCamera;
+
+element(
+  "resetAllButton"
+).onclick =
+  () => {
+    localStorage.removeItem(
+      STORAGE_KEY
+    );
+
+    location.reload();
+  };
+
+/* =========================================================
+   KEYBOARD
+   ========================================================= */
+
+window.addEventListener(
+  "keydown",
+  event => {
+    const target =
+      event.target;
+
+    if (
+      target &&
+      (
+        target.tagName ===
+        "SELECT" ||
+        (
+          target.tagName ===
+          "INPUT" &&
+          target.type ===
+          "range"
+        )
+      ) &&
+      event.key !== "Tab" &&
+      event.key !== "Escape"
+    ) {
+      return;
+    }
+
+    if (
+      event.key === "Tab"
+    ) {
+      event.preventDefault();
+      togglePanel();
+      return;
+    }
+
+    if (
+      event.ctrlKey ||
+      event.metaKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
+    const key =
+      event.key.toLowerCase();
+
+    let handled =
+      true;
+
+    if (
+      event.shiftKey &&
+      event.key ===
+      "ArrowLeft"
+    ) {
+      settings.cameraX =
+        clamp(
+          settings.cameraX -
+          0.02,
+          -0.5,
+          0.5
+        );
+    } else if (
+      event.shiftKey &&
+      event.key ===
+      "ArrowRight"
+    ) {
+      settings.cameraX =
+        clamp(
+          settings.cameraX +
+          0.02,
+          -0.5,
+          0.5
+        );
+    } else if (
+      event.shiftKey &&
+      event.key ===
+      "ArrowUp"
+    ) {
+      settings.cameraY =
+        clamp(
+          settings.cameraY -
+          0.02,
+          -0.5,
+          0.5
+        );
+    } else if (
+      event.shiftKey &&
+      event.key ===
+      "ArrowDown"
+    ) {
+      settings.cameraY =
+        clamp(
+          settings.cameraY +
+          0.02,
+          -0.5,
+          0.5
+        );
+    } else if (
+      event.key ===
+      "ArrowLeft"
+    ) {
+      settings.pictureRotation =
+        (
+          settings.pictureRotation +
+          3
+        ) %
+        4;
+    } else if (
+      event.key ===
+      "ArrowRight"
+    ) {
+      settings.pictureRotation =
+        (
+          settings.pictureRotation +
+          1
+        ) %
+        4;
+    } else if (
+      event.key ===
+      "ArrowUp"
+    ) {
+      settings.cameraRotation =
+        (
+          settings.cameraRotation +
+          1
+        ) %
+        4;
+    } else if (
+      event.key ===
+      "ArrowDown"
+    ) {
+      settings.cameraRotation =
+        (
+          settings.cameraRotation +
+          3
+        ) %
+        4;
+    } else if (
+      key === "1"
+    ) {
+      setScene(
+        "galaxy"
+      );
+
+      return;
+    } else if (
+      key === "2"
+    ) {
+      setScene(
+        "sky"
+      );
+
+      return;
+    } else if (
+      key === "n"
+    ) {
+      stepScene(1);
+      return;
+    } else if (
+      key === "t"
+    ) {
+      stepVariant(
+        event.shiftKey
+          ? -1
+          : 1
+      );
+
+      return;
+    } else if (
+      key === "m"
+    ) {
+      settings.mirror =
+        !settings.mirror;
+    } else if (
+      key === "v"
+    ) {
+      settings.flip =
+        !settings.flip;
+    } else if (
+      key === "c"
+    ) {
+      nextCamera();
+      return;
+    } else if (
+      key === "i"
+    ) {
+      listCameras();
+      return;
+    } else if (
+      key === "d"
+    ) {
+      settings.debug =
+        !settings.debug;
+    } else if (
+      key === "a"
+    ) {
+      settings.demo =
+        !settings.demo;
+    } else if (
+      key === "-" ||
+      key === "_"
+    ) {
+      settings.sensitivity =
+        clamp(
+          settings.sensitivity /
+          1.15,
+          0.4,
+          3
+        );
+    } else if (
+      key === "+" ||
+      key === "="
+    ) {
+      settings.sensitivity =
+        clamp(
+          settings.sensitivity *
+          1.15,
+          0.4,
+          3
+        );
+    } else if (
+      key === ","
+    ) {
+      settings.cameraZoom =
+        clamp(
+          settings.cameraZoom -
+          0.05,
+          0.5,
+          3
+        );
+    } else if (
+      key === "."
+    ) {
+      settings.cameraZoom =
+        clamp(
+          settings.cameraZoom +
+          0.05,
+          0.5,
+          3
+        );
+    } else if (
+      key === "0"
+    ) {
+      resetCamera();
+      return;
+    } else if (
+      key === "f"
+    ) {
+      toggleFullscreen();
+      return;
+    } else if (
+      key === "h"
+    ) {
+      hintElement
+        .classList
+        .toggle(
+          "show"
+        );
+
+      return;
+    } else if (
+      event.key ===
+      "Escape"
+    ) {
+      if (drawingZone) {
+        drawingZone = false;
+        temporaryZone = null;
+        zoneStart = null;
+
+        syncPanel();
+        updateCursor();
+      } else {
+        togglePanel(false);
+      }
+
+      return;
+    } else {
+      handled =
+        false;
+    }
+
+    if (handled) {
+      event.preventDefault();
+
+      motion.primed =
+        false;
+
+      saveSettings();
+      syncPanel();
+    }
+  }
+);
+
+/* =========================================================
+   OVERLAYS
+   ========================================================= */
+
+function drawOverlays() {
+  if (settings.debug) {
+    const cellWidth =
+      screenWidth /
+      GRID_WIDTH;
+
+    const cellHeight =
+      screenHeight /
+      GRID_HEIGHT;
+
+    context.save();
+
+    for (
+      let index = 0;
+      index < GRID_COUNT;
+      index++
+    ) {
+      const value =
+        motion.grid[index];
+
+      if (value < 0.05) {
+        continue;
+      }
+
+      context.fillStyle =
+        "rgba(80,255,220," +
+        Math.min(
+          0.62,
+          value *
+          0.62
+        ) +
+        ")";
+
+      context.fillRect(
+        (
+          index %
+          GRID_WIDTH
+        ) *
+        cellWidth,
+
+        (
+          (
+            index /
+            GRID_WIDTH
+          ) | 0
+        ) *
+        cellHeight,
+
+        cellWidth + 1,
+        cellHeight + 1
+      );
+    }
+
+    if (
+      motion.hasCamera
+    ) {
+      context.globalAlpha =
+        0.72;
+
+      context.drawImage(
+        motionCanvas,
+        14,
+        14,
+        256,
+        144
+      );
+
+      context.globalAlpha =
+        1;
+
+      context.strokeStyle =
+        "#fff";
+
+      context.strokeRect(
+        14,
+        14,
+        256,
+        144
+      );
+    }
+
+    context.restore();
+  }
+
+  const zone =
+    temporaryZone ||
+    settings.zone;
+
+  if (
+    zone &&
+    (
+      drawingZone ||
+      settings.debug
+    )
+  ) {
+    context.save();
+
+    context.strokeStyle =
+      "rgba(255,255,255,.9)";
+
+    context.lineWidth =
+      2;
+
+    context.setLineDash(
+      [9,7]
+    );
+
+    context.strokeRect(
+      zone.x0 *
+      screenWidth,
+
+      zone.y0 *
+      screenHeight,
+
+      (
+        zone.x1 -
+        zone.x0
+      ) *
+      screenWidth,
+
+      (
+        zone.y1 -
+        zone.y0
+      ) *
+      screenHeight
+    );
+
+    context.restore();
+  }
+}
+
+/* =========================================================
+   MAIN LOOP
+   ========================================================= */
+
+let lastFrame =
+  performance.now();
+
+function frame(now) {
+  const delta =
+    Math.min(
+      0.05,
+      (
+        now -
+        lastFrame
+      ) /
+      1000
+    );
+
+  lastFrame =
+    now;
+
+  stepMotion(now);
+
+  const time =
+    now /
+    1000;
+
+  const scene =
+    scenes[
+      settings.scene
+    ];
+
+  scene.update(
+    delta,
+    time
+  );
+
+  worldContext.setTransform(
+    1,0,0,1,0,0
+  );
+
+  worldContext.fillStyle =
+    "#000";
+
+  worldContext.fillRect(
+    0,
+    0,
+    worldWidth,
+    worldHeight
+  );
+
+  scene.draw(
+    worldContext,
+    time
+  );
+
+  context.setTransform(
+    1,0,0,1,0,0
+  );
+
+  context.fillStyle =
+    "#000";
+
+  context.fillRect(
+    0,
+    0,
+    screenWidth,
+    screenHeight
+  );
+
+  context.save();
+
+  context.translate(
+    screenWidth / 2,
+    screenHeight / 2
+  );
+
+  context.rotate(
+    settings.pictureRotation *
+    Math.PI /
+    2
+  );
+
+  if (
+    settings.pictureRotation %
+    2
+  ) {
+    context.scale(
+      screenHeight /
+      screenWidth,
+
+      screenWidth /
+      screenHeight
+    );
+  }
+
+  context.translate(
+    settings.sceneX *
+    screenWidth,
+
+    settings.sceneY *
+    screenHeight
+  );
+
+  context.scale(
+    settings.sceneZoom,
+    settings.sceneZoom
+  );
+
+  context.drawImage(
+    worldCanvas,
+
+    worldOffsetX,
+    0,
+    screenWidth,
+    screenHeight,
+
+    -screenWidth / 2,
+    -screenHeight / 2,
+    screenWidth,
+    screenHeight
+  );
+
+  context.restore();
+
+  drawOverlays();
+
+  if (
+    settings.brightness <
+    1
+  ) {
+    context.fillStyle =
+      "rgba(0,0,0," +
+      (
+        1 -
+        settings.brightness
+      ) +
+      ")";
+
+    context.fillRect(
+      0,
+      0,
+      screenWidth,
+      screenHeight
+    );
+  } else if (
+    settings.brightness >
+    1
+  ) {
+    context.save();
+
+    context
+      .globalCompositeOperation =
+      "screen";
+
+    context.fillStyle =
+      "rgba(255,255,255," +
+      (
+        (
+          settings.brightness -
+          1
+        ) *
+        0.24
+      ) +
+      ")";
+
+    context.fillRect(
+      0,
+      0,
+      screenWidth,
+      screenHeight
+    );
+
+    context.restore();
+  }
+
+  requestAnimationFrame(
+    frame
+  );
+}
+
+/* =========================================================
+   STARTUP
+   ========================================================= */
+
+resize();
+syncPanel();
+
+if (
+  query.get("panel") ===
+  "1"
+) {
+  togglePanel(true);
+}
+
+/*
+  Automatic camera startup retained from the working version.
+*/
+startCamera(
+  settings.cameraId
+);
+
+requestAnimationFrame(
+  frame
+);
+
+})();
+</script>
+
+</body>
+</html>
